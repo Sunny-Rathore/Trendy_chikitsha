@@ -12,9 +12,10 @@ class HealerProfileFetchData {
   String? pinCode;
   String? about;
   String? keywords;
-  String? videoLink;
+  String? videoLink, healer_age;
   List<Expertise>? expertise;
   List<Pricing>? pricing;
+  int? expire_status;
 
   HealerProfileFetchData(
       {this.status,
@@ -32,7 +33,7 @@ class HealerProfileFetchData {
         this.keywords,
         this.videoLink,
         this.expertise,
-        this.pricing});
+        this.pricing, this.healer_age,this.expire_status});
 
   HealerProfileFetchData.fromJson(Map<String, dynamic> json) {
     status = json['status'];
@@ -49,42 +50,48 @@ class HealerProfileFetchData {
     about = json['about'];
     keywords = json['keywords'];
     videoLink = json['video_link'];
+healer_age= json['healer_age'];
     if (json['expertise'] != null) {
       expertise = <Expertise>[];
       json['expertise'].forEach((v) {
-        expertise!.add(new Expertise.fromJson(v));
+        expertise!.add(Expertise.fromJson(v));
       });
     }
     if (json['pricing'] != null) {
       pricing = <Pricing>[];
       json['pricing'].forEach((v) {
-        pricing!.add(new Pricing.fromJson(v));
+        pricing!.add(Pricing.fromJson(v));
       });
     }
+    expire_status = json['expire_status'];
+
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['response'] = this.response;
-    data['healer_id'] = this.healerId;
-    data['healer_name'] = this.healerName;
-    data['healer_profile'] = this.healerProfile;
-    data['healer_email'] = this.healerEmail;
-    data['healer_telephone'] = this.healerTelephone;
-    data['date_of_birth'] = this.dateOfBirth;
-    data['gender'] = this.gender;
-    data['address'] = this.address;
-    data['pin_code'] = this.pinCode;
-    data['about'] = this.about;
-    data['keywords'] = this.keywords;
-    data['video_link'] = this.videoLink;
-    if (this.expertise != null) {
-      data['expertise'] = this.expertise!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['response'] = response;
+    data['healer_id'] = healerId;
+    data['healer_name'] = healerName;
+    data['healer_profile'] = healerProfile;
+    data['healer_email'] = healerEmail;
+    data['healer_telephone'] = healerTelephone;
+    data['date_of_birth'] = dateOfBirth;
+    data['gender'] = gender;
+    data['address'] = address;
+    data['pin_code'] = pinCode;
+    data['about'] = about;
+    data['keywords'] = keywords;
+    data['video_link'] = videoLink;
+    data['healer_age'] = healer_age;
+    if (expertise != null) {
+      data['expertise'] = expertise!.map((v) => v.toJson()).toList();
     }
-    if (this.pricing != null) {
-      data['pricing'] = this.pricing!.map((v) => v.toJson()).toList();
+    if (pricing != null) {
+      data['pricing'] = pricing!.map((v) => v.toJson()).toList();
     }
+    data['expire_status'] = expire_status;
+
     return data;
   }
 }
@@ -93,6 +100,7 @@ class Expertise {
   String? count;
   String? therapyName1;
   String? issues1;
+  String? expertise_id;
   String? experienceYear1;
   String? experienceMonth1;
   String? therapyCertificate1;
@@ -103,7 +111,7 @@ class Expertise {
         this.issues1,
         this.experienceYear1,
         this.experienceMonth1,
-        this.therapyCertificate1});
+        this.therapyCertificate1, this.expertise_id});
 
   Expertise.fromJson(Map<String, dynamic> json) {
     count = json['count'];
@@ -112,16 +120,18 @@ class Expertise {
     experienceYear1 = json['experience_year1'];
     experienceMonth1 = json['experience_month1'];
     therapyCertificate1 = json['therapy_certificate1'];
+    expertise_id=json['expertise_id'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['count'] = this.count;
-    data['therapy_name1'] = this.therapyName1;
-    data['issues1'] = this.issues1;
-    data['experience_year1'] = this.experienceYear1;
-    data['experience_month1'] = this.experienceMonth1;
-    data['therapy_certificate1'] = this.therapyCertificate1;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['count'] = count;
+    data['therapy_name1'] = therapyName1;
+    data['issues1'] = issues1;
+    data['experience_year1'] = experienceYear1;
+    data['experience_month1'] = experienceMonth1;
+    data['therapy_certificate1'] = therapyCertificate1;
+    data['expertise_id'] = expertise_id;
     return data;
   }
 }
@@ -140,10 +150,10 @@ class Pricing {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['th_id'] = this.thId;
-    data['therapy_name'] = this.therapyName;
-    data['custom_price'] = this.customPrice;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['th_id'] = thId;
+    data['therapy_name'] = therapyName;
+    data['custom_price'] = customPrice;
     return data;
   }
 }

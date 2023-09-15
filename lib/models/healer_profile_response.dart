@@ -29,7 +29,7 @@ class HealerProfileResponse {
     response=json['response'];
     slots = <Slots>[];
     json['slots'].forEach((v) {
-      slots!.add(new Slots.fromJson(v));
+      slots!.add(Slots.fromJson(v));
     });
 
     /*
@@ -43,16 +43,16 @@ class HealerProfileResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['msg'] = this.msg;
-    data['healer_id'] = this.healerId;
-    data['healer_name'] = this.healerName;
-    data['healer_profile'] = this.healerProfile;
-    data['therapy_name'] = this.therapyName;
-    data['response']=this.response;
-    data['experience'] = this.experience;
-    data['slots'] = this.slots!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['msg'] = msg;
+    data['healer_id'] = healerId;
+    data['healer_name'] = healerName;
+    data['healer_profile'] = healerProfile;
+    data['therapy_name'] = therapyName;
+    data['response']=response;
+    data['experience'] = experience;
+    data['slots'] = slots!.map((v) => v.toJson()).toList();
 
     /* if (this.slots != null) {
       data['slots'] = this.slots!.map((v) => v.toJson()).toList();
@@ -72,9 +72,9 @@ class Slots {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['slot'] = this.slot;
-    data['slot_id'] = this.slotId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['slot'] = slot;
+    data['slot_id'] = slotId;
 
     return data;
   }

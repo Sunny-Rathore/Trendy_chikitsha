@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class transactions extends StatefulWidget {
-   transactions({Key? key}) : super(key: key);
+   const transactions({Key? key}) : super(key: key);
 
   @override
   State<transactions> createState() => _transactionsState();

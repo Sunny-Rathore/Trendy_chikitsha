@@ -7,11 +7,13 @@ class StringUtils {
   static String class_id = "CLASS_ID";
   static String class_section = "class_section";
   static String type = "type";
-
+  static String subscriptionPlan = "SUBSCRIPTION PLAN";
   static String name = "name";
   static String s_unique_id = "s_unique_id";
   static String s_mobile = "s_mobile";
+  static String phoneNo = "phoneNo";
   static String unique_id = "STUDENT_UNIQUE_ID";
+  static String profile_image = "PROFILE_IMAGE";
   static String email = "USER_EMAIL";
   static String dob = "USER_DOB";
   static String address = "ADDRESS";
@@ -27,9 +29,6 @@ class StringUtils {
   static String pinterestLink = "pinterest_Link";
   static String linkedinLink = "linkedin_Link";
   static String youtubeLink = "youtube_Link";
-
-
-
   static String device_token = "DEVICE_TOKEN";
   static String id = "ID";
   static String token = "TOKEN";

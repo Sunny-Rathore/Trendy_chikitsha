@@ -9,7 +9,7 @@ class TextWidgetAlignRight extends StatelessWidget {
 
 
   TextWidgetAlignRight(
-      String text, FontWeight fontWeight, Color textColor, double fontSize, String font_family) {
+      String text, FontWeight fontWeight, Color textColor, double fontSize, String font_family, {super.key}) {
     this.text = text;
     this.fontWeight = fontWeight;
     this.textColor = textColor;

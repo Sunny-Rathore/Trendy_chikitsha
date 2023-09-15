@@ -11,17 +11,17 @@ class GetHealerSocialMediaResponse {
     if (json['response'] != null) {
       response = <Response>[];
       json['response'].forEach((v) {
-        response!.add(new Response.fromJson(v));
+        response!.add(Response.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['msg'] = this.msg;
-    if (this.response != null) {
-      data['response'] = this.response!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['msg'] = msg;
+    if (response != null) {
+      data['response'] = response!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -53,13 +53,13 @@ class Response {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['h_facebook_link'] = this.hFacebookLink;
-    data['h_twitter_link'] = this.hTwitterLink;
-    data['h_instagram_link'] = this.hInstagramLink;
-    data['h_pinterest_link'] = this.hPinterestLink;
-    data['h_linkedin_link'] = this.hLinkedinLink;
-    data['h_youtube_link'] = this.hYoutubeLink;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['h_facebook_link'] = hFacebookLink;
+    data['h_twitter_link'] = hTwitterLink;
+    data['h_instagram_link'] = hInstagramLink;
+    data['h_pinterest_link'] = hPinterestLink;
+    data['h_linkedin_link'] = hLinkedinLink;
+    data['h_youtube_link'] = hYoutubeLink;
     return data;
   }
 }

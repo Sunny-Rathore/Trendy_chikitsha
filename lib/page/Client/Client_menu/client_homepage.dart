@@ -1,37 +1,32 @@
 import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:doctor/baseurl/baseURL.dart';
-import 'package:doctor/global/global.dart';
-import 'package:doctor/models/all_therapy_response.dart';
-import 'package:doctor/models/client_responses/top_reviewed_healer_response.dart';
-import 'package:doctor/models/healer_responses/pricing_plan_response.dart';
-import 'package:doctor/page/Client/Client_menu/pages/therapist_details_page.dart';
-import 'package:doctor/page/Client/Client_menu/pages/therapistlist_page.dart';
-import 'package:doctor/page/Client/Client_menu/pages/therapy_category.dart';
-import 'package:doctor/page/Healer/Choose%20Your%20Expertise/HealerChooseExperties.dart';
-import 'package:doctor/utils/color_utils.dart';
-import 'package:doctor/utils/size_util.dart';
-import 'package:doctor/utils/string_utils.dart';
-import 'package:doctor/widget/text_widget.dart';
-import 'package:doctor/widget/text_widget_align_center.dart';
-import 'package:doctor/widget/text_widget_align_right.dart';
-import 'package:doctor/widgets/spinKitFadingCircleWidget.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gender_picker/source/enums.dart';
 import 'package:gender_picker/source/gender_picker.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
+import 'package:trendy_chikitsa/baseurl/baseURL.dart';
+import 'package:trendy_chikitsa/models/all_therapy_response.dart';
+import 'package:trendy_chikitsa/models/client_responses/top_reviewed_healer_response.dart';
+import 'package:trendy_chikitsa/models/healer_responses/pricing_plan_response.dart';
+import 'package:trendy_chikitsa/page/Client/Client_menu/pages/therapist_details_page.dart';
+import 'package:trendy_chikitsa/page/Client/Client_menu/pages/therapistlist_page.dart';
+import 'package:trendy_chikitsa/page/Client/Client_menu/pages/therapy_category.dart';
+import 'package:trendy_chikitsa/page/Healer/Choose%20Your%20Expertise/HealerChooseExperties.dart';
+import 'package:trendy_chikitsa/utils/color_utils.dart';
+import 'package:trendy_chikitsa/utils/string_utils.dart';
+import 'package:trendy_chikitsa/widget/text_widget.dart';
+import 'package:trendy_chikitsa/widgets/spinKitFadingCircleWidget.dart';
 
 class ClientHomePage extends StatefulWidget {
+  const ClientHomePage({super.key});
+
 /*  String tabNumber;*/
 
 /*
@@ -46,7 +41,7 @@ class ClientHomePage extends StatefulWidget {
 }
 
 class ClientHomePageState extends State<ClientHomePage> {
-  int _value = 1;
+  final int _value = 1;
   List<TherapyList> therapyList = [];
   List<TopFeaturedHealersResponse> topFeaturedHealerList = [];
   List<TopFeaturedHealersResponse> topReviewedHealerList = [];
@@ -72,7 +67,8 @@ class ClientHomePageState extends State<ClientHomePage> {
 
   @override
   void initState() {
-    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
 
     //  saveValue();
 
@@ -84,7 +80,8 @@ class ClientHomePageState extends State<ClientHomePage> {
     //  storage = new FlutterSecureStorage();
 
     prefs = await SharedPreferences.getInstance();
- /*   Future.delayed(Duration(seconds: 3), () {
+    setState(() {});
+    /*   Future.delayed(Duration(seconds: 3), () {
       setState(() {
         ;
       });
@@ -137,24 +134,14 @@ class ClientHomePageState extends State<ClientHomePage> {
                     child: CarouselSlider(
                       items: [
                         //1st Image of Slider
-                        Container(
-                          margin: EdgeInsets.all(0.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0),
-                            image: DecorationImage(
-                              image: AssetImage("assets/images/handshake.png"),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
 
                         //2nd Image of Slider
                         Container(
-                          margin: EdgeInsets.all(0.0),
+                          margin: const EdgeInsets.all(0.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.0),
-                            image: DecorationImage(
-                              image: AssetImage("assets/images/ic_medical.png"),
+                            image: const DecorationImage(
+                              image: AssetImage("assets/images/client_b.png"),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -162,11 +149,11 @@ class ClientHomePageState extends State<ClientHomePage> {
 
                         //3rd Image of Slider
                         Container(
-                          margin: EdgeInsets.all(0.0),
+                          margin: const EdgeInsets.all(0.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.0),
-                            image: DecorationImage(
-                              image: AssetImage("assets/images/hong.png"),
+                            image: const DecorationImage(
+                              image: AssetImage("assets/images/client_a.png"),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -174,27 +161,17 @@ class ClientHomePageState extends State<ClientHomePage> {
 
                         //4th Image of Slider
                         Container(
-                          margin: EdgeInsets.all(0.0),
+                          margin: const EdgeInsets.all(0.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.0),
-                            image: DecorationImage(
-                              image: AssetImage("assets/images/handshake.png"),
+                            image: const DecorationImage(
+                              image: AssetImage("assets/images/client_c.png"),
                               fit: BoxFit.cover,
                             ),
                           ),
                         ),
 
                         //5th Image of Slider
-                        Container(
-                          margin: EdgeInsets.all(0.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0),
-                            image: DecorationImage(
-                              image: AssetImage("assets/images/hong.png"),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
                       ],
 
                       //Slider Container properties
@@ -205,25 +182,25 @@ class ClientHomePageState extends State<ClientHomePage> {
                         aspectRatio: 16 / 9,
                         autoPlayCurve: Curves.fastOutSlowIn,
                         enableInfiniteScroll: true,
-                        autoPlayAnimationDuration: Duration(milliseconds: 800),
+                        autoPlayAnimationDuration:
+                            const Duration(milliseconds: 800),
                         viewportFraction: 0.8,
                       ),
                     )),
-            Align(
-              alignment:
-              Alignment.center,
-              child:      Padding(
-                    padding: EdgeInsets.only(top: 2.h),
-                    child: Text('Therapies',
-                        maxLines: 3,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: StringUtils.roboto_font_family,
-                          color: ColorUtils.blackColor.withOpacity(1),
-                          fontWeight: FontWeight.normal,
-                          fontSize: 22,
-                        )))),
-                Container(
+                Align(
+                    alignment: Alignment.center,
+                    child: Padding(
+                        padding: EdgeInsets.only(top: 2.h),
+                        child: Text('Therapies',
+                            maxLines: 3,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: StringUtils.roboto_font_family,
+                              color: ColorUtils.blackColor.withOpacity(1),
+                              fontWeight: FontWeight.normal,
+                              fontSize: 22,
+                            )))),
+                SizedBox(
                     height: 200,
                     child: FutureBuilder(
                         future: getTherapies(),
@@ -231,7 +208,7 @@ class ClientHomePageState extends State<ClientHomePage> {
                           return ListView.builder(
                               scrollDirection: Axis.horizontal,
                               itemCount:
-                                  therapyList != null ? therapyList!.length : 0,
+                                  therapyList != null ? therapyList.length : 0,
                               /*physics: NeverScrollableScrollPhysics(),*/
                               shrinkWrap: true,
                               itemBuilder: (BuildContext context, int index) {
@@ -270,14 +247,15 @@ class ClientHomePageState extends State<ClientHomePage> {
                                               height: 18.h,
                                               width: 140,
                                               decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-                                                    topLeft: Radius.circular(5),
-                                                    topRight:
-                                                        Radius.circular(5)),
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                        topLeft:
+                                                            Radius.circular(5),
+                                                        topRight:
+                                                            Radius.circular(5)),
                                                 image: DecorationImage(
                                                   image: NetworkImage(therapyList
-                                                              .length >
-                                                          0
+                                                          .isNotEmpty
                                                       ? therapyList[index]
                                                           .therapy_image
                                                           .toString()
@@ -285,7 +263,7 @@ class ClientHomePageState extends State<ClientHomePage> {
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),
-                                              child: Text(""),
+                                              child: const Text(""),
                                             ),
                                             Expanded(
                                                 child: Container(
@@ -294,15 +272,16 @@ class ClientHomePageState extends State<ClientHomePage> {
                                               decoration: BoxDecoration(
                                                 color:
                                                     ColorUtils.trendyThemeColor,
-                                                borderRadius: BorderRadius.only(
-                                                    bottomLeft:
-                                                        Radius.circular(5),
-                                                    bottomRight:
-                                                        Radius.circular(5)),
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                        bottomLeft:
+                                                            Radius.circular(5),
+                                                        bottomRight:
+                                                            Radius.circular(5)),
                                               ),
                                               child: Center(
                                                 child: Text(
-                                                    therapyList.length > 0
+                                                    therapyList.isNotEmpty
                                                         ? therapyList[index]
                                                             .therapy_name
                                                             .toString()
@@ -325,206 +304,34 @@ class ClientHomePageState extends State<ClientHomePage> {
                                 );
                               });
                         })),
-            Align(
-              alignment:
-              Alignment.center,
-              child:   Padding(
-                    padding: EdgeInsets.only(top: 2.h),
-                    child: Text('Top Featured Healers',
-                        maxLines: 3,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: StringUtils.roboto_font_family,
-                          color: ColorUtils.blackColor.withOpacity(1),
-                          fontWeight: FontWeight.normal,
-                          fontSize: 22,
-                        )))),
-              SizedBox(
-                  height: 35.h,
-                  child: FutureBuilder(
-                      future: getTopFeaturedHealer(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.done) {
-                          if (snapshot.hasData) {
-                            print('snapshot--  ${snapshot.error}');
-
-                            if (topFeaturedHealerList!.length > 0) {
-                              return ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount:topFeaturedHealerList != null
-                                      ? topFeaturedHealerList!.length
-                                      : 0,
-                                  /*physics: NeverScrollableScrollPhysics(),*/
-                                  shrinkWrap: true,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    TherapyDetailsPage(
-                                                      healerId:
-                                                      topFeaturedHealerList[index]!
-                                                          .healerId
-                                                          .toString(),
-                                                      therapyCategory: topFeaturedHealerList[index].therapyName.toString(),
-                                                    )));
-                                      },
-                                      child: /* Card(
-                                            elevation: 0,
-                                            shadowColor:
-                                                ColorUtils.lightGreyColor,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
-                                            ),
-                                            child: */
-                                      Container(
-                                          height: 18.h,
-                                          width: 125,
-                                          margin: EdgeInsets.fromLTRB(
-                                              1.w, 2.h, 1.w, 1.h),
-                                          child: Column(children: [
-                                            Container(
-                                              height: 18.h,
-                                              width: 140,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                BorderRadius.only(
-                                                    topLeft: Radius
-                                                        .circular(5),
-                                                    topRight: Radius
-                                                        .circular(5)),
-                                                image: DecorationImage(
-                                                  image: NetworkImage(
-                                                      topFeaturedHealerList.length >
-                                                          0
-                                                          ? topFeaturedHealerList[
-                                                      index]
-                                                          .healerImage
-                                                          .toString()
-                                                          : "https://media.istockphoto.com/photos/there-are-many-fun-ways-to-learn-picture-id1166330501?k=20&m=1166330501&s=612x612&w=0&h=VcvEDu0or-cSjxyEQIM1FWpCReXQ9vq1ZXQN4nRa39c="),
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                              child: Text(""),
-                                            ),
-                                            Container(
-                                              height: 7.h,
-                                              width: 140,
-                                              decoration: BoxDecoration(
-                                                color: ColorUtils
-                                                    .trendyThemeColor,
-                                                borderRadius:
-                                                BorderRadius.only(
-                                                    bottomLeft: Radius
-                                                        .circular(5),
-                                                    bottomRight:
-                                                    Radius
-                                                        .circular(
-                                                        5)),
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                    topFeaturedHealerList.length > 0
-                                                        ? topFeaturedHealerList[
-                                                    index]
-                                                        .healerName
-                                                        .toString()
-                                                        : '',
-                                                    maxLines: 3,
-                                                    textAlign:
-                                                    TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontFamily: StringUtils
-                                                          .roboto_font_family,
-                                                      color: ColorUtils
-                                                          .whiteColor
-                                                          .withOpacity(1),
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .normal,
-                                                      fontSize: 15,
-                                                    )),
-                                              ),
-                                            )
-                                          ])),
-                                    );
-                                  });
-                            } else {
-                              return SizedBox(
-                                  height: 500,
-                                  child: Center(
-                                    child: Lottie.asset(
-                                      'assets/images/no_data.json',
-                                      repeat: true,
-                                      height: 70,
-                                      width: 35.w,
-                                      reverse: false,
-                                      animate: true,
-                                    ),
-                                    /*     Image.asset(
-                                                          'assets/images/no_data.png',
-                                                          width: 200,
-                                                          height: 200,
-                                                        ),*/
-                                  ));
-                            }
-                          } else {
-                            return SizedBox(
-                                height: 500,
-                                child: Center(
-                                  child: Lottie.asset(
-                                    'assets/images/no_data.json',
-                                    repeat: true,
-                                    height: 50.h,
-                                    width: 45.w,
-                                    reverse: false,
-                                    animate: true,
-                                  ),
-                                  /*     Image.asset(
-                                                          'assets/images/no_data.png',
-                                                          width: 200,
-                                                          height: 200,
-                                                        ),*/
-                                ));
-                          }
-                        } else {
-                          return SpinKitFadingCircleWidget(true);
-                        }
-                      })),
                 Align(
-                    alignment:
-                    Alignment.center,
-                    child:   Padding(
-                    padding: EdgeInsets.only(top: 0.h),
-                    child: Text('Top Reviewed Healers',
-                        maxLines: 3,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: StringUtils.roboto_font_family,
-                          color: ColorUtils.blackColor.withOpacity(1),
-                          fontWeight: FontWeight.normal,
-                          fontSize: 22,
-                        )))),
+                    alignment: Alignment.center,
+                    child: Padding(
+                        padding: EdgeInsets.only(top: 2.h),
+                        child: Text('Top Featured Healers',
+                            maxLines: 3,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: StringUtils.roboto_font_family,
+                              color: ColorUtils.blackColor.withOpacity(1),
+                              fontWeight: FontWeight.normal,
+                              fontSize: 22,
+                            )))),
                 SizedBox(
                     height: 35.h,
                     child: FutureBuilder(
-                        future: getTopReviewedHealer(),
+                        future: getTopFeaturedHealer(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.done) {
                             if (snapshot.hasData) {
                               print('snapshot--  ${snapshot.error}');
 
-                              if (topReviewedHealerList!.length > 0) {
+                              if (topFeaturedHealerList.isNotEmpty) {
                                 return ListView.builder(
                                     scrollDirection: Axis.horizontal,
-                                    itemCount:topReviewedHealerList != null
-                                        ? topReviewedHealerList!.length
+                                    itemCount: topFeaturedHealerList != null
+                                        ? topFeaturedHealerList.length
                                         : 0,
                                     /*physics: NeverScrollableScrollPhysics(),*/
                                     shrinkWrap: true,
@@ -538,10 +345,15 @@ class ClientHomePageState extends State<ClientHomePage> {
                                                   builder: (context) =>
                                                       TherapyDetailsPage(
                                                         healerId:
-                                                        topReviewedHealerList[index]!
-                                                            .healerId
-                                                            .toString(),
-                                                        therapyCategory: topReviewedHealerList[index].therapyName.toString(),
+                                                            topFeaturedHealerList[
+                                                                    index]
+                                                                .healerId
+                                                                .toString(),
+                                                        therapyCategory:
+                                                            topFeaturedHealerList[
+                                                                    index]
+                                                                .therapyName
+                                                                .toString(),
                                                       )));
                                         },
                                         child: /* Card(
@@ -564,16 +376,17 @@ class ClientHomePageState extends State<ClientHomePage> {
                                                     width: 140,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius.only(
+                                                          const BorderRadius
+                                                              .only(
                                                               topLeft: Radius
                                                                   .circular(5),
                                                               topRight: Radius
                                                                   .circular(5)),
                                                       image: DecorationImage(
                                                         image: NetworkImage(
-                                                            topReviewedHealerList.length >
-                                                                    0
-                                                                ? topReviewedHealerList[
+                                                            topFeaturedHealerList
+                                                                    .isNotEmpty
+                                                                ? topFeaturedHealerList[
                                                                         index]
                                                                     .healerImage
                                                                     .toString()
@@ -581,7 +394,7 @@ class ClientHomePageState extends State<ClientHomePage> {
                                                         fit: BoxFit.cover,
                                                       ),
                                                     ),
-                                                    child: Text(""),
+                                                    child: const Text(""),
                                                   ),
                                                   Container(
                                                     height: 7.h,
@@ -590,7 +403,8 @@ class ClientHomePageState extends State<ClientHomePage> {
                                                       color: ColorUtils
                                                           .trendyThemeColor,
                                                       borderRadius:
-                                                          BorderRadius.only(
+                                                          const BorderRadius
+                                                              .only(
                                                               bottomLeft: Radius
                                                                   .circular(5),
                                                               bottomRight:
@@ -600,7 +414,186 @@ class ClientHomePageState extends State<ClientHomePage> {
                                                     ),
                                                     child: Center(
                                                       child: Text(
-                                                          topReviewedHealerList.length > 0
+                                                          topFeaturedHealerList
+                                                                  .isNotEmpty
+                                                              ? topFeaturedHealerList[
+                                                                      index]
+                                                                  .healerName
+                                                                  .toString()
+                                                              : '',
+                                                          maxLines: 3,
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                            fontFamily: StringUtils
+                                                                .roboto_font_family,
+                                                            color: ColorUtils
+                                                                .whiteColor
+                                                                .withOpacity(1),
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal,
+                                                            fontSize: 15,
+                                                          )),
+                                                    ),
+                                                  )
+                                                ])),
+                                      );
+                                    });
+                              } else {
+                                return SizedBox(
+                                    height: 500,
+                                    child: Center(
+                                      child: Lottie.asset(
+                                        'assets/images/no_data.json',
+                                        repeat: true,
+                                        height: 70,
+                                        width: 35.w,
+                                        reverse: false,
+                                        animate: true,
+                                      ),
+                                      /*     Image.asset(
+                                                          'assets/images/no_data.png',
+                                                          width: 200,
+                                                          height: 200,
+                                                        ),*/
+                                    ));
+                              }
+                            } else {
+                              return SizedBox(
+                                  height: 500,
+                                  child: Center(
+                                    child: Lottie.asset(
+                                      'assets/images/no_data.json',
+                                      repeat: true,
+                                      height: 50.h,
+                                      width: 45.w,
+                                      reverse: false,
+                                      animate: true,
+                                    ),
+                                    /*     Image.asset(
+                                                          'assets/images/no_data.png',
+                                                          width: 200,
+                                                          height: 200,
+                                                        ),*/
+                                  ));
+                            }
+                          } else {
+                            return SpinKitFadingCircleWidget(true);
+                          }
+                        })),
+                Align(
+                    alignment: Alignment.center,
+                    child: Padding(
+                        padding: EdgeInsets.only(top: 0.h),
+                        child: Text('Top Reviewed Healers',
+                            maxLines: 3,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: StringUtils.roboto_font_family,
+                              color: ColorUtils.blackColor.withOpacity(1),
+                              fontWeight: FontWeight.normal,
+                              fontSize: 22,
+                            )))),
+                SizedBox(
+                    height: 35.h,
+                    child: FutureBuilder(
+                        future: getTopReviewedHealer(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            if (snapshot.hasData) {
+                              print('snapshot--  ${snapshot.error}');
+
+                              if (topReviewedHealerList.isNotEmpty) {
+                                return ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: topReviewedHealerList != null
+                                        ? topReviewedHealerList.length
+                                        : 0,
+                                    /*physics: NeverScrollableScrollPhysics(),*/
+                                    shrinkWrap: true,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      TherapyDetailsPage(
+                                                        healerId:
+                                                            topReviewedHealerList[
+                                                                    index]
+                                                                .healerId
+                                                                .toString(),
+                                                        therapyCategory:
+                                                            topReviewedHealerList[
+                                                                    index]
+                                                                .therapyName
+                                                                .toString(),
+                                                      )));
+                                        },
+                                        child: /* Card(
+                                            elevation: 0,
+                                            shadowColor:
+                                                ColorUtils.lightGreyColor,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                            ),
+                                            child: */
+                                            Container(
+                                                height: 18.h,
+                                                width: 125,
+                                                margin: EdgeInsets.fromLTRB(
+                                                    1.w, 2.h, 1.w, 1.h),
+                                                child: Column(children: [
+                                                  Container(
+                                                    height: 18.h,
+                                                    width: 140,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                              .only(
+                                                              topLeft: Radius
+                                                                  .circular(5),
+                                                              topRight: Radius
+                                                                  .circular(5)),
+                                                      image: DecorationImage(
+                                                        image: NetworkImage(
+                                                            topReviewedHealerList
+                                                                    .isNotEmpty
+                                                                ? topReviewedHealerList[
+                                                                        index]
+                                                                    .healerImage
+                                                                    .toString()
+                                                                : "https://media.istockphoto.com/photos/there-are-many-fun-ways-to-learn-picture-id1166330501?k=20&m=1166330501&s=612x612&w=0&h=VcvEDu0or-cSjxyEQIM1FWpCReXQ9vq1ZXQN4nRa39c="),
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                    child: const Text(""),
+                                                  ),
+                                                  Container(
+                                                    height: 7.h,
+                                                    width: 140,
+                                                    decoration: BoxDecoration(
+                                                      color: ColorUtils
+                                                          .trendyThemeColor,
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                              .only(
+                                                              bottomLeft: Radius
+                                                                  .circular(5),
+                                                              bottomRight:
+                                                                  Radius
+                                                                      .circular(
+                                                                          5)),
+                                                    ),
+                                                    child: Center(
+                                                      child: Text(
+                                                          topReviewedHealerList
+                                                                  .isNotEmpty
                                                               ? topReviewedHealerList[
                                                                       index]
                                                                   .healerName
@@ -668,40 +661,42 @@ class ClientHomePageState extends State<ClientHomePage> {
                           }
                         })),
                 Align(
-                    alignment:
-                    Alignment.center,
-                    child:       Padding(
-                    padding: EdgeInsets.fromLTRB(10, 40, 10, 20),
-                    child: SizedBox(
-                        width: 280,
-                        height: 46,
-                        child: ElevatedButton(
-                            child: TextWidget(
-                                'Book Appointment',
-                                FontWeight.normal,
-                                ColorUtils.whiteColor,
-                                19,
-                                StringUtils.roboto_font_family),
-                            style: ButtonStyle(
-                                elevation: MaterialStateProperty.all(20),
-                                foregroundColor: MaterialStateProperty.all<Color>(
-                                    ColorUtils.trendyButtonColor),
-                                backgroundColor: MaterialStateProperty.all<Color>(
-                                    ColorUtils.trendyButtonColor),
-                                shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                        borderRadius:
-                                            new BorderRadius.circular(30.0),
-                                        side: BorderSide(
-                                            color: ColorUtils.trendyButtonColor)))),
-                            onPressed: () {
-
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => TherapyCategories(),));
-                            }))))
+                    alignment: Alignment.center,
+                    child: Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 40, 10, 20),
+                        child: SizedBox(
+                            width: 280,
+                            height: 46,
+                            child: ElevatedButton(
+                                child: TextWidget(
+                                    'Book Appointment',
+                                    FontWeight.normal,
+                                    ColorUtils.whiteColor,
+                                    19,
+                                    StringUtils.roboto_font_family),
+                                style: ButtonStyle(
+                                    elevation: MaterialStateProperty.all(20),
+                                    foregroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            ColorUtils.trendyButtonColor),
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            ColorUtils.trendyButtonColor),
+                                    shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(30.0),
+                                            side: BorderSide(
+                                                color: ColorUtils.trendyButtonColor)))),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const TherapyCategories(),
+                                      ));
+                                }))))
               ],
             ),
           ));
@@ -733,7 +728,7 @@ class ClientHomePageState extends State<ClientHomePage> {
 
               var rest1 = data["msg"];
               data = json.decode(response.body);
-              print('--->>?   ${data}');
+              print('--->>?   $data');
 
               if (data["status"] == "true" &&
                   data["msg"] == "Submitted successfully") {
@@ -743,9 +738,9 @@ class ClientHomePageState extends State<ClientHomePage> {
                 print(pricingPlanResponse.response!.hPosition.toString());
 
                 showAlertDialog(context, data["msg"]);
-                Future.delayed(Duration(seconds: 2), () {
+                Future.delayed(const Duration(seconds: 2), () {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => HealerChooseExperties()));
+                      builder: (context) => const HealerChooseExperties()));
                 });
               } else {
                 showAlertDialog(context, data["msg"]);
@@ -757,6 +752,7 @@ class ClientHomePageState extends State<ClientHomePage> {
         })
         .catchError((err) => print('error : ' + err.toString()))
         .whenComplete(() {});
+    return null;
     //print('reason phrase- ${res.stream.bytesToString()}');
     // return res.stream.bytesToString();
   }
@@ -769,15 +765,15 @@ class ClientHomePageState extends State<ClientHomePage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            new GestureDetector(
+            GestureDetector(
                 onTap: () {
                   Navigator.of(context).pop();
                 },
-                child: Container(
+                child: SizedBox(
                     width: 60.w,
                     child: Text(msg,
                         textAlign: TextAlign.left,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontWeight: FontWeight.normal,
                             color: Colors.black87,
                             fontSize: 18)))),
@@ -786,7 +782,7 @@ class ClientHomePageState extends State<ClientHomePage> {
         content: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            new GestureDetector(
+            GestureDetector(
                 onTap: () {
                   Navigator.of(context).pop();
                 },
@@ -817,7 +813,7 @@ class ClientHomePageState extends State<ClientHomePage> {
     // var res = await request.send();
     var response = await request.send();
     // var res = await request.send();
-     final responsed = await http.Response.fromStream(response);
+    final responsed = await http.Response.fromStream(response);
     if (response.statusCode == 200) {
       print("Uploaded! ");
       print('response.body ' + responsed.body);
@@ -828,40 +824,26 @@ class ClientHomePageState extends State<ClientHomePage> {
 
       var rest1 = data["msg"];
       data = json.decode(responsed.body);
-      print('--->>?   ${data}');
+      print('--->>?   $data');
 
       if (data["status"] == "true" && data["msg"] == "success") {
         print('Login succssfull---    ');
 
         final jsonResponse = json.decode(responsed.body);
 
-        studentAllChapterResponse =
-        new AllTherapyResponse.fromJson(jsonResponse);
+        studentAllChapterResponse = AllTherapyResponse.fromJson(jsonResponse);
         /*  setState(() {*/
-        therapyList = studentAllChapterResponse!.response!;
+        therapyList = studentAllChapterResponse.response!;
 
         //   leadList.add(person.campaignData.indexOf(0));
         /*   });*/
         //  showAlertDialog(context, "Uploaded KYC successfully" );
       } else {
-        therapyList!.clear();
+        therapyList.clear();
         setState(() {});
       }
     }
     return studentAllChapterResponse!.response;
-/*    request
-        .send()
-        .then((result) async {
-          http.Response.fromStream(result).then((response) {
-
-
-            return response.body;
-          });
-        })
-        .catchError((err) => print('error : ' + err.toString()))
-        .whenComplete(() {});*/
-    //print('reason phrase- ${res.stream.bytesToString()}');
-    // return res.stream.bytesToString();
   }
 
   Future<TopFeaturedHealers?> getTopFeaturedHealer() async {
@@ -883,21 +865,21 @@ class ClientHomePageState extends State<ClientHomePage> {
 
       var rest1 = data["msg"];
       data = json.decode(responsed.body);
-      print('--->>?   ${data}');
+      print('--->>?   $data');
 
       if (data["status"] == "true" && data["msg"] == "success") {
         print('Login succssfull---    ');
 
         final jsonResponse = json.decode(responsed.body);
 
-        topFeaturedHealers= new TopFeaturedHealers.fromJson(jsonResponse);
-        topFeaturedHealerList = topFeaturedHealers!.response!;
+        topFeaturedHealers = TopFeaturedHealers.fromJson(jsonResponse);
+        topFeaturedHealerList = topFeaturedHealers.response!;
 
         //   leadList.add(person.campaignData.indexOf(0));
         /*   });*/
         //  showAlertDialog(context, "Uploaded KYC successfully" );
       } else {
-        topFeaturedHealerList!.clear();
+        topFeaturedHealerList.clear();
       }
     }
 
@@ -906,7 +888,6 @@ class ClientHomePageState extends State<ClientHomePage> {
     //print('reason phrase- ${res.stream.bytesToString()}');
     // return res.stream.bytesToString();
   }
-
 
   Future<TopFeaturedHealers?> getTopReviewedHealer() async {
     var data;
@@ -927,21 +908,21 @@ class ClientHomePageState extends State<ClientHomePage> {
 
       var rest1 = data["msg"];
       data = json.decode(responsed.body);
-      print('--->>?   ${data}');
+      print('--->>?   $data');
 
       if (data["status"] == "true" && data["msg"] == "success") {
         print('Login succssfull---    ');
 
         final jsonResponse = json.decode(responsed.body);
 
-        topFeaturedHealers= new TopFeaturedHealers.fromJson(jsonResponse);
-        topReviewedHealerList = topFeaturedHealers!.response!;
+        topFeaturedHealers = TopFeaturedHealers.fromJson(jsonResponse);
+        topReviewedHealerList = topFeaturedHealers.response!;
 
         //   leadList.add(person.campaignData.indexOf(0));
         /*   });*/
         //  showAlertDialog(context, "Uploaded KYC successfully" );
       } else {
-        topReviewedHealerList!.clear();
+        topReviewedHealerList.clear();
       }
     }
 

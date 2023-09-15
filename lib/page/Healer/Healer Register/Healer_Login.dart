@@ -1,21 +1,20 @@
 import 'dart:convert';
 
-import 'package:doctor/baseurl/baseURL.dart';
-import 'package:doctor/models/client_responses/client_login_response.dart';
-import 'package:doctor/models/healer_responses/healer_login_response.dart';
-import 'package:doctor/page/Client/Client_menu/pages/Client_Home_Menu.dart';
-import 'package:doctor/page/Healer/Choose%20Your%20Expertise/Choose_your_expertise.dart';
-import 'package:doctor/page/Healer/Choose%20Your%20Expertise/HealerChooseExperties.dart';
-import 'package:doctor/page/Healer/Healer_menu/Healer_Menu.dart';
-import 'package:doctor/page/Healer/Healer_menu/Menu%20Pages/Home_Menu.dart';
-import 'package:doctor/page/Healer/Healer_menu/Payment/payment_mode.dart';
-import 'package:doctor/page/Healer/Healer_menu/pages/healer_pricing_plan.dart';
-import 'package:doctor/page/LoginPage.dart';
-import 'package:doctor/utils/color_utils.dart';
-import 'package:doctor/utils/string_utils.dart';
-import 'package:doctor/widget/text_widget.dart';
-import 'package:doctor/widgets/spinKitFadingCircleWidget.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:trendy_chikitsa/models/client_responses/client_login_response.dart';
+import 'package:trendy_chikitsa/models/healer_responses/healer_login_response.dart';
+import 'package:trendy_chikitsa/page/Client/Client_menu/pages/Client_Home_Menu.dart';
+import 'package:trendy_chikitsa/page/Client/Client_menu/pages/client_looking_for.dart';
+
+import 'package:trendy_chikitsa/page/Healer/Choose%20Your%20Expertise/HealerChooseExperties.dart';
+
+import 'package:trendy_chikitsa/page/Healer/Healer_menu/Menu%20Pages/Home_Menu.dart';
+
+import 'package:trendy_chikitsa/page/Healer/Healer_menu/pages/healer_pricing_plan.dart';
+import 'package:trendy_chikitsa/page/LoginPage.dart';
+import 'package:trendy_chikitsa/utils/color_utils.dart';
+import 'package:trendy_chikitsa/utils/string_utils.dart';
+import 'package:trendy_chikitsa/widget/text_widget.dart';
+import 'package:trendy_chikitsa/widgets/spinKitFadingCircleWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -36,17 +35,18 @@ class Healer_Login extends StatefulWidget {
 class _Healer_LoginState extends State<Healer_Login> {
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   static const emailRegex = r'\S+@\S+\.\S+';
-  var isPasswordHidden = true.obs;
+  var isPasswordHidden = false.obs;
   bool isChecked = false, isLoading = false;
-  int? _value = 0;
-  bool _isObscure = true;
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final int? _value = 0;
+  bool _isObscure = false;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   SharedPreferences? prefs;
 
   @override
   void initState() {
-    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
 
     //  saveValue();
 
@@ -58,6 +58,7 @@ class _Healer_LoginState extends State<Healer_Login> {
     //  storage = new FlutterSecureStorage();
 
     prefs = await SharedPreferences.getInstance();
+    setState(() {});
     // _register();
   }
 
@@ -69,12 +70,11 @@ class _Healer_LoginState extends State<Healer_Login> {
               resizeToAvoidBottomInset: false,
               extendBodyBehindAppBar: true,
               appBar: AppBar(
-                brightness: Brightness.dark,
                 toolbarHeight: 60,
                 backgroundColor: ColorUtils.trendyThemeColor,
                 elevation: 0.0,
                 /*  automaticallyImplyLeading: false,*/
-                title: Text('Login',
+                title: Text('Healer Login',
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontFamily: StringUtils.roboto_font_family,
@@ -82,6 +82,7 @@ class _Healer_LoginState extends State<Healer_Login> {
                       fontSize: 18,
                     )),
                 centerTitle: true,
+                systemOverlayStyle: SystemUiOverlayStyle.light,
                 /*   flexibleSpace: Container(
                 decoration: BoxDecoration(
                     borderRadius: const BorderRadius.only(
@@ -116,8 +117,8 @@ class _Healer_LoginState extends State<Healer_Login> {
                       Container(
                           height: 7.h,
                           width: 100.w,
-                          padding:
-                              EdgeInsets.symmetric(vertical: 3, horizontal: 15),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 3, horizontal: 15),
                           margin:
                               EdgeInsets.only(top: 1.h, left: 8.w, right: 8.w),
                           decoration: BoxDecoration(
@@ -126,7 +127,7 @@ class _Healer_LoginState extends State<Healer_Login> {
                                 color: ColorUtils.lightGreyBorderColor),
                             color: ColorUtils.whiteColor,
                           ),
-                          child: new Row(
+                          child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
@@ -143,13 +144,13 @@ class _Healer_LoginState extends State<Healer_Login> {
                                                     SizedBox(
                                                       width: 20,
                                                     ),*/
-                              new Container(
-                                child: new Flexible(
-                                  child: new TextField(
+                              Container(
+                                child: Flexible(
+                                  child: TextField(
                                     controller: _emailController,
                                     keyboardType: TextInputType.text,
                                     textAlign: TextAlign.left,
-                                    decoration: new InputDecoration(
+                                    decoration: InputDecoration(
                                         hintStyle: TextStyle(
                                             color: ColorUtils.b3Color,
                                             fontFamily: StringUtils
@@ -194,8 +195,8 @@ class _Healer_LoginState extends State<Healer_Login> {
                       Container(
                           height: 7.h,
                           width: 100.w,
-                          padding:
-                              EdgeInsets.symmetric(vertical: 3, horizontal: 15),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 3, horizontal: 15),
                           margin:
                               EdgeInsets.only(top: 1.h, left: 8.w, right: 8.w),
                           decoration: BoxDecoration(
@@ -204,7 +205,7 @@ class _Healer_LoginState extends State<Healer_Login> {
                                 color: ColorUtils.lightGreyBorderColor),
                             color: ColorUtils.whiteColor,
                           ),
-                          child: new Row(
+                          child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
@@ -221,14 +222,14 @@ class _Healer_LoginState extends State<Healer_Login> {
                                                     SizedBox(
                                                       width: 20,
                                                     ),*/
-                              new Container(
-                                child: new Flexible(
-                                  child: new TextField(
+                              Container(
+                                child: Flexible(
+                                  child: TextField(
                                     controller: _passwordController,
                                     keyboardType: TextInputType.visiblePassword,
                                     textAlign: TextAlign.left,
                                     obscureText: !_isObscure,
-                                    decoration: new InputDecoration(
+                                    decoration: InputDecoration(
                                         hintStyle: TextStyle(
                                             color: ColorUtils.b3Color,
                                             fontFamily: StringUtils
@@ -304,14 +305,13 @@ class _Healer_LoginState extends State<Healer_Login> {
                             children: [
                               InkWell(
                                   onTap: () {
-                                    if (_emailController.text.length == 0 ||
+                                    if (_emailController.text.isEmpty ||
                                         !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                                             .hasMatch(_emailController.text)) {
                                       showAlertDialog(
                                           context, "Please enter valid email");
                                     } else if (_passwordController
-                                            .text.length ==
-                                        0) {
+                                        .text.isEmpty) {
                                       showAlertDialog(
                                           context, "Please enter password");
                                     } else {
@@ -341,19 +341,17 @@ class _Healer_LoginState extends State<Healer_Login> {
                                                       RoundedRectangleBorder>(
                                                   RoundedRectangleBorder(
                                                       borderRadius:
-                                                          new BorderRadius.circular(10.0),
+                                                          BorderRadius.circular(10.0),
                                                       side: BorderSide(color: ColorUtils.trendyButtonColor)))),
                                           onPressed: () async {
-                                            if (_emailController.text.length ==
-                                                    0 ||
+                                            if (_emailController.text.isEmpty ||
                                                 !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                                                     .hasMatch(_emailController
                                                         .text)) {
                                               showAlertDialog(context,
                                                   "Please enter valid email");
                                             } else if (_passwordController
-                                                    .text.length ==
-                                                0) {
+                                                .text.isEmpty) {
                                               showAlertDialog(context,
                                                   "Please enter password");
                                             } else {
@@ -376,16 +374,44 @@ class _Healer_LoginState extends State<Healer_Login> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (_) =>
-                                              const Healer_Register()));
+                                          builder: (_) => Healer_Register(
+                                                isLookingFor: false,
+                                              )));
                                 },
-                              )
+                              ),
+                              SizedBox(
+                                height: 2.h,
+                              ),
+                              Visibility(
+                                  visible: prefs != null &&
+                                      prefs!
+                                              .getString(StringUtils.type)
+                                              .toString() ==
+                                          "2",
+                                  child: InkWell(
+                                    child: RichText(
+                                        text: TextSpan(
+                                            text: 'I am looking for',
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                color: AppColors.colorlal,
+                                                decoration:
+                                                    TextDecoration.underline))),
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (_) =>
+                                                  const ClientLookingFor()));
+                                    },
+                                  ))
                             ]))),
                 SpinKitFadingCircleWidget(isLoading)
               ])));
     });
   }
 
+  HealerLoginResponse? loginUser;
   Future<String?> loginHealer() async {
     isLoading = true;
     setState(() {});
@@ -414,7 +440,7 @@ class _Healer_LoginState extends State<Healer_Login> {
 
             var rest1 = data["msg"];
             data = json.decode(response.body);
-            print('--->>?   ${data}');
+            print('--->>?   $data');
             if (prefs!.getString(StringUtils.type).toString() == "1") {
               if (data["status"] == "false" &&
                   (data["msg"] ==
@@ -423,81 +449,102 @@ class _Healer_LoginState extends State<Healer_Login> {
                           "Your account is not approved by the administration of this website. Please wait for admin approval." ||
                       data["msg"] ==
                           "Your account has been rejected by the administration of this website. Please contact administration for further discussion.")) {
-                HealerLoginResponse loginUser =
+                loginUser =
                     HealerLoginResponse.fromJson(jsonDecode(response.body));
-                if (loginUser.response == "pricing plan") {
+                if (loginUser!.response == "pricing plan") {
                   showSnackBar(context, data["msg"]);
                   print(
-                      '--vc->>?   ${loginUser.healerData!.hLinks.toString()}');
+                      '--vc->>?   ${loginUser!.healerData!.hLinks.toString()}');
                   prefs!
                       .setString(StringUtils.unique_id,
-                          loginUser.healerData!.hLinks.toString())
+                          loginUser!.healerData!.hLinks.toString())
                       .toString();
 
                   prefs!.setString(StringUtils.completeProfile, "NO");
-                  Future.delayed(Duration(seconds: 2), () {
+                  Future.delayed(const Duration(seconds: 2), () {
                     isLoading = false;
                     setState(() {});
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => HealerPricingPlan()));
+                        builder: (context) => const HealerPricingPlan()));
                   });
                 } else if (data["status"] == "false" &&
-                    loginUser.response == "choose expertise") {
+                    loginUser!.response == "choose expertise") {
                   showSnackBar(context, data["msg"]);
                   prefs!
                       .setString(StringUtils.unique_id,
-                          loginUser.healerData!.hLinks.toString())
+                          loginUser!.healerData!.hLinks.toString())
                       .toString();
                   prefs!.setString(StringUtils.completeProfile, "NO");
-                  Future.delayed(Duration(seconds: 2), () {
+
+                  prefs!.setString(StringUtils.subscriptionPlan,
+                      loginUser!.healerData!.subscriptionPlan.toString());
+                  Future.delayed(const Duration(seconds: 2), () {
                     isLoading = false;
                     setState(() {});
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => HealerChooseExperties()));
+                        builder: (context) => const HealerChooseExperties()));
                   });
                 } else if (data["status"] == "false" &&
-                    loginUser.response == "not approved" &&
+                    loginUser!.response == "not approved" &&
                     data["msg"] ==
                         "Your account is not approved by the administration of this website. Please wait for admin approval.") {
                   prefs!.setString(StringUtils.completeProfile, "NO");
-                  Future.delayed(Duration(seconds: 2), () {
+                  Future.delayed(const Duration(seconds: 2), () {
                     isLoading = false;
                     setState(() {});
-                    Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => LoginPage()));
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => const LoginPage()));
                   });
                   showAlertDialog(context, data["msg"]);
                 } else if (data["status"] == "false" &&
-                    loginUser.response == "profile rejected" &&
+                    loginUser!.response == "profile rejected" &&
                     data["msg"] ==
                         "Your account has been rejected by the administration of this website. Please contact administration for further discussion.") {
                   prefs!.setString(StringUtils.completeProfile, "NO");
                   showAlertDialog(context, data["msg"]);
-                  Future.delayed(Duration(seconds: 2), () {
+                  Future.delayed(const Duration(seconds: 2), () {
                     isLoading = false;
                     setState(() {});
-                    Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => LoginPage()));
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => const LoginPage()));
                   });
                 } else if (data["status"] == "true" &&
-                    loginUser.response == "login success" &&
+                    loginUser!.response == "login success" &&
                     data["msg"] == "Success!! Login successful.") {
                   prefs!
-                      .setString(StringUtils.unique_id,
-                          loginUser.healerData!.hLinks.toString())
+                      .setString(StringUtils.name,
+                          loginUser!.healerData!.hName.toString())
                       .toString();
                   prefs!
+                      .setString(StringUtils.email,
+                          loginUser!.healerData!.hEmail.toString())
+                      .toString();
+                  prefs!
+                      .setString(StringUtils.phoneNo,
+                          loginUser!.healerData!.hTelephone.toString())
+                      .toString();
+                  prefs!
+                      .setString(StringUtils.unique_id,
+                          loginUser!.healerData!.hLinks.toString())
+                      .toString();
+
+                  prefs!
+                      .setString(StringUtils.profile_image,
+                          loginUser!.healerData!.hProfile.toString())
+                      .toString();
+
+                  prefs!
                       .setString(
-                          StringUtils.id, loginUser.healerData!.hId.toString())
+                          StringUtils.id, loginUser!.healerData!.hId.toString())
                       .toString();
                   prefs!.setString(StringUtils.completeProfile, "YES");
                   showSnackBar(context, data["msg"]);
                   prefs!.setBool(StringUtils.loginINAPP, true);
-                  Future.delayed(Duration(seconds: 2), () {
+                  Future.delayed(const Duration(seconds: 2), () {
                     isLoading = false;
                     setState(() {});
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => Home_Menu()));
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const Home_Menu()));
                   });
                 }
 
@@ -521,24 +568,32 @@ class _Healer_LoginState extends State<Healer_Login> {
                           loginUser.healerData!.hLinks.toString())
                       .toString();
                   prefs!
+                      .setString(StringUtils.profile_image,
+                          loginUser.healerData!.hProfile.toString())
+                      .toString();
+                  prefs!
+                      .setString(StringUtils.subscriptionPlan,
+                          loginUser.healerData!.subscriptionPlan.toString())
+                      .toString();
+                  prefs!
                       .setString(
                           StringUtils.id, loginUser.healerData!.hId.toString())
                       .toString();
                   prefs!.setString(StringUtils.completeProfile, "YES");
                   showSnackBar(context, data["msg"]);
                   prefs!.setBool(StringUtils.loginINAPP, true);
-                  Future.delayed(Duration(seconds: 2), () {
+                  Future.delayed(const Duration(seconds: 2), () {
                     isLoading = false;
                     setState(() {});
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => Home_Menu()));
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const Home_Menu()));
                   });
                 } else {
                   showAlertDialog(context, data["msg"]);
                 }
               } else {
                 print('coming iside else 1');
-                Future.delayed(Duration(seconds: 1), () {
+                Future.delayed(const Duration(seconds: 1), () {
                   isLoading = false;
                   setState(() {});
                 });
@@ -555,6 +610,8 @@ class _Healer_LoginState extends State<Healer_Login> {
                     StringUtils.name, loginUser.clientData!.clName.toString());
                 prefs!.setString(StringUtils.email,
                     loginUser.clientData!.clEmail.toString());
+                prefs!.setString(
+                    StringUtils.name, loginUser.clientData!.clName.toString());
                 prefs!.setString(StringUtils.mobile,
                     loginUser.clientData!.clTelephone.toString());
                 prefs!.setString(
@@ -565,18 +622,24 @@ class _Healer_LoginState extends State<Healer_Login> {
                     loginUser.clientData!.clAddress.toString());
                 prefs!.setString(StringUtils.zipcode,
                     loginUser.clientData!.clPin.toString());
+
+                prefs!
+                    .setString(StringUtils.profile_image,
+                        loginUser.clientData!.clProfile.toString())
+                    .toString();
+
                 prefs!.setString(StringUtils.unique_id,
                     loginUser.clientData!.clLinks.toString());
                 prefs!.setBool(StringUtils.loginINAPP, true);
                 prefs!.setString(StringUtils.type, "2");
-                Future.delayed(Duration(seconds: 2), () {
+                Future.delayed(const Duration(seconds: 2), () {
                   isLoading = false;
                   setState(() {});
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => Client_Home_Menu()));
+                      builder: (context) => const Client_Home_Menu()));
                 });
               } else {
-                Future.delayed(Duration(seconds: 2), () {
+                Future.delayed(const Duration(seconds: 2), () {
                   isLoading = false;
                   setState(() {});
                 });
@@ -597,6 +660,7 @@ class _Healer_LoginState extends State<Healer_Login> {
       showAlertDialog(context, e.toString());
       print(e);
     }
+    return null;
     //print('reason phrase- ${res.stream.bytesToString()}');
     // return res.stream.bytesToString();
   }
@@ -609,15 +673,15 @@ class _Healer_LoginState extends State<Healer_Login> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            new GestureDetector(
+            GestureDetector(
                 onTap: () {
                   Navigator.of(context).pop();
                 },
-                child: Container(
+                child: SizedBox(
                     width: 60.w,
                     child: Text(msg,
                         textAlign: TextAlign.left,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontWeight: FontWeight.normal,
                             color: Colors.black87,
                             fontSize: 18)))),
@@ -626,7 +690,7 @@ class _Healer_LoginState extends State<Healer_Login> {
         content: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            new GestureDetector(
+            GestureDetector(
                 onTap: () {
                   Navigator.of(context).pop();
                 },

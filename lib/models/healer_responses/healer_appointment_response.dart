@@ -11,17 +11,17 @@ class HealerAppointmentResponse {
     if (json['response'] != null) {
       response = <HealerAppointmentListResponse>[];
       json['response'].forEach((v) {
-        response!.add(new HealerAppointmentListResponse.fromJson(v));
+        response!.add(HealerAppointmentListResponse.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['msg'] = this.msg;
-    if (this.response != null) {
-      data['response'] = this.response!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['msg'] = msg;
+    if (response != null) {
+      data['response'] = response!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -36,7 +36,7 @@ class HealerAppointmentListResponse {
   String? address;
   String? clientEmail;
   String? clientMobile;
-  String? status;
+  String? status,meeting_id, book_id;
 
   HealerAppointmentListResponse(
       {this.clProfile,
@@ -47,7 +47,7 @@ class HealerAppointmentListResponse {
         this.address,
         this.clientEmail,
         this.clientMobile,
-        this.status});
+        this.status, this.meeting_id, this.book_id});
 
   HealerAppointmentListResponse.fromJson(Map<String, dynamic> json) {
     clProfile = json['cl_profile'];
@@ -59,19 +59,23 @@ class HealerAppointmentListResponse {
     clientEmail = json['client_email'];
     clientMobile = json['client_mobile'];
     status = json['status'];
+    meeting_id=json['meeting_id'];
+    book_id=json['book_id'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['cl_profile'] = this.clProfile;
-    data['client_name'] = this.clientName;
-    data['therapy_name'] = this.therapyName;
-    data['date'] = this.date;
-    data['slot'] = this.slot;
-    data['address'] = this.address;
-    data['client_email'] = this.clientEmail;
-    data['client_mobile'] = this.clientMobile;
-    data['status'] = this.status;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['cl_profile'] = clProfile;
+    data['client_name'] = clientName;
+    data['therapy_name'] = therapyName;
+    data['date'] = date;
+    data['slot'] = slot;
+    data['address'] = address;
+    data['client_email'] = clientEmail;
+    data['client_mobile'] = clientMobile;
+    data['status'] = status;
+    data['meeting_id']=meeting_id;
+    data['book_id']=book_id;
     return data;
   }
 }

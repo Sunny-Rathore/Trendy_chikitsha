@@ -1,15 +1,13 @@
-import 'package:doctor/page/Healer/Healer_menu/pages/pricing_plans.dart';
-import 'package:doctor/page/Healer/Healer_menu/pages/today_appointment.dart';
-import 'package:doctor/utils/color_utils.dart';
-import 'package:doctor/utils/string_utils.dart';
+import 'package:trendy_chikitsa/page/Healer/Healer_menu/pages/pricing_plans.dart';
+import 'package:trendy_chikitsa/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
 class HealerPricingPlan extends StatefulWidget {
-  HealerPricingPlan({Key? key}) : super(key: key);
+  const HealerPricingPlan({Key? key}) : super(key: key);
 
   @override
-  State<HealerPricingPlan> createState() =>HealerPricingPlanState();
+  State<HealerPricingPlan> createState() => HealerPricingPlanState();
 }
 
 class HealerPricingPlanState extends State<HealerPricingPlan> {
@@ -27,8 +25,8 @@ class HealerPricingPlanState extends State<HealerPricingPlan> {
                 isScrollable: true,
                 labelColor: ColorUtils.whiteColor,
                 indicatorColor: ColorUtils.whiteColor,
-                labelStyle: TextStyle(fontSize: 15.0),
-                tabs: [
+                labelStyle: const TextStyle(fontSize: 15.0),
+                tabs: const [
                   Tab(
                     text: 'FREE TRIAL\n(1 MONTH)',
                   ),
@@ -46,15 +44,21 @@ class HealerPricingPlanState extends State<HealerPricingPlan> {
             ),
             body: TabBarView(
               children: [
-                PricingData(tabNumber: '1',),
-                PricingData(tabNumber: '2',),
-                PricingData(tabNumber: '3',),
-                PricingData(tabNumber: '4',),
+                PricingData(
+                  tabNumber: '1',
+                ),
+                PricingData(
+                  tabNumber: '2',
+                ),
+                PricingData(
+                  tabNumber: '3',
+                ),
+                PricingData(
+                  tabNumber: '4',
+                ),
               ],
             ),
           ));
     });
   }
-
-
 }

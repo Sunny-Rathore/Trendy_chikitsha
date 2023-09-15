@@ -1,6 +1,4 @@
-import 'package:doctor/global/colors.dat.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
 class DoctorAppGridMenu extends StatelessWidget {
   const DoctorAppGridMenu({Key? key}) : super(key: key);
@@ -15,9 +13,9 @@ class DoctorAppGridMenu extends StatelessWidget {
               color: Colors.blue,
             borderRadius: BorderRadius.circular(20),
           ),
-          child: Column(
+          child: const Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
                Icon(Icons.home,size: 50,color: Colors.white,),
               Text('Home',style: TextStyle(fontSize: 16,color: Colors.white),)
             ],
@@ -28,9 +26,9 @@ class DoctorAppGridMenu extends StatelessWidget {
               color: Colors.blue,
               borderRadius: BorderRadius.circular(20)
           ),
-          child: Column(
+          child: const Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Icon(Icons.home,size: 50,color: Colors.white,),
               Text('Home',style: TextStyle(fontSize: 16,color: Colors.white),)
             ],
@@ -41,9 +39,9 @@ class DoctorAppGridMenu extends StatelessWidget {
               color: Colors.blue,
               borderRadius: BorderRadius.circular(20)
           ),
-          child: Column(
+          child: const Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Icon(Icons.home,size: 50,color: Colors.white,),
               Text('Home',style: TextStyle(fontSize: 16,color: Colors.white),)
             ],
@@ -54,9 +52,9 @@ class DoctorAppGridMenu extends StatelessWidget {
               color: Colors.blue,
               borderRadius: BorderRadius.circular(20)
           ),
-          child: Column(
+          child: const Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Icon(Icons.home,size: 50,color: Colors.white,),
               Text('Home',style: TextStyle(fontSize: 16,color: Colors.white),)
             ],
@@ -67,9 +65,9 @@ class DoctorAppGridMenu extends StatelessWidget {
               color: Colors.blue,
               borderRadius: BorderRadius.circular(20)
           ),
-          child: Column(
+          child: const Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Icon(Icons.home,size: 50,color: Colors.white,),
               Text('Home',style: TextStyle(fontSize: 16,color: Colors.white),)
             ],
@@ -80,9 +78,9 @@ class DoctorAppGridMenu extends StatelessWidget {
               color: Colors.blue,
               borderRadius: BorderRadius.circular(20)
           ),
-          child: Column(
+          child: const Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Icon(Icons.home,size: 50,color: Colors.white,),
               Text('Home',style: TextStyle(fontSize: 16,color: Colors.white),)
             ],
@@ -93,9 +91,9 @@ class DoctorAppGridMenu extends StatelessWidget {
               color: Colors.blue,
               borderRadius: BorderRadius.circular(20)
           ),
-          child: Column(
+          child: const Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Icon(Icons.home,size: 50,color: Colors.white,),
               Text('Home',style: TextStyle(fontSize: 16,color: Colors.white),)
             ],
@@ -106,9 +104,9 @@ class DoctorAppGridMenu extends StatelessWidget {
               color: Colors.blue,
               borderRadius: BorderRadius.circular(20)
           ),
-          child: Column(
+          child: const Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Icon(Icons.home,size: 50,color: Colors.white,),
               Text('Home',style: TextStyle(fontSize: 16,color: Colors.white),)
             ],

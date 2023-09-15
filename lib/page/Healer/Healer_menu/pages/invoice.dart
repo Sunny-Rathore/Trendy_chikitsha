@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class invoice extends StatefulWidget {
-   invoice({Key? key}) : super(key: key);
+   const invoice({Key? key}) : super(key: key);
 
   @override
   State<invoice> createState() => _invoiceState();

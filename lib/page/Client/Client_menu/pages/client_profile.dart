@@ -1,28 +1,25 @@
-import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
-import 'dart:ui';
-import 'package:doctor/utils/color_utils.dart';
-import 'package:doctor/utils/string_utils.dart';
-import 'package:doctor/utils/utils_methods.dart';
-import 'package:doctor/widgets/spinKitFadingCircleWidget.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:trendy_chikitsa/baseurl/baseURL.dart';
+import 'package:trendy_chikitsa/models/client_responses/fetch_client_profile_detail_response.dart';
+import 'package:trendy_chikitsa/utils/color_utils.dart';
+import 'package:trendy_chikitsa/utils/string_utils.dart';
+import 'package:trendy_chikitsa/utils/utils_methods.dart';
+import 'package:trendy_chikitsa/widgets/spinKitFadingCircleWidget.dart';
 
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:getwidget/getwidget.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:multiselect/multiselect.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 class ClientProfileSetting extends StatefulWidget {
   String from_page = "";
+
+  ClientProfileSetting({super.key});
 
   @override
   ClientProfileSettingstate createState() => ClientProfileSettingstate();
@@ -49,9 +46,8 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
   var items = [
     'Male',
     'Female',
-    'Other',
   ];
-  List<String?> _animals = [
+  final List<String?> _animals = [
     'Depression',
     'Carrer related issue',
     'Confidence issue',
@@ -61,24 +57,24 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
   ];
 
   List<String> selected = [];
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final myController = TextEditingController();
   final nameController = TextEditingController();
 
   String appToken = "";
   bool isLoading = false;
   String share_link = "", title = "Profile";
-  PickedFile? _imageFile = null;
+  PickedFile? _imageFile;
   final ImagePicker _picker = ImagePicker();
-  int _selectedIndex = 0;
+  final int _selectedIndex = 0;
   SharedPreferences? prefs;
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _mobileNumberController = TextEditingController();
-  TextEditingController _dobController = TextEditingController();
-  TextEditingController _zipCodeController = TextEditingController();
-  TextEditingController _addressController = TextEditingController();
-  TextEditingController _classController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _mobileNumberController = TextEditingController();
+  final TextEditingController _dobController = TextEditingController();
+  final TextEditingController _zipCodeController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
   int value = 1, pricingValue = 1;
 
   String? selectedSpinnerItem,
@@ -88,7 +84,8 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
       class_id = "",
       stateId = "",
       cityId = "",
-      image_url = 'https://source.unsplash.com/user/c_v_r';
+      image_url = 'https://source.unsplash.com/user/c_v_r',
+      selectedGender;
 
   @override
   void initState() {
@@ -115,7 +112,7 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
     new TextEditingController(text: prefs!.getString(StringUtils.subject));*/
 
     print('selcted city   ${prefs!.getString(StringUtils.city)}');
-
+    getFetchProfileData();
     setState(() {});
     /*  preferences = await SharedPreferences.getInstance();
     SchedulerBinding.instance!.addPostFrameCallback((_) {
@@ -136,12 +133,12 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
           title: '',
           builder: (context, widget) {
             // TODO: implement build
-            return new Scaffold(
+            return Scaffold(
                 key: _scaffoldKey,
                 resizeToAvoidBottomInset: true,
                 backgroundColor: ColorUtils.lightGreyBorderColor,
                 appBar: AppBar(
-                  shape: RoundedRectangleBorder(
+                  shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.vertical(
                       bottom: Radius.circular(20),
                     ),
@@ -158,21 +155,20 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                       fontSize: 20,
                     ),
                   ),
-                  actions: <Widget>[],
-                  leading: new IconButton(
+                  actions: const <Widget>[],
+                  /*  leading: new IconButton(
                     icon: new Icon(
                       Icons.menu,
                       color: ColorUtils.whiteColor,
                       size: 20,
                     ),
                     onPressed: () => _scaffoldKey.currentState!.openDrawer(),
-                  ),
+                  ),*/
                 ),
                 body: Stack(
                   children: [
                     SingleChildScrollView(
                       child: Column(children: [
-
                         Container(
                             margin: EdgeInsets.only(
                                 left: 0, right: 0, top: 0.h, bottom: .7.h),
@@ -188,8 +184,7 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
                                         children: [
-
-                                          Container(
+                                          /*   Container(
                                             height: 20.h,
                                             width: 40.w,
                                             child: Stack(
@@ -211,7 +206,7 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                                 )
                                               ],
                                             ),
-                                          ),
+                                          ),*/
 
                                           Padding(
                                               padding: EdgeInsets.only(
@@ -252,12 +247,12 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
+                                            child: TextField(
                                               keyboardType: TextInputType.text,
                                               controller: _nameController,
                                               /*enabled: false,*/
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
                                                           ColorUtils.blackColor,
@@ -274,7 +269,7 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                                   errorBorder: InputBorder.none,
                                                   disabledBorder:
                                                       InputBorder.none,
-                                                  hintText: 'eg. Topic 1'),
+                                                  hintText: 'Enter full name'),
                                               onChanged: (text) {
                                                 setState(() {
                                                   /* customer_mobile =
@@ -325,12 +320,12 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
+                                            child: TextField(
                                               controller: _emailController,
                                               keyboardType: TextInputType.text,
                                               /* enabled: false,*/
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
                                                           ColorUtils.blackColor,
@@ -347,7 +342,7 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                                   errorBorder: InputBorder.none,
                                                   disabledBorder:
                                                       InputBorder.none,
-                                                  hintText: 'eg. Topic 1'),
+                                                  hintText: 'Enter email'),
                                               onChanged: (text) {
                                                 setState(() {
                                                   /* customer_mobile =
@@ -399,13 +394,13 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
+                                            child: TextField(
                                               controller:
                                                   _mobileNumberController,
                                               keyboardType: TextInputType.text,
                                               /* enabled: false,*/
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
                                                           ColorUtils.blackColor,
@@ -422,7 +417,8 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                                   errorBorder: InputBorder.none,
                                                   disabledBorder:
                                                       InputBorder.none,
-                                                  hintText: 'eg. Topic 1'),
+                                                  hintText:
+                                                      'Enter mobile number'),
                                               onChanged: (text) {
                                                 setState(() {
                                                   /* customer_mobile =
@@ -452,13 +448,99 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                                             .blackColor,
                                                         fontSize: 16,
                                                       )))),
+                                          InkWell(
+                                              onTap: () {
+                                                _selectDate(
+                                                    context); // Call Function that has showDatePicker()
+                                              },
+                                              child: IgnorePointer(
+                                                  child: Container(
+                                                height: 6.h,
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 3,
+                                                    horizontal: 2.w),
+                                                margin: EdgeInsets.only(
+                                                    top: 1.h,
+                                                    left: 4.w,
+                                                    right: 4.w),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                  border: Border.all(
+                                                    color: ColorUtils.greyColor
+                                                        .withOpacity(.4),
+                                                  ),
+                                                  /*  color: ColorUtils
+                                                      .lightGreyBorderColor
+                                                      .withOpacity(0.3),*/
+                                                ),
+                                                child: TextField(
+                                                  controller: _dobController,
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  /*enabled: false,*/
+                                                  textAlign: TextAlign.left,
+                                                  decoration: InputDecoration(
+                                                      hintStyle: TextStyle(
+                                                          color: ColorUtils
+                                                              .blackColor,
+                                                          fontSize: 17),
+                                                      labelStyle: TextStyle(
+                                                          color: ColorUtils
+                                                              .blackColor,
+                                                          fontSize: 16),
+                                                      border: InputBorder.none,
+                                                      focusedBorder:
+                                                          InputBorder.none,
+                                                      enabledBorder:
+                                                          InputBorder.none,
+                                                      errorBorder:
+                                                          InputBorder.none,
+                                                      disabledBorder:
+                                                          InputBorder.none,
+                                                      hintText:
+                                                          'Enter date of birth'),
+                                                  onChanged: (text) {
+                                                    setState(() {
+                                                      /* customer_mobile =
+                                          text.toString();*/
+                                                      //you can access nameController in its scope to get
+                                                      // the value of text entered as shown below
+                                                      //UserName = nameController.text;
+                                                    });
+                                                  },
+                                                ),
+                                              ))),
+                                          Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: 15,
+                                                  right: 15,
+                                                  top: 2.h),
+                                              child: Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Text('Age',
+                                                      textAlign: TextAlign.left,
+                                                      style: TextStyle(
+                                                        fontFamily: StringUtils
+                                                            .roboto_font_family,
+                                                        color: ColorUtils
+                                                            .blackColor,
+                                                        fontSize: 16,
+                                                      )))),
                                           Container(
-                                            height: 6.h,
+                                            height: 9.5.h,
                                             width: MediaQuery.of(context)
                                                 .size
                                                 .width,
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 3, horizontal: 2.w),
+                                            padding: EdgeInsets.only(
+                                                top: 3.h,
+                                                left: 4.w,
+                                                right: 4.w,
+                                                bottom: 1.h),
                                             margin: EdgeInsets.only(
                                                 top: 1.h,
                                                 left: 4.w,
@@ -474,12 +556,14 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
-                                              controller: _dobController,
-                                              keyboardType: TextInputType.text,
+                                            child: TextField(
+                                              controller: _ageController,
+                                              maxLength: 2,
+                                              keyboardType:
+                                                  TextInputType.number,
                                               /*enabled: false,*/
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
                                                           ColorUtils.blackColor,
@@ -496,7 +580,7 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                                   errorBorder: InputBorder.none,
                                                   disabledBorder:
                                                       InputBorder.none,
-                                                  hintText: 'eg. Topic 1'),
+                                                  hintText: 'Your age'),
                                               onChanged: (text) {
                                                 setState(() {
                                                   /* customer_mobile =
@@ -508,7 +592,6 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                               },
                                             ),
                                           ),
-
                                           Padding(
                                               padding: EdgeInsets.only(
                                                   left: 15,
@@ -531,9 +614,9 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                             width: MediaQuery.of(context)
                                                 .size
                                                 .width,
-                                            padding: EdgeInsets.symmetric(
+                                            padding: const EdgeInsets.symmetric(
                                                 vertical: 3, horizontal: 15),
-                                            margin: EdgeInsets.only(
+                                            margin: const EdgeInsets.only(
                                                 top: 10, left: 15, right: 15),
                                             decoration: BoxDecoration(
                                               borderRadius:
@@ -549,9 +632,10 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                                 child: DropdownButton(
                                               // Initial Value
                                               isExpanded: true,
-                                              value: selectedCityItem,
+                                              value: selectedGender,
                                               hint: Container(
-                                                child: Text('Select Gender'),
+                                                child:
+                                                    const Text('Select Gender'),
                                               ),
                                               // Down Arrow Icon
                                               icon: Icon(
@@ -578,7 +662,7 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                               // change button value to selected value
                                               onChanged: (String? newValue) {
                                                 setState(() {
-                                                  dropdownvalue = newValue!;
+                                                  selectedGender = newValue!;
                                                 });
                                               },
                                             )),
@@ -601,7 +685,7 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                                         fontSize: 16,
                                                       )))),
                                           Container(
-                                            height: 6.h,
+                                            height: 15.h,
                                             width: MediaQuery.of(context)
                                                 .size
                                                 .width,
@@ -622,12 +706,14 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
+                                            child: TextField(
                                               controller: _addressController,
                                               keyboardType: TextInputType.text,
                                               enabled: true,
+                                              minLines: 6,
+                                              maxLines: null,
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
                                                           ColorUtils.blackColor,
@@ -644,7 +730,7 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                                   errorBorder: InputBorder.none,
                                                   disabledBorder:
                                                       InputBorder.none,
-                                                  hintText: 'eg. Topic 1'),
+                                                  hintText: 'Enter address'),
                                               onChanged: (text) {
                                                 setState(() {
                                                   /* customer_mobile =
@@ -696,12 +782,12 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
+                                            child: TextField(
                                               controller: _zipCodeController,
                                               keyboardType: TextInputType.text,
                                               enabled: true,
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
                                                           ColorUtils.blackColor,
@@ -718,7 +804,7 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                                   errorBorder: InputBorder.none,
                                                   disabledBorder:
                                                       InputBorder.none,
-                                                  hintText: 'eg. Topic 1'),
+                                                  hintText: 'Enter zipcode'),
                                               onChanged: (text) {
                                                 setState(() {
                                                   /* customer_mobile =
@@ -731,54 +817,152 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
                                             ),
                                           ),
 
-                                          InkWell(   child: Container(
-                                        color: ColorUtils.whiteColor,
-                                        height: 12.h,
-                                        child: Column(children: [
-                                          Padding(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  10.w, 4.h, 10.w, 1.h),
-                                              child: SizedBox(
-                                                  width: 100.h,
-                                                  height: 7.h,
-                                                  child: ElevatedButton(
-                                                      child: Text(
-                                                          'Save Changes'
-                                                              .toUpperCase(),
-                                                          style: TextStyle(
-                                                            fontFamily: StringUtils
-                                                                .roboto_font_family,
-                                                            fontSize: 17,
-                                                            color: ColorUtils
-                                                                .whiteColor,
-                                                            letterSpacing: 0.75,
-                                                            fontWeight:
-                                                            FontWeight.w700,
-                                                            height: 1.2,
-                                                          )),
-                                                      style: ButtonStyle(
-                                                          elevation:
-                                                          MaterialStateProperty.all(
-                                                              0),
-                                                          foregroundColor:
-                                                          MaterialStateProperty.all<Color>(
-                                                              ColorUtils
-                                                                  .violetButtonColor),
-                                                          backgroundColor:
-                                                          MaterialStateProperty.all<Color>(
-                                                              ColorUtils
-                                                                  .violetButtonColor),
-                                                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                                              RoundedRectangleBorder(borderRadius: new BorderRadius.circular(8.0), side: BorderSide(color: ColorUtils.violetButtonColor)))),
-                                                      onPressed: () {
-
-                                                      }))),
-                                        ])),
-                                    onTap: () async {}),
+                                          InkWell(
+                                              child: Container(
+                                                  color: ColorUtils.whiteColor,
+                                                  height: 12.h,
+                                                  child: Column(children: [
+                                                    Padding(
+                                                        padding:
+                                                            EdgeInsets.fromLTRB(
+                                                                10.w,
+                                                                4.h,
+                                                                10.w,
+                                                                1.h),
+                                                        child: SizedBox(
+                                                            width: 100.h,
+                                                            height: 7.h,
+                                                            child:
+                                                                ElevatedButton(
+                                                                    child: Text(
+                                                                        'Save Changes'
+                                                                            .toUpperCase(),
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontFamily:
+                                                                              StringUtils.roboto_font_family,
+                                                                          fontSize:
+                                                                              17,
+                                                                          color:
+                                                                              ColorUtils.whiteColor,
+                                                                          letterSpacing:
+                                                                              0.75,
+                                                                          fontWeight:
+                                                                              FontWeight.w700,
+                                                                          height:
+                                                                              1.2,
+                                                                        )),
+                                                                    style: ButtonStyle(
+                                                                        elevation:
+                                                                            MaterialStateProperty.all(
+                                                                                0),
+                                                                        foregroundColor:
+                                                                            MaterialStateProperty.all<Color>(ColorUtils
+                                                                                .violetButtonColor),
+                                                                        backgroundColor:
+                                                                            MaterialStateProperty.all<Color>(ColorUtils
+                                                                                .violetButtonColor),
+                                                                        shape:
+                                                                            MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0), side: BorderSide(color: ColorUtils.violetButtonColor)))),
+                                                                    onPressed: () {
+                                                                      if (_nameController
+                                                                          .text
+                                                                          .isEmpty) {
+                                                                        showAlertDialog(
+                                                                            context,
+                                                                            "Please enter name");
+                                                                      } else if (_emailController
+                                                                              .text
+                                                                              .isEmpty ||
+                                                                          !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(_emailController
+                                                                              .text)) {
+                                                                        showAlertDialog(
+                                                                            context,
+                                                                            "Please enter valid email");
+                                                                      } else if (_mobileNumberController
+                                                                          .text
+                                                                          .isEmpty) {
+                                                                        showAlertDialog(
+                                                                            context,
+                                                                            "Please enter mobile number");
+                                                                      }
+                                                                      /*      else if (_dobController
+                                                            .text.length ==
+                                                            0) {
+                                                          showAlertDialog(context,
+                                                              "Please enter date of birth");
+                                                        }*/
+                                                                      else if (_ageController
+                                                                          .text
+                                                                          .isEmpty) {
+                                                                        showAlertDialog(
+                                                                            context,
+                                                                            "Please enter age");
+                                                                      } else if (selectedGender!
+                                                                          .isEmpty) {
+                                                                        showAlertDialog(
+                                                                            context,
+                                                                            "Please enter gender");
+                                                                      } else if (_addressController
+                                                                          .text
+                                                                          .isEmpty) {
+                                                                        showAlertDialog(
+                                                                            context,
+                                                                            "Please enter address");
+                                                                      } else if (_zipCodeController
+                                                                          .text
+                                                                          .isEmpty) {
+                                                                        showAlertDialog(
+                                                                            context,
+                                                                            "Please enter zipcode");
+                                                                      } else {
+                                                                        updateProfile();
+                                                                      }
+                                                                    }))),
+                                                  ])),
+                                              onTap: () async {
+                                                if (_nameController
+                                                    .text.isEmpty) {
+                                                  showAlertDialog(context,
+                                                      "Please enter name");
+                                                } else if (_emailController
+                                                        .text.isEmpty ||
+                                                    !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                                        .hasMatch(
+                                                            _emailController
+                                                                .text)) {
+                                                  showAlertDialog(context,
+                                                      "Please enter valid email");
+                                                } else if (_mobileNumberController
+                                                    .text.isEmpty) {
+                                                  showAlertDialog(context,
+                                                      "Please enter mobile number");
+                                                } else if (_dobController
+                                                    .text.isEmpty) {
+                                                  showAlertDialog(context,
+                                                      "Please enter date of birth");
+                                                } else if (_ageController
+                                                    .text.isEmpty) {
+                                                  showAlertDialog(context,
+                                                      "Please enter age");
+                                                } else if (selectedGender!
+                                                    .isEmpty) {
+                                                  showAlertDialog(context,
+                                                      "Please enter gender");
+                                                } else if (_addressController
+                                                    .text.isEmpty) {
+                                                  showAlertDialog(context,
+                                                      "Please enter address");
+                                                } else if (_zipCodeController
+                                                    .text.isEmpty) {
+                                                  showAlertDialog(context,
+                                                      "Please enter zipcode");
+                                                } else {
+                                                  updateProfile();
+                                                }
+                                              }),
                                           //row
                                         ])))),
-
-
                         SpinKitFadingCircleWidget(isLoading)
                       ]),
                     )
@@ -803,22 +987,32 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
 
   Future<String?> updateProfile() async {
     var data;
-    /*   Map<String, String> headers = {'Authorization': prefs.getString(StringConstant.token)};
-*/
+    debugPrint('gender---   ${selectedGender.toString()} ');
     var request = http.MultipartRequest('POST',
-        Uri.parse('https://www.techtradedu.com/conceptlive/api/edit_profile'));
-    //   request.headers.addAll(headers);
-   /* request.fields['user_id'] =
-        prefs!.getString(StringUtils.teacher_id).toString();*/
-    request.fields['user_type'] = '2';
-    request.fields['address'] = _addressController.text.toString();
-    request.fields['city_id'] = cityId.toString();
-    request.fields['state_id'] = stateId.toString();
-    request.fields['zip_code'] = _zipCodeController.text.toString();
-    if (_imageFile != null) {
+        Uri.parse('https://trendychikitsa.com/api/client_edit_profile/'));
+
+    request.fields['client_id'] = prefs!.getString(StringUtils.id).toString();
+    request.fields['client_name'] = _nameController.text.toString();
+    request.fields['client_email'] = _emailController.text.toString();
+    request.fields['client_phone'] = _mobileNumberController.text.toString();
+    if (selectedGender!.toString().trim() == 'Female') {
+      debugPrint('gender---  2 ');
+      request.fields['client_gender'] = '2';
+    } else if (selectedGender!.toString().trim() == 'Male') {
+      request.fields['client_gender'] = '1';
+      debugPrint('gender---  1 ');
+    }
+    /* request.fields['client_gender'] = selectedGender.toString();
+*/
+    request.fields['client_age'] = _ageController.text.toString();
+    request.fields['client_pincode'] = _zipCodeController.text.toString();
+    request.fields['client_dob'] = _dobController.text.toString();
+    request.fields['client_address'] = _addressController.text.toString();
+
+    /*  if (_imageFile != null) {
       request.files.add(await http.MultipartFile.fromPath(
           'user_profile', _imageFile!.path.toString()));
-    }
+    }*/
     // var res = await request.send();
 
     request
@@ -835,16 +1029,22 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
 
               var rest1 = data["msg"];
               data = json.decode(response.body);
-              print('--->>?   ${data}');
+              print('--->>?   $data');
 
               if (data["status"] == "true" &&
-                  data["msg"] == "Login successful!!!") {
-                print('Login succssfull---    ');
-
-                UtilMethods.showSnackBar(context, "Login successful!!!");
-
-                //  showAlertDialog(context, "Uploaded KYC successfully" );
+                  data["msg"] == "Profile Updated Successfully!!!") {
+                showAlertDialog(context, "Success! Updated Successfully.");
+                Future.delayed(const Duration(seconds: 2), () {
+                  isLoading = false;
+                  setState(() {});
+                  /*   Navigator.pop(context);*/
+                });
               } else {
+                showAlertDialog(context, data["msg"]);
+                Future.delayed(const Duration(seconds: 1), () {
+                  isLoading = false;
+                  setState(() {});
+                });
                 UtilMethods.showSnackBar(context, data["msg"]);
               }
             }
@@ -854,6 +1054,7 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
         })
         .catchError((err) => print('error : ' + err.toString()))
         .whenComplete(() {});
+    return null;
     //print('reason phrase- ${res.stream.bytesToString()}');
     // return res.stream.bytesToString();
   }
@@ -894,7 +1095,7 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
       )*/
           ;
     } else {
-      return CircleAvatar(
+      return const CircleAvatar(
         radius: 90.0,
         backgroundImage: AssetImage(
           ('assets/images/student.jpg'),
@@ -904,13 +1105,13 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
         margin: EdgeInsets.only(top: 1.h),
         width: 100,
         height: 100,
-        child: CircleAvatar(
+        child: const CircleAvatar(
           radius: 30,
           backgroundImage: AssetImage(
             ('assets/images/fb_logo.png'),
           ),
         ),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           shape: BoxShape.circle,
           image: DecorationImage(
               image: AssetImage(
@@ -920,5 +1121,239 @@ class ClientProfileSettingstate extends State<ClientProfileSetting> {
         ),
       );
     }
+  }
+
+  showAlertDialog(BuildContext context, String msg) {
+    // set up the button
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+        title: Container(
+            height: 50,
+            alignment: Alignment.center,
+            color: ColorUtils.trendyButtonColor,
+            child: const Text(
+              "Alert !!",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
+                  color: Colors.white),
+            )),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        //   children: [
+        //     GestureDetector(
+        //         onTap: () {
+        //           Navigator.of(context).pop();
+        //         },
+        //         child: SizedBox(
+        //             width: 60.w,
+        //             child: Text(msg,
+        //                 textAlign: TextAlign.left,
+        //                 style: const TextStyle(
+        //                     fontWeight: FontWeight.normal,
+        //                     color: Colors.black87,
+        //                     fontSize: 18)))),
+        //   ],
+        // ),
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: SizedBox(
+                    width: 60.w,
+                    child: Text(msg,
+                        textAlign: TextAlign.left,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black87,
+                            fontSize: 18)))),
+          ],
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                        border:
+                            Border.all(color: ColorUtils.trendyButtonColor)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text("OK",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: ColorUtils.appDarkBlueColor,
+                              fontSize: 18)),
+                    ),
+                  )),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          )
+
+          //  Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //   children: [
+          //     GestureDetector(
+          //         onTap: () {
+          //           Navigator.of(context).pop();
+          //         },
+          //         child: Text("Ok",
+          //             textAlign: TextAlign.left,
+          //             style: TextStyle(
+          //                 fontWeight: FontWeight.normal,
+          //                 color: ColorUtils.appDarkBlueColor,
+          //                 fontSize: 18))),
+          //   ],
+          // )
+        ]);
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  DateTime selectedDate = DateTime.now();
+  bool currentDate = true;
+  String initialdate = "", selectedInitialDate = "";
+  _selectDate(BuildContext context) async {
+    final DateTime? selected = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(1970),
+      lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: ColorUtils.appDarkBlueColor, // header background color
+              onPrimary: Colors.white, // header text color
+              onSurface: Colors.black87, // body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor:
+                    ColorUtils.headerTextColor, // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (selected != null && selected != selectedDate) {
+      setState(() {
+        var temp = DateTime.now().toUtc();
+        var d1 = DateTime.utc(temp.year, temp.month, temp.day);
+        var d2 = DateTime.utc(selected.year, selected.month,
+            selected.day); //you can add today's date here
+        if (d2.compareTo(d1) == 0) {
+          currentDate = true;
+          print('true');
+        } else {
+          currentDate = false;
+          print('false');
+        }
+
+        selectedDate = selected;
+        print('selected date--   $selectedDate');
+        final DateFormat formatter1 = DateFormat('yyyy-MM-dd');
+        final String formatted1 = formatter1.format(selected);
+
+        selectedInitialDate = selectedDate.toString().substring(0, 10);
+        print('selected initial date---   $selectedInitialDate');
+        _dobController.text = selectedInitialDate;
+        final DateFormat formatter = DateFormat('MMMM d, yyyy');
+        final String formatted = formatter.format(selectedDate);
+        //   initialdate = formatted;
+        /*   initialdate=selectedDate.toString();*/
+        Future.delayed(const Duration(seconds: 1), () {
+          setState(() {});
+        });
+      });
+    }
+  }
+
+  FetchClientProfileDetails? _clientProfileDetails;
+
+  Future<FetchClientProfileDetails?> getFetchProfileData() async {
+    var data;
+    try {
+      print(
+          'fetched healer id-   ${prefs!.getString(StringUtils.id).toString()}');
+      var request = http.MultipartRequest('POST', BaseuURL.client_details);
+
+      request.fields['client_id'] =
+          prefs!.getString(StringUtils.id).toString() /*'52'*/;
+      // var res = await request.send();
+      // var res = await request.send();
+      var response = await request.send();
+      final responsed = await http.Response.fromStream(response);
+      if (response.statusCode == 200) {
+        print("Uploaded! ");
+        print('response.body ' + responsed.body);
+        var jsonData = responsed.body;
+
+        print(jsonData);
+        data = json.decode(responsed.body);
+
+        var rest1 = data["msg"];
+        data = json.decode(responsed.body);
+        print('--->>?   $data');
+
+        if (data["status"] == "true" && data["msg"] == "success") {
+          print('getFetchProfileData--    ');
+
+          final jsonResponse = json.decode(responsed.body);
+
+          _clientProfileDetails =
+              FetchClientProfileDetails.fromJson(jsonResponse);
+
+          _nameController.text =
+              _clientProfileDetails!.response![0].clName.toString();
+          _emailController.text =
+              _clientProfileDetails!.response![0].clEmail.toString();
+          _mobileNumberController.text =
+              _clientProfileDetails!.response![0].clTelephone.toString();
+          /* _dobController.text =_clientProfileDetails!.response![0].clDob.toString();
+         */
+          _zipCodeController.text =
+              _clientProfileDetails!.response![0].clPin.toString();
+          _addressController.text =
+              _clientProfileDetails!.response![0].clAddress.toString();
+          _ageController.text =
+              _clientProfileDetails!.response![0].clAge.toString();
+          selectedGender =
+              _clientProfileDetails!.response![0].clGender.toString();
+          print(
+              'client dob--   ${_clientProfileDetails!.response![0].clDob.toString()}');
+          if (_clientProfileDetails!.response![0].clDob.toString() == 'null') {
+            _dobController.text = "--";
+          } else {
+            _dobController.text =
+                _clientProfileDetails!.response![0].clDob.toString();
+          }
+        }
+      }
+
+      setState(() {});
+    } catch (e) {
+      print('exce --   ${e.toString()}    ');
+    }
+    return _clientProfileDetails;
   }
 }

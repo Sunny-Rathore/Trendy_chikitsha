@@ -1,13 +1,15 @@
+import 'package:trendy_chikitsa/page/Client/Client_menu/pages/Client_Home_Menu.dart';
+import 'package:trendy_chikitsa/page/Client/Client_menu/pages/client_change_password.dart';
+import 'package:trendy_chikitsa/page/Client/Client_menu/pages/client_grievance_list.dart';
+import 'package:trendy_chikitsa/page/Client/Client_menu/pages/client_profile.dart';
+import 'package:trendy_chikitsa/page/Client/Client_menu/pages/client_review_list.dart';
+import 'package:trendy_chikitsa/page/Client/Client_menu/pages/client_transaction_list.dart';
+import 'package:trendy_chikitsa/page/Client/Client_menu/pages/clients_appointments.dart';
 
-import 'package:doctor/page/Client/Client_menu/pages/client_change_password.dart';
-import 'package:doctor/page/Client/Client_menu/pages/client_profile.dart';
-import 'package:doctor/page/Client/Client_menu/pages/clients_appointments.dart';
-
-import 'package:doctor/page/Client/Client_menu/pages/therapy_category.dart';
-import 'package:doctor/page/LoginPage.dart';
-import 'package:doctor/utils/color_utils.dart';
-import 'package:doctor/utils/size_util.dart';
-import 'package:doctor/utils/string_utils.dart';
+import 'package:trendy_chikitsa/page/LoginPage.dart';
+import 'package:trendy_chikitsa/utils/color_utils.dart';
+import 'package:trendy_chikitsa/utils/size_util.dart';
+import 'package:trendy_chikitsa/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,6 +17,8 @@ import 'package:sizer/sizer.dart';
 
 class NavDrawer extends StatefulWidget {
   String from_page = "", token = "";
+
+  NavDrawer({super.key});
 
   @override
   NavDrawerState createState() => NavDrawerState();
@@ -45,12 +49,130 @@ class NavDrawerState extends State<NavDrawer> {
   Widget build(BuildContext context) {
     return Sizer(builder: (context, orientation, deviceType) {
       return Drawer(
-
-
         child: ListView(
-
           children: [
-         /*   SizedBox(
+            SizedBox(
+                height: 25.h,
+                child: Container(
+                  color: ColorUtils.trendyThemeColor,
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.only(top: 30, left: 10, right: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Text(
+                            "WELCOME",
+                            style: TextStyle(
+                                fontFamily: StringUtils.roboto_font_family_bold,
+                                color: Colors.white,
+                                fontSize: 20),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            const CircleAvatar(
+                              radius: 40.0,
+                              backgroundImage: NetworkImage(
+                                  'https://trendychikitsa.com/img/users.png'),
+                              backgroundColor: Colors.transparent,
+                            ),
+                            const SizedBox(
+                              width: 15,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  prefs != null
+                                      ? prefs!
+                                          .getString(StringUtils.name)
+                                          .toString()
+                                          .toUpperCase()
+                                      : '',
+                                  style: TextStyle(
+                                      fontFamily: StringUtils
+                                          .roboto_font_family_regular,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: ColorUtils.whiteColor),
+                                ),
+                                const SizedBox(
+                                  height: 7,
+                                ),
+                                Text(
+                                  prefs != null
+                                      ? prefs!
+                                          .getString(StringUtils.email)
+                                          .toString()
+                                      : '',
+                                  style: TextStyle(
+                                      fontSize: 10.sp,
+                                      fontWeight: FontWeight.bold,
+                                      color: ColorUtils.whiteColor),
+                                ),
+                                const SizedBox(
+                                  height: 7,
+                                ),
+                                Text(
+                                  prefs != null
+                                      ? prefs!
+                                          .getString(StringUtils.mobile)
+                                          .toString()
+                                      : '',
+                                  style: TextStyle(
+                                      fontSize: 10.sp,
+                                      fontWeight: FontWeight.bold,
+                                      color: ColorUtils.whiteColor),
+                                )
+                              ],
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                )
+                // DrawerHeader(
+                //   decoration: BoxDecoration(
+                //     color: ColorUtils.trendyThemeColor,
+                //   ), //BoxDecoration
+                //   child: UserAccountsDrawerHeader(
+                //     decoration:
+                //         BoxDecoration(color: ColorUtils.trendyThemeColor),
+                //     accountName: Padding(
+                //         padding: EdgeInsets.only(top: 10, left: 2.w),
+                // child:
+                // Text(
+                //   prefs != null
+                //       ? prefs!.getString(StringUtils.name).toString()
+                //       : '',
+                //   style: TextStyle(
+                //       fontSize: 20,
+                //       fontWeight: FontWeight.bold,
+                //       color: ColorUtils.whiteColor),
+                // )),
+                //     accountEmail: Text(
+                //       prefs != null
+                //           ? prefs!.getString(StringUtils.email).toString()
+                //           : '',
+                //       style: TextStyle(
+                //           fontSize: 17,
+                //           fontWeight: FontWeight.bold,
+                //           color: ColorUtils.whiteColor),
+                //     ),
+                //     currentAccountPictureSize: const Size.square(90),
+                // currentAccountPicture: const CircleAvatar(
+                //   radius: 90.0,
+                //   backgroundImage: NetworkImage(
+                //       'https://trendychikitsa.com/img/users.png'),
+                //   backgroundColor: Colors.transparent,
+                // ), //circleAvatar
+                //   ), //UserAccountDrawerHeader
+                // )
+                ),
+            /*   SizedBox(
                 height: 32.h,
                 child: DrawerHeader(
                   decoration: BoxDecoration(
@@ -124,45 +246,52 @@ class NavDrawerState extends State<NavDrawer> {
                       ])),
                 )),*/
             DrawerListItem(
-                text: "Home", icon_color: Colors.black, route: "Home"),
+                iconaname: Icons.home,
+                text: "Home",
+                icon_color: Colors.black,
+                route: "Home"),
             DrawerListItem(
+                iconaname: Icons.date_range,
                 text: "My Appointments",
                 icon_color: Colors.black,
                 route: "Appointments"),
             DrawerListItem(
-                text: "Favourites",
-                icon_color: Colors.black,
-                route: "Favourites"),
-            DrawerListItem(
+                iconaname: Icons.history,
                 text: "Transactions",
                 icon_color: Colors.black,
                 route: "Transactions"),
 
-            DrawerListItem(
-                text: "Orders",
-                icon_color: Colors.black,
-                route: "Orders"),
-            DrawerListItem(
+            /*DrawerListItem(
                 text: "Your Issues",
                 icon_color: Colors.black,
-                route: "Your Issues"),
+                route: "Your Issues"),*/
             DrawerListItem(
-                text: "ChangePassword",
+                iconaname: Icons.lock_clock,
+                text: "Change Password",
                 icon_color: Colors.black,
                 route: "ChangePassword"),
             /* DrawerListItem(text: "Edit Profile", icon_color: Colors.black,
                 route:"Edit Profile"),*/
             DrawerListItem(
-                text: "Profile Setting", icon_color: Colors.black, route: "Profile Setting"),
+                iconaname: Icons.admin_panel_settings,
+                text: "Profile Setting",
+                icon_color: Colors.black,
+                route: "Profile Setting"),
             DrawerListItem(
-                text: "Review",
+                iconaname: Icons.reviews,
+                text: "Reviews",
                 icon_color: Colors.black,
                 route: "Review"),
-
-
-
             DrawerListItem(
-                text: "Log Out", icon_color: Colors.black, route: "Log Out"),
+                iconaname: Icons.support,
+                text: "Support",
+                icon_color: Colors.black,
+                route: "Grievance"),
+            DrawerListItem(
+                iconaname: Icons.logout,
+                text: "Log Out",
+                icon_color: Colors.black,
+                route: "Log Out"),
           ],
         ),
       );
@@ -171,6 +300,7 @@ class NavDrawerState extends State<NavDrawer> {
 }
 
 class DrawerListItem extends StatefulWidget {
+  final IconData iconaname;
   String from_page = "", token = "";
   late Color textcolor, color2, icon_color;
   late IconData icon;
@@ -184,7 +314,8 @@ class DrawerListItem extends StatefulWidget {
       {Key? key,
       required this.text,
       required this.icon_color,
-      required this.route})
+      required this.route,
+      required this.iconaname})
       : super(key: key);
 }
 
@@ -195,7 +326,6 @@ class DrawerListItemState extends State<DrawerListItem> {
   late FontWeight fontWeight;
   SharedPreferences? prefs;
   late BuildContext context1;
-
 
   bool close = false;
 
@@ -227,6 +357,7 @@ class DrawerListItemState extends State<DrawerListItem> {
   @override
   Widget build(BuildContext context1) {
     return ListTile(
+      leading: Icon(widget.iconaname),
       title: Text(
         widget.text,
         style: TextStyle(
@@ -247,27 +378,33 @@ class DrawerListItemState extends State<DrawerListItem> {
       ),*/
       onTap: () async {
         if (widget.route == "Home") {
-         /* Navigator.pushAndRemoveUntil(
+          Navigator.pushAndRemoveUntil(
               context1,
-              MaterialPageRoute(builder: (context) => StudentDashboard()),
-              (route) => false);*/
+              MaterialPageRoute(builder: (context) => const Client_Home_Menu()),
+              (route) => false);
         } else if (widget.route == "Appointments") {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>ClientAppointments(),));
+                builder: (context) => ClientAppointments(),
+              ));
         } else if (widget.route == "ChangePassword") {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ClientChangePassword()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ClientChangePassword()));
         } else if (widget.route == "Profile Setting") {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>ClientProfileSetting()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ClientProfileSetting()));
+        } else if (widget.route == "Transactions") {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ClientTransactionList()));
+        } else if (widget.route == "Grievance") {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ClientGrievanceList()));
+        } else if (widget.route == "Review") {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ClientReviewList()));
         } else if (widget.route == "About Us") {
-      /*    storage.write(key: StringUtils.current_page, value: "ABOUT");*/
+          /*    storage.write(key: StringUtils.current_page, value: "ABOUT");*/
         } else if (widget.route == "Privacy Policy") {
           /*Navigator.push(
               context,
@@ -278,12 +415,14 @@ class DrawerListItemState extends State<DrawerListItem> {
           prefs!.setString(StringUtils.id, "");
           prefs!.setString(StringUtils.unique_id, "");
           prefs!.setString(StringUtils.type, "");
+          prefs!.setString(StringUtils.name, "");
+          prefs!.setString(StringUtils.profile_image, "");
           Navigator.pushAndRemoveUntil<dynamic>(
             context,
             MaterialPageRoute<dynamic>(
-              builder: (BuildContext context) => LoginPage(),
+              builder: (BuildContext context) => const LoginPage(),
             ),
-                (route) => false,//if you want to disable back feature set to false
+            (route) => false, //if you want to disable back feature set to false
           );
         }
       },
@@ -292,7 +431,7 @@ class DrawerListItemState extends State<DrawerListItem> {
 
   showDeleteAlertDialog(BuildContext context2) {
     // set up the buttons
-    Widget cancelButton = FlatButton(
+    Widget cancelButton = TextButton(
       child: Text('Not Now',
           textAlign: TextAlign.left,
           maxLines: 3,
@@ -306,7 +445,7 @@ class DrawerListItemState extends State<DrawerListItem> {
         Navigator.of(context2).pop();
       },
     );
-    Widget continueButton = FlatButton(
+    Widget continueButton = TextButton(
       child: Text('Yes',
           textAlign: TextAlign.left,
           maxLines: 3,
@@ -322,7 +461,7 @@ class DrawerListItemState extends State<DrawerListItem> {
     AlertDialog alert = AlertDialog(
       /*    title: Text("AlertDialog"),
   */
-      content: Text(
+      content: const Text(
         "Are you sure you want to logout?",
         textAlign: TextAlign.center,
       ),
@@ -339,6 +478,4 @@ class DrawerListItemState extends State<DrawerListItem> {
       },
     );
   }
-
-
 }

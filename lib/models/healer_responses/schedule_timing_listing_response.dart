@@ -11,17 +11,17 @@ class ScheduleTimeListingResponse {
     if (json['response'] != null) {
       response = <ScheduleResponse>[];
       json['response'].forEach((v) {
-        response!.add(new ScheduleResponse.fromJson(v));
+        response!.add(ScheduleResponse.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['msg'] = this.msg;
-    if (this.response != null) {
-      data['response'] = this.response!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['msg'] = msg;
+    if (response != null) {
+      data['response'] = response!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -45,12 +45,12 @@ class ScheduleResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['sh_id'] = this.shId;
-    data['sh_day'] = this.shDay;
-    data['sh_start'] = this.shStart;
-    data['sh_end'] = this.shEnd;
-    data['healer_id'] = this.healerId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['sh_id'] = shId;
+    data['sh_day'] = shDay;
+    data['sh_start'] = shStart;
+    data['sh_end'] = shEnd;
+    data['healer_id'] = healerId;
     return data;
   }
 }

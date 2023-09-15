@@ -9,7 +9,7 @@ class MyRadioListTile<T> extends StatelessWidget {
   final Widget? title;
   final ValueChanged<T?> onChanged;
 
-  const MyRadioListTile({
+  const MyRadioListTile({super.key, 
     required this.value,
     required this.groupValue,
     required this.onChanged,

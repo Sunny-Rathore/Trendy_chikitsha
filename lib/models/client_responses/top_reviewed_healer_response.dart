@@ -11,17 +11,17 @@ class TopFeaturedHealers {
     if (json['response'] != null) {
       response = <TopFeaturedHealersResponse>[];
       json['response'].forEach((v) {
-        response!.add(new TopFeaturedHealersResponse.fromJson(v));
+        response!.add(TopFeaturedHealersResponse.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['msg'] = this.msg;
-    if (this.response != null) {
-      data['response'] = this.response!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['msg'] = msg;
+    if (response != null) {
+      data['response'] = response!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -53,13 +53,13 @@ class TopFeaturedHealersResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['healer_id'] = this.healerId;
-    data['healer_name'] = this.healerName;
-    data['healer_unique_id'] = this.healerUniqueId;
-    data['healer_image'] = this.healerImage;
-    data['therapy_name'] = this.therapyName;
-    data['experience'] = this.experience;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['healer_id'] = healerId;
+    data['healer_name'] = healerName;
+    data['healer_unique_id'] = healerUniqueId;
+    data['healer_image'] = healerImage;
+    data['therapy_name'] = therapyName;
+    data['experience'] = experience;
     return data;
   }
 }

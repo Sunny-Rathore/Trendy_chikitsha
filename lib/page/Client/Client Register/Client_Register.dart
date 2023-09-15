@@ -1,11 +1,11 @@
-import 'package:doctor/page/Client/Client_menu/pages/Client_Home_Menu.dart';
+import 'package:flutter/services.dart';
+import 'package:trendy_chikitsa/page/Client/Client_menu/pages/Client_Home_Menu.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gender_picker/source/enums.dart';
 import 'package:gender_picker/source/gender_picker.dart';
 import 'package:get/get.dart';
 import '../../../global/global.dart';
-import '../Client_Home.dart';
 import 'Client_Login.dart';
 
 class Client_Register extends StatefulWidget {
@@ -54,7 +54,6 @@ class _Client_RegisterState extends State<Client_Register> {
         child: Scaffold(
             extendBodyBehindAppBar: true,
             appBar: AppBar(
-              brightness: Brightness.dark,
               toolbarHeight: 70,
               backgroundColor: Colors.transparent,
               elevation: 0.0,
@@ -69,7 +68,7 @@ class _Client_RegisterState extends State<Client_Register> {
                         colors: [AppColors.colorlal, AppColors.colorJambli],
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter)),
-              ),
+              ), systemOverlayStyle: SystemUiOverlayStyle.light,
             ),
             body: SingleChildScrollView(
               child: Container(

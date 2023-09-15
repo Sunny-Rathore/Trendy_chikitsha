@@ -9,16 +9,16 @@ class HealerChangePassResponse {
     status = json['status'];
     msg = json['msg'];
     response = json['response'] != null
-        ? new Response.fromJson(json['response'])
+        ? Response.fromJson(json['response'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['msg'] = this.msg;
-    if (this.response != null) {
-      data['response'] = this.response!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['msg'] = msg;
+    if (response != null) {
+      data['response'] = response!.toJson();
     }
     return data;
   }
@@ -34,8 +34,8 @@ class Response {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['h_password'] = this.hPassword;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['h_password'] = hPassword;
     return data;
   }
 }

@@ -11,17 +11,17 @@ class LoginClientResponse {
     msg = json['msg'];
     response = json['response'];
     clientData = json['client_data'] != null
-        ? new ClientData.fromJson(json['client_data'])
+        ? ClientData.fromJson(json['client_data'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['msg'] = this.msg;
-    data['response'] = this.response;
-    if (this.clientData != null) {
-      data['client_data'] = this.clientData!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['msg'] = msg;
+    data['response'] = response;
+    if (clientData != null) {
+      data['client_data'] = clientData!.toJson();
     }
     return data;
   }
@@ -86,24 +86,24 @@ class ClientData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['cl_id'] = this.clId;
-    data['cl_links'] = this.clLinks;
-    data['cl_name'] = this.clName;
-    data['cl_email'] = this.clEmail;
-    data['cl_password'] = this.clPassword;
-    data['cl_profile'] = this.clProfile;
-    data['cl_age'] = this.clAge;
-    data['cl_gender'] = this.clGender;
-    data['cl_dob'] = this.clDob;
-    data['cl_telephone'] = this.clTelephone;
-    data['cl_address'] = this.clAddress;
-    data['cl_pin'] = this.clPin;
-    data['cl_approve'] = this.clApprove;
-    data['cl_date'] = this.clDate;
-    data['reset'] = this.reset;
-    data['issue_id'] = this.issueId;
-    data['type'] = this.type;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['cl_id'] = clId;
+    data['cl_links'] = clLinks;
+    data['cl_name'] = clName;
+    data['cl_email'] = clEmail;
+    data['cl_password'] = clPassword;
+    data['cl_profile'] = clProfile;
+    data['cl_age'] = clAge;
+    data['cl_gender'] = clGender;
+    data['cl_dob'] = clDob;
+    data['cl_telephone'] = clTelephone;
+    data['cl_address'] = clAddress;
+    data['cl_pin'] = clPin;
+    data['cl_approve'] = clApprove;
+    data['cl_date'] = clDate;
+    data['reset'] = reset;
+    data['issue_id'] = issueId;
+    data['type'] = type;
     return data;
   }
 }

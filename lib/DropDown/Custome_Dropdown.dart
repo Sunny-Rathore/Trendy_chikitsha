@@ -1,12 +1,11 @@
-import 'package:doctor/global/global.dart';
-import 'package:doctor/page/Client/Client%20Register/Client_Login.dart';
-import 'package:doctor/page/Healer/Choose%20Your%20Expertise/Choose_your_expertise.dart';
-import 'package:doctor/page/Healer/Healer%20Register/Healer_Login.dart';
-import 'package:doctor/page/Healer/Healer_menu/Payment/payment_mode.dart';
-import 'package:doctor/utils/string_utils.dart';
+import 'package:trendy_chikitsa/page/Healer/Healer%20Register/Healer_Login.dart';
+import 'package:trendy_chikitsa/utils/color_utils.dart';
+import 'package:trendy_chikitsa/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../page/Client/ClientLogin.dart';
 
 class CustomeDropdown extends StatefulWidget {
   const CustomeDropdown({
@@ -24,27 +23,32 @@ class _CustomeDropdownState extends State<CustomeDropdown> {
 
   @override
   void initState() {
-    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
 
     //  saveValue();
 
     super.initState();
     saveValue();
   }
+
   saveValue() async {
     //  storage = new FlutterSecureStorage();
 
     prefs = await SharedPreferences.getInstance();
+    setState(() {});
     // _register();
   }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Container(
-        decoration:   BoxDecoration(
-            color: AppColors.colorJambli,
-            borderRadius: const BorderRadius.all( Radius.circular(10))),
+        decoration: BoxDecoration(
+            /*    color: AppColors.colorJambli,*/
+            color: ColorUtils.trendyThemeColor,
+            borderRadius: const BorderRadius.all(Radius.circular(10))),
         padding: const EdgeInsets.all(20),
         height: MediaQuery.of(context).size.height / 12,
         width: MediaQuery.of(context).size.width,
@@ -53,7 +57,11 @@ class _CustomeDropdownState extends State<CustomeDropdown> {
             width: 0.1,
           ),
           value: dropdownvalue,
-          icon: const Icon(Icons.keyboard_arrow_down),
+          icon: const Icon(
+            Icons.keyboard_arrow_down,
+            color: Colors.white,
+            size: 25,
+          ),
           items: items.map((String items) {
             return DropdownMenuItem(
               value: items,
@@ -71,22 +79,23 @@ class _CustomeDropdownState extends State<CustomeDropdown> {
               dropdownvalue = newValue!;
 
               if (dropdownvalue == "Client") {
-
-                prefs!.setString(StringUtils.type,"2" );
+                prefs!.setString(StringUtils.type, "2");
                 await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Healer_Login()),
+                  MaterialPageRoute(
+                      builder: (context) => const ClientLoginPage()),
                 );
               } else if (dropdownvalue == "Healer") {
-                prefs!.setString(StringUtils.type,"1" );
+                prefs!.setString(StringUtils.type, "1");
                 await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) =>  Healer_Login()),
+                  MaterialPageRoute(builder: (context) => const Healer_Login()),
                 );
               }
             });
           },
-          dropdownColor: AppColors.colorlal,
+          dropdownColor: ColorUtils.trendyButtonColor,
+          /*        dropdownColor: AppColors.colorlal,*/
           isExpanded: true,
           elevation: 8,
           style: const TextStyle(color: Colors.white, fontSize: 16),

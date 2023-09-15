@@ -11,17 +11,17 @@ class AddTimeSlotsResponse {
     if (json['response'] != null) {
       response = <Response>[];
       json['response'].forEach((v) {
-        response!.add(new Response.fromJson(v));
+        response!.add(Response.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['msg'] = this.msg;
-    if (this.response != null) {
-      data['response'] = this.response!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['msg'] = msg;
+    if (response != null) {
+      data['response'] = response!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -46,12 +46,12 @@ class Response {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['healer_id'] = this.healerId;
-    data['sh_start'] = this.shStart;
-    data['sh_end'] = this.shEnd;
-    data['sh_day'] = this.shDay;
-    data['create_date'] = this.createDate;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['healer_id'] = healerId;
+    data['sh_start'] = shStart;
+    data['sh_end'] = shEnd;
+    data['sh_day'] = shDay;
+    data['create_date'] = createDate;
     return data;
   }
 }

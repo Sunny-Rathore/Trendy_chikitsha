@@ -1,21 +1,20 @@
 import 'dart:convert';
 
-import 'package:doctor/baseurl/baseURL.dart';
-import 'package:doctor/models/all_therapy_response.dart';
-import 'package:doctor/page/Client/Client_menu/pages/therapistlist_page.dart';
-import 'package:doctor/page/Client/client_navigation.dart';
-import 'package:doctor/page/Healer/Healer_menu/pages/today_appointment.dart';
-import 'package:doctor/utils/color_utils.dart';
-import 'package:doctor/utils/size_util.dart';
-import 'package:doctor/utils/string_utils.dart';
-import 'package:doctor/widgets/spinKitFadingCircleWidget.dart';
+import 'package:trendy_chikitsa/baseurl/baseURL.dart';
+import 'package:trendy_chikitsa/models/all_therapy_response.dart';
+import 'package:trendy_chikitsa/page/Client/Client_menu/pages/therapistlist_page.dart';
+import 'package:trendy_chikitsa/page/Client/client_navigation.dart';
+import 'package:trendy_chikitsa/utils/color_utils.dart';
+import 'package:trendy_chikitsa/utils/size_util.dart';
+import 'package:trendy_chikitsa/utils/string_utils.dart';
+import 'package:trendy_chikitsa/widgets/spinKitFadingCircleWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sizer/sizer.dart';
 import 'package:http/http.dart' as http;
 
 class TherapyCategories extends StatefulWidget {
-  TherapyCategories({Key? key}) : super(key: key);
+  const TherapyCategories({Key? key}) : super(key: key);
 
   @override
   State<TherapyCategories> createState() => TherapyCategoriesState();
@@ -35,9 +34,9 @@ class TherapyCategoriesState extends State<TherapyCategories> {
   saveValue() async {
  //   prefs = await SharedPreferences.getInstance();
 
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () {
       setState(() {
-       ;
+       
       });
       // Do something
     });
@@ -49,7 +48,7 @@ class TherapyCategoriesState extends State<TherapyCategories> {
       return SafeArea(
           child: Scaffold(
             appBar: AppBar(
-              shape: RoundedRectangleBorder(
+              shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(
                   bottom: Radius.circular(10),
                 ),
@@ -94,13 +93,13 @@ class TherapyCategoriesState extends State<TherapyCategories> {
             ),
         drawer: NavDrawer(),
         body: Padding(
-            padding: EdgeInsets.fromLTRB(24, 14, 24, 14),
+            padding: const EdgeInsets.fromLTRB(24, 14, 24, 14),
             child: FutureBuilder<TherapyList?>(
               future: getTherapies(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   print('snapshot--  ${snapshot.error}');
-                  if (therapyList!.length > 0) {
+                  if (therapyList.isNotEmpty) {
                     print('snapshot--  ${snapshot.error}');
                     //   print('value is..  ${new Map<String, dynamic>.from(snapshot.data).}');
 
@@ -110,15 +109,15 @@ class TherapyCategoriesState extends State<TherapyCategories> {
                             shrinkWrap: true,
                            /* physics: NeverScrollableScrollPhysics(),*/
                             gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
+                                const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               childAspectRatio: 0.75,
                               crossAxisSpacing: 10.0,
                               mainAxisSpacing: 10.0,
                             ),
-                            itemCount:therapyList.length>0? therapyList.length : 0,
+                            itemCount:therapyList.isNotEmpty? therapyList.length : 0,
                             itemBuilder: (BuildContext ctx, index) {
-                              print('lll-   ${therapyList![index].therapy_name}');
+                              print('lll-   ${therapyList[index].therapy_name}');
                               return GestureDetector(
                                 onTap: () {
 
@@ -136,7 +135,7 @@ class TherapyCategoriesState extends State<TherapyCategories> {
                                                   BorderRadius.circular(16),
                                             ),
                                             child: */
-                                    Container(
+                                    SizedBox(
                                         height: 600,
                                         width: 125,
                                         child: Column(children: [
@@ -150,7 +149,7 @@ class TherapyCategoriesState extends State<TherapyCategories> {
                                                   topRight: Radius.circular(
                                                       DimenUtils.dimen_17)),
                                               image: DecorationImage(
-                                                image: NetworkImage(therapyList.length>0
+                                                image: NetworkImage(therapyList.isNotEmpty
                                                     ? therapyList[index]
                                                     .therapy_image
                                                     .toString()
@@ -159,7 +158,7 @@ class TherapyCategoriesState extends State<TherapyCategories> {
                                                 fit: BoxFit.cover,
                                               ),
                                             ),
-                                            child: Text(""),
+                                            child: const Text(""),
                                           ),
                                           Container(
                                             height: 60,
@@ -174,7 +173,7 @@ class TherapyCategoriesState extends State<TherapyCategories> {
                                             ),
                                             child: Center(
                                               child: Text(
-                                                  therapyList.length>0
+                                                  therapyList.isNotEmpty
                                                       ? therapyList[index]
                                                           .therapy_name
                                                           .toString()
@@ -245,7 +244,7 @@ class TherapyCategoriesState extends State<TherapyCategories> {
 
               var rest1 = data["msg"];
               data = json.decode(response.body);
-              print('--->>?   ${data}');
+              print('--->>?   $data');
 
               if (data["status"] == "true" && data["msg"] == "success") {
                 print('Login succssfull---    ');
@@ -253,15 +252,15 @@ class TherapyCategoriesState extends State<TherapyCategories> {
                 final jsonResponse = json.decode(response.body);
 
                 AllTherapyResponse studentAllChapterResponse =
-                    new AllTherapyResponse.fromJson(jsonResponse);
+                    AllTherapyResponse.fromJson(jsonResponse);
               /*  setState(() {*/
-                  therapyList = studentAllChapterResponse!.response!;
+                  therapyList = studentAllChapterResponse.response!;
 
                   //   leadList.add(person.campaignData.indexOf(0));
              /*   });*/
                 //  showAlertDialog(context, "Uploaded KYC successfully" );
               } else {
-                therapyList!.clear();
+                therapyList.clear();
                 setState(() {});
               }
             }
@@ -271,6 +270,7 @@ class TherapyCategoriesState extends State<TherapyCategories> {
         })
         .catchError((err) => print('error : ' + err.toString()))
         .whenComplete(() {});
+    return null;
     //print('reason phrase- ${res.stream.bytesToString()}');
     // return res.stream.bytesToString();
   }

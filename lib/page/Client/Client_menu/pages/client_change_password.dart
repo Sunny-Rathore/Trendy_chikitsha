@@ -1,31 +1,23 @@
-import 'dart:collection';
 import 'dart:convert';
 
-import 'dart:ui';
-
-import 'package:doctor/baseurl/baseURL.dart';
-import 'package:doctor/global/global.dart';
-import 'package:doctor/page/Healer/Healer%20Register/Healer_Forgotpass.dart';
-import 'package:doctor/page/Healer/Healer%20Register/Healer_Register.dart';
-import 'package:doctor/page/Healer/Healer_menu/Menu%20Pages/Home_Menu.dart';
-import 'package:doctor/utils/color_utils.dart';
-import 'package:doctor/utils/string_utils.dart';
-import 'package:doctor/utils/utils_methods.dart';
-import 'package:doctor/widget/text_widget.dart';
-import 'package:doctor/widgets/spinKitFadingCircleWidget.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter/services.dart';
+import 'package:trendy_chikitsa/baseurl/baseURL.dart';
+import 'package:trendy_chikitsa/models/healer_responses/healer_change_password_response.dart';
+import 'package:trendy_chikitsa/page/Client/Client_menu/pages/Client_Home_Menu.dart';
+import 'package:trendy_chikitsa/utils/color_utils.dart';
+import 'package:trendy_chikitsa/utils/string_utils.dart';
+import 'package:trendy_chikitsa/widget/text_widget.dart';
+import 'package:trendy_chikitsa/widgets/spinKitFadingCircleWidget.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 class ClientChangePassword extends StatefulWidget {
   String from_page = "";
+
+  ClientChangePassword({super.key});
 
   @override
   ClientChangePasswordstate createState() => ClientChangePasswordstate();
@@ -39,13 +31,9 @@ class ClientChangePassword extends StatefulWidget {
 class ClientChangePasswordstate extends State<ClientChangePassword> {
   static const String routeName = '/homePage';
   String appointment_Status = 'Pending Appointment';
-  String customer_mobile = '',
-      age = '',
-      phone_no = '',
-      pickup_address = '';
+  String customer_mobile = '', age = '', phone_no = '', pickup_address = '';
   String dropdownvalue = 'Select Gender';
-  bool isVisible = false,
-      isLoading = false;
+  bool isVisible = false, isLoading = false;
   SharedPreferences? prefs;
   var items = [
     'Select Gender',
@@ -55,13 +43,17 @@ class ClientChangePasswordstate extends State<ClientChangePassword> {
   ];
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   static const emailRegex = r'\S+@\S+\.\S+';
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final myController = TextEditingController();
   var isPasswordHidden = true.obs;
   bool isChecked = false;
-  int? _value = 0;
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  final myController = TextEditingController();
-  TextEditingController  _newPasswordController = TextEditingController();
-  TextEditingController _oldPasswordController = TextEditingController();
+  final int? _value = 0;
+  bool _isNewObscure = false, _isOldObscure = false, _isConfirmObscure = false;
+  final TextEditingController _oldPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -72,263 +64,421 @@ class ClientChangePasswordstate extends State<ClientChangePassword> {
 
   saveValue() async {
     prefs = await SharedPreferences.getInstance();
+    setState(() {});
   }
-
 
   @override
   Widget build(BuildContext context) {
-    print(
-        'responsive---    ${MediaQuery
-            .of(context)
-            .size
-            .width}  ${MediaQuery
-            .of(context)
-            .size
-            .height}');
     return Sizer(builder: (context, orientation, deviceType) {
-      return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: '',
-          builder: (context, widget) {
-            // TODO: implement build
-            return new Scaffold(
-                key: _scaffoldKey,
-                resizeToAvoidBottomInset: true,
-                backgroundColor: ColorUtils.whiteColor.withOpacity(1),
-                appBar: AppBar(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      bottom: Radius.circular(10),
-                    ),
-                  ),
-                  elevation: 5,
-                  backgroundColor: ColorUtils.whatsapp_icon_color,
-                  title: Text(
-                    "Change Password",
+      return SafeArea(
+          child: Scaffold(
+              /*  resizeToAvoidBottomInset: false,*/
+              extendBodyBehindAppBar: true,
+              appBar: AppBar(
+                toolbarHeight: 60,
+                backgroundColor: ColorUtils.trendyThemeColor,
+                elevation: 0.0,
+                /*  automaticallyImplyLeading: false,*/
+                title: Text('Change Password',
+                    textAlign: TextAlign.left,
                     style: TextStyle(
                       fontFamily: StringUtils.roboto_font_family,
                       color: ColorUtils.whiteColor,
-                      letterSpacing: 0.15,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                  ),
-                  /*     actions: <Widget>[
-                GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Profile()),
-                      );
-                    },
-                    child: Padding(
-                        padding: EdgeInsets.fromLTRB(3, 0, 20, 00),
-                        child: SvgPicture.asset(
-                          'assets/images/profile.svg',
-                          height: 22,
-                          width: 22,
-                        )))
-              ],*/
-                  /*       leading: new IconButton(
-                icon: new Icon(
-                  Icons.menu,
-                  color: ColorUtils.appDarkBlueColor,
-                  size: 20,
-                ),
-              onPressed: (){},
-              *//*  onPressed: () => _scaffoldKey.currentState!.openDrawer(),*//*
+                      fontSize: 18,
+                    )),
+                centerTitle: true,
+                systemOverlayStyle: SystemUiOverlayStyle.light,
+                /*   flexibleSpace: Container(
+                decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20)),
+                    gradient: LinearGradient(
+                        colors: [AppColors.colorlal, AppColors.colorJambli],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter)),
               ),*/
-                ),
-                body:  SingleChildScrollView(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 80),
+              ),
+              body: Stack(children: [
+                SingleChildScrollView(
                     child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Form(
-                        key: _formkey,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-
-                        TextFormField(
-                        obscureText: isPasswordHidden.value,
-                          decoration: InputDecoration(
-                              hintText: 'Old Password',
-                              border: const OutlineInputBorder(),
-                              prefixIcon: const Icon(Icons.lock),
-                              suffix: InkWell(
-                                child: Icon(
-                                  isPasswordHidden.value
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
-                                  color: Colors.grey,
-                                  size: 20,
-                                ),
-                                onTap: () {
-                                  isPasswordHidden.value =
-                                  !isPasswordHidden.value;
-                                },
-                              )),
+                  padding: EdgeInsets.only(
+                      left: 0, right: 0, top: 15.h, bottom: 10.h),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                          padding:
+                              EdgeInsets.only(left: 8.w, right: 8.w, top: 3.h),
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(' Old Password',
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    fontFamily: StringUtils.roboto_font_family,
+                                    color: ColorUtils.blackColor,
+                                    fontSize: 17,
+                                  )))),
+                      Container(
+                        height: 7.h,
+                        width: 100.w,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 3, horizontal: 15),
+                        margin:
+                            EdgeInsets.only(top: 1.h, left: 8.w, right: 8.w),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: ColorUtils.lightGreyBorderColor),
+                          color: ColorUtils.whiteColor,
+                        ),
+                        child: TextField(
+                          controller: _oldPasswordController,
                           keyboardType: TextInputType.visiblePassword,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'field cannot be empty';
-                            } else if (value.length < 5) {
-                              return "must be at least 6 chars";
-                            } else {
-                              return null;
-                            }
+                          textAlign: TextAlign.left,
+                          obscureText: !_isOldObscure,
+                          decoration: InputDecoration(
+                              hintStyle: TextStyle(
+                                  color: ColorUtils.b3Color,
+                                  fontFamily:
+                                      StringUtils.roboto_font_family_regular,
+                                  fontSize: 17),
+                              suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _isOldObscure
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isOldObscure = !_isOldObscure;
+                                    });
+                                  }),
+                              labelStyle: TextStyle(
+                                  color: ColorUtils.textFormFieldLabelColor,
+                                  fontFamily: StringUtils.roboto_font_family,
+                                  fontSize: 17),
+                              border: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              errorBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              hintText: 'Enter old password'),
+                          onChanged: (text) {
+                            setState(() {
+                              /*   customer_mobile =
+                                                            text
+                                                                .toString();*/
+                            });
                           },
                         ),
-                        const SizedBox(
-                          height: 20,
+                      ),
+                      Padding(
+                          padding:
+                              EdgeInsets.only(left: 8.w, right: 8.w, top: 3.h),
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(' New Password',
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    fontFamily: StringUtils.roboto_font_family,
+                                    color: ColorUtils.blackColor,
+                                    fontSize: 17,
+                                  )))),
+                      Container(
+                        height: 7.h,
+                        width: 100.w,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 3, horizontal: 15),
+                        margin:
+                            EdgeInsets.only(top: 1.h, left: 8.w, right: 8.w),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: ColorUtils.lightGreyBorderColor),
+                          color: ColorUtils.whiteColor,
                         ),
-                            TextFormField(
-                              obscureText: isPasswordHidden.value,
-                              decoration: InputDecoration(
-                                  hintText: 'New Password',
-                                  border: const OutlineInputBorder(),
-                                  prefixIcon: const Icon(Icons.lock),
-                                  suffix: InkWell(
-                                    child: Icon(
-                                      isPasswordHidden.value
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
-                                      color: Colors.grey,
-                                      size: 20,
-                                    ),
-                                    onTap: () {
-                                      isPasswordHidden.value =
-                                      !isPasswordHidden.value;
-                                    },
-                                  )),
-                              keyboardType: TextInputType.visiblePassword,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'field cannot be empty';
-                                } else if (value.length < 5) {
-                                  return "must be at least 6 chars";
-                                } else {
-                                  return null;
-                                }
-                              },
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            Obx(
-                                  () => TextFormField(
-                                obscureText: isPasswordHidden.value,
-                                decoration: InputDecoration(
-                                    hintText: 'Confirm Password',
-                                    border: const OutlineInputBorder(),
-                                    prefixIcon: const Icon(Icons.lock),
-                                    suffix: InkWell(
-                                      child: Icon(
-                                        isPasswordHidden.value
-                                            ? Icons.visibility
-                                            : Icons.visibility_off,
-                                        color: Colors.grey,
-                                        size: 20,
-                                      ),
-                                      onTap: () {
-                                        isPasswordHidden.value =
-                                        !isPasswordHidden.value;
-                                      },
-                                    )),
-                                keyboardType: TextInputType.visiblePassword,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'field cannot be empty';
-                                  } else if (value.length < 5) {
-                                    return "must be at least 6 chars";
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                              ),
-                            ),
-
-
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Padding(
-                                    padding: EdgeInsets.fromLTRB(10, 40, 10, 20),
-                                    child: SizedBox(
-                                        width: 280,
-                                        height: 46,
-                                        child: ElevatedButton(
-                                            child: TextWidget(
-                                                'Submit',
-                                                FontWeight.normal,
-                                                ColorUtils.whiteColor,
-                                                19,
-                                                StringUtils.roboto_font_family),
-                                            style: ButtonStyle(
-                                                elevation: MaterialStateProperty.all(20),
-                                                foregroundColor: MaterialStateProperty.all<Color>(
-                                                    ColorUtils.headerTextColor),
-                                                backgroundColor: MaterialStateProperty.all<Color>(
-                                                    ColorUtils.headerTextColor),
-                                                shape: MaterialStateProperty.all<
-                                                    RoundedRectangleBorder>(
-                                                    RoundedRectangleBorder(
-                                                        borderRadius:
-                                                        new BorderRadius.circular(30.0),
-                                                        side: BorderSide(
-                                                            color: ColorUtils.headerTextColor)))),
-                                            onPressed: () {
-
-                                            }))))
-                          ],
+                        child: TextField(
+                          controller: _passwordController,
+                          keyboardType: TextInputType.visiblePassword,
+                          textAlign: TextAlign.left,
+                          obscureText: !_isNewObscure,
+                          decoration: InputDecoration(
+                              hintStyle: TextStyle(
+                                  color: ColorUtils.b3Color,
+                                  fontFamily:
+                                      StringUtils.roboto_font_family_regular,
+                                  fontSize: 17),
+                              suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _isNewObscure
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isNewObscure = !_isNewObscure;
+                                    });
+                                  }),
+                              labelStyle: TextStyle(
+                                  color: ColorUtils.textFormFieldLabelColor,
+                                  fontFamily: StringUtils.roboto_font_family,
+                                  fontSize: 17),
+                              border: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              errorBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              hintText: 'Enter new password'),
+                          onChanged: (text) {
+                            setState(() {
+                              /*   customer_mobile =
+                                                            text
+                                                                .toString();*/
+                            });
+                          },
                         ),
                       ),
-                    ),
+                      Padding(
+                          padding:
+                              EdgeInsets.only(left: 8.w, right: 8.w, top: 3.h),
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text('Confirm Password',
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    fontFamily: StringUtils.roboto_font_family,
+                                    color: ColorUtils.blackColor,
+                                    fontSize: 17,
+                                  )))),
+                      Container(
+                        height: 7.h,
+                        width: 100.w,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 3, horizontal: 15),
+                        margin: EdgeInsets.only(
+                            top: 1.h, left: 8.w, right: 8.w, bottom: 3.h),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: ColorUtils.lightGreyBorderColor),
+                          color: ColorUtils.whiteColor,
+                        ),
+                        child: TextField(
+                          controller: _confirmPasswordController,
+                          keyboardType: TextInputType.visiblePassword,
+                          textAlign: TextAlign.left,
+                          obscureText: !_isConfirmObscure,
+                          decoration: InputDecoration(
+                              hintStyle: TextStyle(
+                                  color: ColorUtils.b3Color,
+                                  fontFamily:
+                                      StringUtils.roboto_font_family_regular,
+                                  fontSize: 17),
+                              suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _isConfirmObscure
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isConfirmObscure = !_isConfirmObscure;
+                                    });
+                                  }),
+                              labelStyle: TextStyle(
+                                  color: ColorUtils.textFormFieldLabelColor,
+                                  fontFamily: StringUtils.roboto_font_family,
+                                  fontSize: 17),
+                              border: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              errorBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              hintText: 'Enter confirm password'),
+                          onChanged: (text) {
+                            setState(() {
+                              /*   customer_mobile =
+                                                            text
+                                                                .toString();*/
+                            });
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5.h,
+                      ),
+                    ],
                   ),
-                ));
-          });
+                )),
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                        padding: EdgeInsets.fromLTRB(10, 0, 10, 5.h),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              InkWell(
+                                  onTap: () {
+                                    if (_oldPasswordController.text.isEmpty) {
+                                      showAlertDialog(
+                                          context, "Please enter old password");
+                                    } else if (_passwordController
+                                        .text.isEmpty) {
+                                      showAlertDialog(
+                                          context, "Please enter new password");
+                                    } else if (_confirmPasswordController
+                                        .text.isEmpty) {
+                                      showAlertDialog(context,
+                                          "Please enter confirm password");
+                                    } else if (_confirmPasswordController.text
+                                            .toString()
+                                            .trim() !=
+                                        _passwordController.text
+                                            .toString()
+                                            .trim()) {
+                                      showAlertDialog(context,
+                                          "Confirm password does not match with new password.");
+                                    } else {
+                                      healerChangePass();
+                                    }
+                                  },
+                                  child: SizedBox(
+                                      width: 280,
+                                      height: 46,
+                                      child: ElevatedButton(
+                                          child: TextWidget(
+                                              'Continue',
+                                              FontWeight.normal,
+                                              ColorUtils.whiteColor,
+                                              19,
+                                              StringUtils.roboto_font_family),
+                                          style: ButtonStyle(
+                                              elevation:
+                                                  MaterialStateProperty.all(10),
+                                              foregroundColor: MaterialStateProperty.all<Color>(
+                                                  ColorUtils.trendyButtonColor),
+                                              backgroundColor:
+                                                  MaterialStateProperty.all<Color>(
+                                                      ColorUtils
+                                                          .trendyButtonColor),
+                                              shape: MaterialStateProperty.all<
+                                                      RoundedRectangleBorder>(
+                                                  RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(10.0),
+                                                      side: BorderSide(color: ColorUtils.trendyButtonColor)))),
+                                          onPressed: () async {
+                                            if (_oldPasswordController
+                                                .text.isEmpty) {
+                                              showAlertDialog(context,
+                                                  "Please enter old password");
+                                            } else if (_passwordController
+                                                .text.isEmpty) {
+                                              showAlertDialog(context,
+                                                  "Please enter new password");
+                                            } else if (_confirmPasswordController
+                                                .text.isEmpty) {
+                                              showAlertDialog(context,
+                                                  "Please enter new password");
+                                            } else if (_confirmPasswordController
+                                                    .text
+                                                    .toString()
+                                                    .trim() !=
+                                                _passwordController.text
+                                                    .toString()
+                                                    .trim()) {
+                                              showAlertDialog(context,
+                                                  "Confirm password does not match with new password.");
+                                            } else {
+                                              healerChangePass();
+                                            }
+                                          }))),
+                              SizedBox(
+                                height: 2.h,
+                              ),
+                            ]))),
+                SpinKitFadingCircleWidget(isLoading)
+              ])));
     });
   }
-
 
   showAlertDialog(BuildContext context, String msg) {
     // set up the button
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-        title: Row(
+      titlePadding: const EdgeInsets.all(0),
+      title: Container(
+          height: 50,
+          alignment: Alignment.center,
+          color: ColorUtils.trendyButtonColor,
+          child: const Text(
+            "Alert !!",
+            style: TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 25, color: Colors.white),
+          )),
+      // Row(
+      //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      //   children: [
+      //     GestureDetector(
+      //         onTap: () {
+      //           Navigator.of(context).pop();
+      //         },
+      //         child:SizedBox( width: 60.w,child:Text(msg,
+      //             textAlign: TextAlign.left,
+      //             style: const TextStyle(
+      //                 fontWeight: FontWeight.normal,
+      //                 color: Colors.black87,
+      //                 fontSize: 18)))),
+      //   ],
+      // ),
+
+      content: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: SizedBox(
+                  width: 60.w,
+                  child: Text(msg,
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black87,
+                          fontSize: 18)))),
+        ],
+      ),
+      actions: [
+        Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            new GestureDetector(
+            GestureDetector(
                 onTap: () {
                   Navigator.of(context).pop();
                 },
-                child:Container( width: 60.w,child:Text(msg,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        color: Colors.black87,
-                        fontSize: 18)))),
+                child: Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: ColorUtils.trendyButtonColor)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text("OK",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            fontWeight: FontWeight.normal,
+                            color: ColorUtils.appDarkBlueColor,
+                            fontSize: 18)),
+                  ),
+                )),
           ],
         ),
-        content: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            new GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text("Ok",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        color: ColorUtils.appDarkBlueColor,
-                        fontSize: 18))),
-          ],
-        ));
+        const SizedBox(
+          height: 10,
+        )
+      ],
+    );
 
     // show the dialog
     showDialog(
@@ -338,7 +488,88 @@ class ClientChangePasswordstate extends State<ClientChangePassword> {
       },
     );
   }
-  Future<String?> changePassword() async {
+
+  Future<String?> healerChangePass() async {
+    isLoading = true;
+    setState(() {});
+    var data;
+    print(
+        'Healer Change Password   ${prefs!.getString(StringUtils.id).toString()}');
+    var request = http.MultipartRequest('POST', BaseuURL.clientChangePassword);
+
+    request.fields['client_id'] = prefs!.getString(StringUtils.id).toString();
+    request.fields['oldpassword'] =
+        _oldPasswordController.text.toString().trim();
+    request.fields['newpassword'] = _passwordController.text.toString().trim();
+
+    // var res = await request.send();
+
+    request
+        .send()
+        .then((result) async {
+          http.Response.fromStream(result).then((response) {
+            if (response.statusCode == 200) {
+              print("Uploaded! ");
+              print('response.body ' + response.body);
+
+              var jsonData = response.body;
+              print(jsonData);
+              data = json.decode(response.body);
+
+              var rest1 = data["msg"];
+              data = json.decode(response.body);
+              print('--->>?   $data');
+
+              if (data["status"] == "true" &&
+                  (data["msg"] == "Password Changed Successfully!!!")) {
+                HealerChangePassResponse changePassResponse =
+                    HealerChangePassResponse.fromJson(
+                        jsonDecode(response.body));
+
+                showSnackBar(context, data["msg"]);
+                /*    prefs!.setString(StringUtils.completeProfile, "No");
+            prefs!.setString(StringUtils.id, "");
+            prefs!.setString(StringUtils.unique_id, "");
+            prefs!.setString(StringUtils.type, "");
+
+
+            prefs!.setString(StringUtils.completeProfile, "NO");*/
+                Future.delayed(const Duration(seconds: 2), () {
+                  isLoading = false;
+                  setState(() {});
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              const Client_Home_Menu()));
+
+                  /*    Navigator.pushAndRemoveUntil<dynamic>(
+                context,
+                MaterialPageRoute<dynamic>(
+                  builder: (BuildContext context) => LoginPage(),
+                ),
+                    (route) => false,//if you want to disable back feature set to false
+              );*/
+                });
+              } else {
+                showAlertDialog(context, data["response"]);
+                Future.delayed(const Duration(seconds: 2), () {
+                  isLoading = false;
+                  setState(() {});
+                });
+              }
+            }
+
+            return response.body;
+          });
+        })
+        .catchError((err) => print('error : ' + err.toString()))
+        .whenComplete(() {});
+    return null;
+    //print('reason phrase- ${res.stream.bytesToString()}');
+    // return res.stream.bytesToString();
+  }
+/*  Future<String?> changePassword() async {
     var data;
    var request = http.MultipartRequest(
         'POST', BaseuURL.clientChangePassword);
@@ -365,7 +596,7 @@ class ClientChangePasswordstate extends State<ClientChangePassword> {
           print('--->>?   ${data}');
 
 
-      /*    if (data["status"] == "true" &&
+      */ /*    if (data["status"] == "true" &&
               data["msg"] == "Password Changed Successfully!!!") {
             print('Password Changed Successfully!!!    ');
             StudentLoginResponse loginUser = StudentLoginResponse.fromJson(
@@ -391,7 +622,7 @@ class ClientChangePasswordstate extends State<ClientChangePassword> {
           } else {
             showAlertDialog(context,data["msg"]);
             UtilMethods.showSnackBar(context, data["msg"]);
-          }*/
+          }*/ /*
         }
 
         return response.body;
@@ -401,5 +632,18 @@ class ClientChangePasswordstate extends State<ClientChangePassword> {
         .whenComplete(() {});
     //print('reason phrase- ${res.stream.bytesToString()}');
     // return res.stream.bytesToString();
+  }*/
+
+  showSnackBar(
+    BuildContext context,
+    String msg,
+  ) {
+    final snackBar = SnackBar(
+      content: Text(msg),
+    );
+
+// Find the ScaffoldMessenger in the widget tree
+// and use it to show a SnackBar.
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

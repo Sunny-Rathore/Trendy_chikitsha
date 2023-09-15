@@ -1,8 +1,7 @@
-import 'package:doctor/page/Client/Client%20Register/Client_Login.dart';
+import 'package:trendy_chikitsa/page/Client/Client%20Register/Client_Login.dart';
 import 'package:flutter/material.dart';
 
 import '../../../global/global.dart';
-import '../Client_Home.dart';
 
 class Client_Forgotpass extends StatefulWidget {
   const Client_Forgotpass({Key? key}) : super(key: key);
@@ -12,11 +11,9 @@ class Client_Forgotpass extends StatefulWidget {
 }
 
 class _Client_ForgotpassState extends State<Client_Forgotpass> {
-
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   static const emailRegex =
       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +21,7 @@ class _Client_ForgotpassState extends State<Client_Forgotpass> {
         child: Scaffold(
             extendBodyBehindAppBar: true,
             appBar: AppBar(
-              brightness: Brightness.dark,
+              // brightness: Brightness.dark,
               toolbarHeight: 70,
               backgroundColor: Colors.transparent,
               elevation: 0.0,
@@ -104,7 +101,6 @@ class _Client_ForgotpassState extends State<Client_Forgotpass> {
                   ),
                 ),
               ),
-            ))
-    );
+            )));
   }
 }

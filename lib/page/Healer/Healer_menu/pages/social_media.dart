@@ -1,31 +1,23 @@
-import 'dart:collection';
 import 'dart:convert';
-import 'dart:io';
 
-import 'dart:ui';
-import 'package:doctor/baseurl/baseURL.dart';
-import 'package:doctor/models/healer_responses/get_healer_social_media_response.dart';
-import 'package:doctor/models/healer_responses/healer_social_media_response.dart';
-import 'package:doctor/utils/color_utils.dart';
-import 'package:doctor/utils/string_utils.dart';
-import 'package:doctor/utils/utils_methods.dart';
-import 'package:doctor/widgets/spinKitFadingCircleWidget.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:trendy_chikitsa/baseurl/baseURL.dart';
+import 'package:trendy_chikitsa/models/healer_responses/get_healer_social_media_response.dart';
+import 'package:trendy_chikitsa/models/healer_responses/healer_social_media_response.dart';
+import 'package:trendy_chikitsa/utils/color_utils.dart';
+import 'package:trendy_chikitsa/utils/string_utils.dart';
+import 'package:trendy_chikitsa/widgets/spinKitFadingCircleWidget.dart';
 
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:getwidget/getwidget.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:multiselect/multiselect.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 class SocialMedia extends StatefulWidget {
   String from_page = "";
+
+  SocialMedia({super.key});
 
   @override
   SocialMediastate createState() => SocialMediastate();
@@ -54,7 +46,7 @@ class SocialMediastate extends State<SocialMedia> {
     'Female',
     'Other',
   ];
-  List<String?> _animals = [
+  final List<String?> _animals = [
     'Depression',
     'Carrer related issue',
     'Confidence issue',
@@ -64,24 +56,26 @@ class SocialMediastate extends State<SocialMedia> {
   ];
 
   List<String> selected = [];
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final myController = TextEditingController();
   final nameController = TextEditingController();
 
   String appToken = "";
   bool isLoading = false;
-  String share_link = "", title = "Profile";
-  PickedFile? _imageFile = null;
+  String share_link = "",
+      title = "Profile";
+  late PickedFile? _imageFile;
   final ImagePicker _picker = ImagePicker();
-  int _selectedIndex = 0;
+  final int _selectedIndex = 0;
   SharedPreferences? prefs;
-  TextEditingController _fbController = TextEditingController();
-  TextEditingController _twitterController = TextEditingController();
-  TextEditingController _instagramController = TextEditingController();
-  TextEditingController _pinterestController = TextEditingController();
-  TextEditingController _linkedinController = TextEditingController();
-  TextEditingController _youtubeController = TextEditingController();
-  int value = 1, pricingValue = 1;
+  final TextEditingController _fbController = TextEditingController();
+  final TextEditingController _twitterController = TextEditingController();
+  final TextEditingController _instagramController = TextEditingController();
+  final TextEditingController _pinterestController = TextEditingController();
+  final TextEditingController _linkedinController = TextEditingController();
+  final TextEditingController _youtubeController = TextEditingController();
+  int value = 1,
+      pricingValue = 1;
 
   String? selectedSpinnerItem,
       selectedSpinnerItem1,
@@ -101,9 +95,10 @@ class SocialMediastate extends State<SocialMedia> {
 
   saveValue() async {
     prefs = await SharedPreferences.getInstance();
-
-   getSocialMediaLinks();
-
+setState(() {
+  
+});
+    getSocialMediaLinks();
   }
 
   @override
@@ -115,12 +110,12 @@ class SocialMediastate extends State<SocialMedia> {
           title: '',
           builder: (context, widget) {
             // TODO: implement build
-            return new Scaffold(
+            return Scaffold(
                 key: _scaffoldKey,
                 resizeToAvoidBottomInset: true,
                 backgroundColor: ColorUtils.lightGreyBorderColor,
                 appBar: AppBar(
-                  shape: RoundedRectangleBorder(
+                  shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.vertical(
                       bottom: Radius.circular(20),
                     ),
@@ -137,7 +132,7 @@ class SocialMediastate extends State<SocialMedia> {
                       fontSize: 20,
                     ),
                   ),
-                  actions: <Widget>[],
+                  actions: const <Widget>[],
                 ),
                 body: Stack(
                   children: [
@@ -156,7 +151,7 @@ class SocialMediastate extends State<SocialMedia> {
                                         bottom: 5.h),
                                     child: Column(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.start,
+                                        MainAxisAlignment.start,
                                         children: [
                                           Padding(
                                               padding: EdgeInsets.only(
@@ -165,7 +160,7 @@ class SocialMediastate extends State<SocialMedia> {
                                                   top: 2.h),
                                               child: Align(
                                                   alignment:
-                                                      Alignment.centerLeft,
+                                                  Alignment.centerLeft,
                                                   child: Text('Facebook URL',
                                                       textAlign: TextAlign.left,
                                                       style: TextStyle(
@@ -177,7 +172,8 @@ class SocialMediastate extends State<SocialMedia> {
                                                       )))),
                                           Container(
                                             height: 6.h,
-                                            width: MediaQuery.of(context)
+                                            width: MediaQuery
+                                                .of(context)
                                                 .size
                                                 .width,
                                             padding: EdgeInsets.symmetric(
@@ -188,7 +184,7 @@ class SocialMediastate extends State<SocialMedia> {
                                                 right: 4.w),
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(5),
+                                              BorderRadius.circular(5),
                                               border: Border.all(
                                                 color: ColorUtils.greyColor
                                                     .withOpacity(.4),
@@ -197,28 +193,28 @@ class SocialMediastate extends State<SocialMedia> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
+                                            child: TextField(
                                               controller: _fbController,
                                               keyboardType: TextInputType.text,
                                               /* enabled: false,*/
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
-                                                          ColorUtils.blackColor,
+                                                      ColorUtils.blackColor,
                                                       fontSize: 17),
                                                   labelStyle: TextStyle(
                                                       color:
-                                                          ColorUtils.blackColor,
+                                                      ColorUtils.blackColor,
                                                       fontSize: 16),
                                                   border: InputBorder.none,
                                                   focusedBorder:
-                                                      InputBorder.none,
+                                                  InputBorder.none,
                                                   enabledBorder:
-                                                      InputBorder.none,
+                                                  InputBorder.none,
                                                   errorBorder: InputBorder.none,
                                                   disabledBorder:
-                                                      InputBorder.none,
+                                                  InputBorder.none,
                                                   hintText: ''),
                                               onChanged: (text) {
                                                 setState(() {
@@ -239,7 +235,7 @@ class SocialMediastate extends State<SocialMedia> {
                                                   top: 2.h),
                                               child: Align(
                                                   alignment:
-                                                      Alignment.centerLeft,
+                                                  Alignment.centerLeft,
                                                   child: Text('Twitter URL',
                                                       textAlign: TextAlign.left,
                                                       style: TextStyle(
@@ -251,7 +247,8 @@ class SocialMediastate extends State<SocialMedia> {
                                                       )))),
                                           Container(
                                             height: 6.h,
-                                            width: MediaQuery.of(context)
+                                            width: MediaQuery
+                                                .of(context)
                                                 .size
                                                 .width,
                                             padding: EdgeInsets.symmetric(
@@ -262,7 +259,7 @@ class SocialMediastate extends State<SocialMedia> {
                                                 right: 4.w),
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(5),
+                                              BorderRadius.circular(5),
                                               border: Border.all(
                                                 color: ColorUtils.greyColor
                                                     .withOpacity(.4),
@@ -271,28 +268,28 @@ class SocialMediastate extends State<SocialMedia> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
+                                            child: TextField(
                                               controller: _twitterController,
                                               keyboardType: TextInputType.text,
                                               /* enabled: false,*/
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
-                                                          ColorUtils.blackColor,
+                                                      ColorUtils.blackColor,
                                                       fontSize: 17),
                                                   labelStyle: TextStyle(
                                                       color:
-                                                          ColorUtils.blackColor,
+                                                      ColorUtils.blackColor,
                                                       fontSize: 16),
                                                   border: InputBorder.none,
                                                   focusedBorder:
-                                                      InputBorder.none,
+                                                  InputBorder.none,
                                                   enabledBorder:
-                                                      InputBorder.none,
+                                                  InputBorder.none,
                                                   errorBorder: InputBorder.none,
                                                   disabledBorder:
-                                                      InputBorder.none,
+                                                  InputBorder.none,
                                                   hintText: ''),
                                               onChanged: (text) {
                                                 setState(() {
@@ -312,7 +309,7 @@ class SocialMediastate extends State<SocialMedia> {
                                                   top: 2.h),
                                               child: Align(
                                                   alignment:
-                                                      Alignment.centerLeft,
+                                                  Alignment.centerLeft,
                                                   child: Text('Instagram URL',
                                                       textAlign: TextAlign.left,
                                                       style: TextStyle(
@@ -324,7 +321,8 @@ class SocialMediastate extends State<SocialMedia> {
                                                       )))),
                                           Container(
                                             height: 6.h,
-                                            width: MediaQuery.of(context)
+                                            width: MediaQuery
+                                                .of(context)
                                                 .size
                                                 .width,
                                             padding: EdgeInsets.symmetric(
@@ -335,7 +333,7 @@ class SocialMediastate extends State<SocialMedia> {
                                                 right: 4.w),
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(5),
+                                              BorderRadius.circular(5),
                                               border: Border.all(
                                                 color: ColorUtils.greyColor
                                                     .withOpacity(.4),
@@ -344,28 +342,28 @@ class SocialMediastate extends State<SocialMedia> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
+                                            child: TextField(
                                               controller: _instagramController,
                                               keyboardType: TextInputType.text,
                                               /* enabled: false,*/
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
-                                                          ColorUtils.blackColor,
+                                                      ColorUtils.blackColor,
                                                       fontSize: 17),
                                                   labelStyle: TextStyle(
                                                       color:
-                                                          ColorUtils.blackColor,
+                                                      ColorUtils.blackColor,
                                                       fontSize: 16),
                                                   border: InputBorder.none,
                                                   focusedBorder:
-                                                      InputBorder.none,
+                                                  InputBorder.none,
                                                   enabledBorder:
-                                                      InputBorder.none,
+                                                  InputBorder.none,
                                                   errorBorder: InputBorder.none,
                                                   disabledBorder:
-                                                      InputBorder.none,
+                                                  InputBorder.none,
                                                   hintText: ''),
                                               onChanged: (text) {
                                                 setState(() {
@@ -385,7 +383,7 @@ class SocialMediastate extends State<SocialMedia> {
                                                   top: 2.h),
                                               child: Align(
                                                   alignment:
-                                                      Alignment.centerLeft,
+                                                  Alignment.centerLeft,
                                                   child: Text('Pinterest URL',
                                                       textAlign: TextAlign.left,
                                                       style: TextStyle(
@@ -397,7 +395,8 @@ class SocialMediastate extends State<SocialMedia> {
                                                       )))),
                                           Container(
                                             height: 6.h,
-                                            width: MediaQuery.of(context)
+                                            width: MediaQuery
+                                                .of(context)
                                                 .size
                                                 .width,
                                             padding: EdgeInsets.symmetric(
@@ -408,7 +407,7 @@ class SocialMediastate extends State<SocialMedia> {
                                                 right: 4.w),
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(5),
+                                              BorderRadius.circular(5),
                                               border: Border.all(
                                                 color: ColorUtils.greyColor
                                                     .withOpacity(.4),
@@ -417,28 +416,28 @@ class SocialMediastate extends State<SocialMedia> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
+                                            child: TextField(
                                               controller: _pinterestController,
                                               keyboardType: TextInputType.text,
                                               /* enabled: false,*/
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
-                                                          ColorUtils.blackColor,
+                                                      ColorUtils.blackColor,
                                                       fontSize: 17),
                                                   labelStyle: TextStyle(
                                                       color:
-                                                          ColorUtils.blackColor,
+                                                      ColorUtils.blackColor,
                                                       fontSize: 16),
                                                   border: InputBorder.none,
                                                   focusedBorder:
-                                                      InputBorder.none,
+                                                  InputBorder.none,
                                                   enabledBorder:
-                                                      InputBorder.none,
+                                                  InputBorder.none,
                                                   errorBorder: InputBorder.none,
                                                   disabledBorder:
-                                                      InputBorder.none,
+                                                  InputBorder.none,
                                                   hintText: ''),
                                               onChanged: (text) {
                                                 setState(() {
@@ -458,7 +457,7 @@ class SocialMediastate extends State<SocialMedia> {
                                                   top: 2.h),
                                               child: Align(
                                                   alignment:
-                                                      Alignment.centerLeft,
+                                                  Alignment.centerLeft,
                                                   child: Text('Linkedin URL',
                                                       textAlign: TextAlign.left,
                                                       style: TextStyle(
@@ -470,7 +469,8 @@ class SocialMediastate extends State<SocialMedia> {
                                                       )))),
                                           Container(
                                             height: 6.h,
-                                            width: MediaQuery.of(context)
+                                            width: MediaQuery
+                                                .of(context)
                                                 .size
                                                 .width,
                                             padding: EdgeInsets.symmetric(
@@ -481,7 +481,7 @@ class SocialMediastate extends State<SocialMedia> {
                                                 right: 4.w),
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(5),
+                                              BorderRadius.circular(5),
                                               border: Border.all(
                                                 color: ColorUtils.greyColor
                                                     .withOpacity(.4),
@@ -490,28 +490,28 @@ class SocialMediastate extends State<SocialMedia> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
+                                            child: TextField(
                                               controller: _linkedinController,
                                               keyboardType: TextInputType.text,
                                               /* enabled: false,*/
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
-                                                          ColorUtils.blackColor,
+                                                      ColorUtils.blackColor,
                                                       fontSize: 17),
                                                   labelStyle: TextStyle(
                                                       color:
-                                                          ColorUtils.blackColor,
+                                                      ColorUtils.blackColor,
                                                       fontSize: 16),
                                                   border: InputBorder.none,
                                                   focusedBorder:
-                                                      InputBorder.none,
+                                                  InputBorder.none,
                                                   enabledBorder:
-                                                      InputBorder.none,
+                                                  InputBorder.none,
                                                   errorBorder: InputBorder.none,
                                                   disabledBorder:
-                                                      InputBorder.none,
+                                                  InputBorder.none,
                                                   hintText: ''),
                                               onChanged: (text) {
                                                 setState(() {
@@ -531,7 +531,7 @@ class SocialMediastate extends State<SocialMedia> {
                                                   top: 2.h),
                                               child: Align(
                                                   alignment:
-                                                      Alignment.centerLeft,
+                                                  Alignment.centerLeft,
                                                   child: Text('Youtube URL',
                                                       textAlign: TextAlign.left,
                                                       style: TextStyle(
@@ -543,7 +543,8 @@ class SocialMediastate extends State<SocialMedia> {
                                                       )))),
                                           Container(
                                             height: 6.h,
-                                            width: MediaQuery.of(context)
+                                            width: MediaQuery
+                                                .of(context)
                                                 .size
                                                 .width,
                                             padding: EdgeInsets.symmetric(
@@ -554,7 +555,7 @@ class SocialMediastate extends State<SocialMedia> {
                                                 right: 4.w),
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  BorderRadius.circular(5),
+                                              BorderRadius.circular(5),
                                               border: Border.all(
                                                 color: ColorUtils.greyColor
                                                     .withOpacity(.4),
@@ -563,28 +564,28 @@ class SocialMediastate extends State<SocialMedia> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
+                                            child: TextField(
                                               controller: _youtubeController,
                                               keyboardType: TextInputType.text,
                                               /* enabled: false,*/
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
-                                                          ColorUtils.blackColor,
+                                                      ColorUtils.blackColor,
                                                       fontSize: 17),
                                                   labelStyle: TextStyle(
                                                       color:
-                                                          ColorUtils.blackColor,
+                                                      ColorUtils.blackColor,
                                                       fontSize: 16),
                                                   border: InputBorder.none,
                                                   focusedBorder:
-                                                      InputBorder.none,
+                                                  InputBorder.none,
                                                   enabledBorder:
-                                                      InputBorder.none,
+                                                  InputBorder.none,
                                                   errorBorder: InputBorder.none,
                                                   disabledBorder:
-                                                      InputBorder.none,
+                                                  InputBorder.none,
                                                   hintText: ''),
                                               onChanged: (text) {
                                                 setState(() {
@@ -619,42 +620,49 @@ class SocialMediastate extends State<SocialMedia> {
                                                         .roboto_font_family,
                                                     fontSize: 17,
                                                     color:
-                                                        ColorUtils.whiteColor,
+                                                    ColorUtils.whiteColor,
                                                     letterSpacing: 0.75,
                                                     fontWeight: FontWeight.w700,
                                                     height: 1.2,
                                                   )),
                                               style: ButtonStyle(
-                                                  elevation: MaterialStateProperty.all(
+                                                  elevation: MaterialStateProperty
+                                                      .all(
                                                       0),
-                                                  foregroundColor: MaterialStateProperty.all<Color>(ColorUtils
+                                                  foregroundColor: MaterialStateProperty
+                                                      .all<Color>(ColorUtils
                                                       .violetButtonColor),
                                                   backgroundColor:
-                                                      MaterialStateProperty.all<Color>(ColorUtils
-                                                          .violetButtonColor),
-                                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                  MaterialStateProperty.all<
+                                                      Color>(ColorUtils
+                                                      .violetButtonColor),
+                                                  shape: MaterialStateProperty
+                                                      .all<
+                                                      RoundedRectangleBorder>(
                                                       RoundedRectangleBorder(
-                                                          borderRadius: new BorderRadius.circular(8.0),
-                                                          side: BorderSide(color: ColorUtils.violetButtonColor)))),
+                                                          borderRadius: BorderRadius
+                                                              .circular(8.0),
+                                                          side: BorderSide(
+                                                              color: ColorUtils
+                                                                  .violetButtonColor)))),
                                               onPressed: () {
-                                                isLoading=true;
+                                                isLoading = true;
                                                 updateSocialMedia();
-                                                Future.delayed(Duration(seconds: 3), () {
+                                                Future.delayed(
+                                                    const Duration(seconds: 3), () {
                                                   setState(() {
-
-                                                    isLoading=false;
+                                                    isLoading = false;
                                                   });
                                                   // Do something
                                                 });
                                               }))),
                                 ])),
                             onTap: () async {
-                              isLoading=true;
+                              isLoading = true;
                               updateSocialMedia();
-                              Future.delayed(Duration(seconds: 3), () {
+                              Future.delayed(const Duration(seconds: 3), () {
                                 setState(() {
-
-                                  isLoading=false;
+                                  isLoading = false;
                                 });
                                 // Do something
                               });
@@ -673,7 +681,8 @@ class SocialMediastate extends State<SocialMedia> {
     setState(() {});
     var data;
     print(
-        'Healer Change Password   ${prefs!.getString(StringUtils.id).toString()}');
+        'Healer Change Password   ${prefs!.getString(StringUtils.id)
+            .toString()}');
     var request = http.MultipartRequest('POST', BaseuURL.socialMediaHealer);
 
     request.fields['healer_id'] = prefs!.getString(StringUtils.id).toString();
@@ -694,72 +703,71 @@ class SocialMediastate extends State<SocialMedia> {
     request
         .send()
         .then((result) async {
-          http.Response.fromStream(result).then((response) {
-            if (response.statusCode == 200) {
-              print("Uploaded! ");
-              print('response.body ' + response.body);
+      http.Response.fromStream(result).then((response) {
+        if (response.statusCode == 200) {
+          print("Uploaded! ");
+          print('response.body ' + response.body);
 
-              var jsonData = response.body;
-              print(jsonData);
-              data = json.decode(response.body);
+          var jsonData = response.body;
+          print(jsonData);
+          data = json.decode(response.body);
 
-              var rest1 = data["msg"];
-              data = json.decode(response.body);
-              print('--->>?   ${data}');
+          var rest1 = data["msg"];
+          data = json.decode(response.body);
+          print('--->>?   $data');
 
-              if (data["status"] == "true" &&
-                  (data["msg"] == "Success!  Updated successfully.")) {
-                SubmitSocialMediaResponse submitSocialMediaResponse =
-                    SubmitSocialMediaResponse.fromJson(
-                        jsonDecode(response.body));
+          if (data["status"] == "true" &&
+              (data["msg"] == "Success!  Updated successfully.")) {
+            SubmitSocialMediaResponse submitSocialMediaResponse =
+            SubmitSocialMediaResponse.fromJson(
+                jsonDecode(response.body));
 
-                showSnackBar(context, data["msg"]);
+            showSnackBar(context, data["msg"]);
 
-                prefs!.setString(
-                    StringUtils.fbLink,
-                    submitSocialMediaResponse.response!.hFacebookLink
-                        .toString());
-                prefs!.setString(
-                    StringUtils.twitterLink,
-                    submitSocialMediaResponse.response!.hTwitterLink
-                        .toString());
-                prefs!.setString(
-                    StringUtils.instagramLink,
-                    submitSocialMediaResponse.response!.hInstagramLink
-                        .toString());
-                prefs!.setString(
-                    StringUtils.pinterestLink,
-                    submitSocialMediaResponse.response!.hPinterestLink
-                        .toString());
-                prefs!.setString(
-                    StringUtils.linkedinLink,
-                    submitSocialMediaResponse.response!.hLinkedinLink
-                        .toString());
-                prefs!.setString(
-                    StringUtils.youtubeLink,
-                    submitSocialMediaResponse.response!.hYoutubeLink
-                        .toString());
+            prefs!.setString(
+                StringUtils.fbLink,
+                submitSocialMediaResponse.response!.hFacebookLink
+                    .toString());
+            prefs!.setString(
+                StringUtils.twitterLink,
+                submitSocialMediaResponse.response!.hTwitterLink
+                    .toString());
+            prefs!.setString(
+                StringUtils.instagramLink,
+                submitSocialMediaResponse.response!.hInstagramLink
+                    .toString());
+            prefs!.setString(
+                StringUtils.pinterestLink,
+                submitSocialMediaResponse.response!.hPinterestLink
+                    .toString());
+            prefs!.setString(
+                StringUtils.linkedinLink,
+                submitSocialMediaResponse.response!.hLinkedinLink
+                    .toString());
+            prefs!.setString(
+                StringUtils.youtubeLink,
+                submitSocialMediaResponse.response!.hYoutubeLink
+                    .toString());
 
-                Future.delayed(Duration(seconds: 2), () {
-                  isLoading = false;
-                  setState(() {});
-                });
-              }
-            }
+            Future.delayed(const Duration(seconds: 2), () {
+              isLoading = false;
+              setState(() {});
+            });
+          }
+        }
 
-            return response.body;
-          });
-        })
+        return response.body;
+      });
+    })
         .catchError((err) => print('error : ' + err.toString()))
         .whenComplete(() {});
+    return null;
     //print('reason phrase- ${res.stream.bytesToString()}');
     // return res.stream.bytesToString();
   }
 
-  showSnackBar(
-    BuildContext context,
-    String msg,
-  ) {
+  showSnackBar(BuildContext context,
+      String msg,) {
     final snackBar = SnackBar(
       content: Text(msg),
     );
@@ -768,7 +776,6 @@ class SocialMediastate extends State<SocialMedia> {
 // and use it to show a SnackBar.
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
-
 
 
   Future<GetHealerSocialMediaResponse?> getSocialMediaLinks() async {
@@ -798,52 +805,95 @@ class SocialMediastate extends State<SocialMedia> {
 
           var rest1 = data["msg"];
           data = json.decode(response.body);
-          print('--->>?   ${data}');
+          print('--->>?   $data');
 
           if (data["status"] == "true" &&
               (data["msg"] == "success")) {
-           getHealerSocialMediaResponse=
-           GetHealerSocialMediaResponse.fromJson(
-                jsonDecode(response.body));
+            getHealerSocialMediaResponse =
+                GetHealerSocialMediaResponse.fromJson(
+                    jsonDecode(response.body));
 
             showSnackBar(context, data["msg"]);
-           _fbController.text=getHealerSocialMediaResponse!.response![0].hFacebookLink.toString();
-           _twitterController.text=getHealerSocialMediaResponse!.response![0].hTwitterLink.toString();
-           _instagramController.text=getHealerSocialMediaResponse!.response![0].hInstagramLink.toString();
-          _pinterestController.text=getHealerSocialMediaResponse!.response![0].hPinterestLink.toString();
-           _linkedinController.text=getHealerSocialMediaResponse!.response![0].hLinkedinLink.toString();
-            _youtubeController.text=getHealerSocialMediaResponse!.response![0].hYoutubeLink.toString();
-            prefs!.setString(
-                StringUtils.fbLink,
-                getHealerSocialMediaResponse!.response![0].hFacebookLink.toString());
-            prefs!.setString(
-                StringUtils.twitterLink,
-                getHealerSocialMediaResponse!.response![0].hTwitterLink.toString());
-            prefs!.setString(
-                StringUtils.instagramLink,
-                getHealerSocialMediaResponse!.response![0].hInstagramLink.toString());
-            prefs!.setString(
-                StringUtils.pinterestLink,
-                getHealerSocialMediaResponse!.response![0].hPinterestLink.toString());
-            prefs!.setString(
-                StringUtils.linkedinLink,
-                getHealerSocialMediaResponse!.response![0].hLinkedinLink.toString());
-            prefs!.setString(
-                StringUtils.youtubeLink,
-                getHealerSocialMediaResponse!.response![0].hYoutubeLink.toString());
 
-            Future.delayed(Duration(seconds: 2), () {
-              isLoading = false;
-              setState(() {});
-            });
-          }
+            if (getHealerSocialMediaResponse!.response![0].hFacebookLink
+                .toString() == 'null') {
+              _fbController.text = '';
+            } else {
+              _fbController.text =
+                  getHealerSocialMediaResponse!.response![0].hFacebookLink
+                      .toString();
+            }
+            if (getHealerSocialMediaResponse!.response![0].hTwitterLink
+                .toString() == 'null') {
+              _twitterController.text = '';
+            } else {
+              _twitterController.text =
+                  getHealerSocialMediaResponse!.response![0].hTwitterLink
+                      .toString();
+            }
+
+
+            if (getHealerSocialMediaResponse!.response![0].hInstagramLink.toString()=='null') {
+              _instagramController.text ='';
+        }else{
+        _instagramController.text=getHealerSocialMediaResponse!.response![0].hInstagramLink.toString();
+        }
+
+        if(getHealerSocialMediaResponse!.response![0].hPinterestLink.toString()=='null'){
+          _pinterestController.text ='';
+        }else{
+        _pinterestController.text=getHealerSocialMediaResponse!.response![0].hPinterestLink.toString();
+        }
+
+        if(getHealerSocialMediaResponse!.response![0].hLinkedinLink.toString()=='null'){
+          _linkedinController.text ='';
+        }else{
+        _linkedinController.text=getHealerSocialMediaResponse!.response![0].hLinkedinLink.toString();
+        }
+
+        if(getHealerSocialMediaResponse!.response![0].hYoutubeLink.toString()=='null'){
+          _youtubeController.text ='';
+        }else{
+        _youtubeController.text=getHealerSocialMediaResponse!.response![0].hYoutubeLink.toString();
+
+        }
+
+
+
+
+
+          prefs!.setString(
+        StringUtils.fbLink,
+        getHealerSocialMediaResponse!.response![0].hFacebookLink.toString());
+        prefs!.setString(
+        StringUtils.twitterLink,
+        getHealerSocialMediaResponse!.response![0].hTwitterLink.toString());
+        prefs!.setString(
+        StringUtils.instagramLink,
+        getHealerSocialMediaResponse!.response![0].hInstagramLink.toString());
+        prefs!.setString(
+        StringUtils.pinterestLink,
+        getHealerSocialMediaResponse!.response![0].hPinterestLink.toString());
+        prefs!.setString(
+        StringUtils.linkedinLink,
+        getHealerSocialMediaResponse!.response![0].hLinkedinLink.toString());
+        prefs!.setString(
+        StringUtils.youtubeLink,
+        getHealerSocialMediaResponse!.response![0].hYoutubeLink.toString());
+
+        Future.delayed(const Duration(seconds: 2), () {
+        isLoading = false;
+        setState(() {});
+        });
+        }
         }
 
         return response.body;
-      });
+        });
     })
         .catchError((err) => print('error : ' + err.toString()))
         .whenComplete(() {});
+    return null;
     //print('reason phrase- ${res.stream.bytesToString()}');
     // return res.stream.bytesToString();
   }

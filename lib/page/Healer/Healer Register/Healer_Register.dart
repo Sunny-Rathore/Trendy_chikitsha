@@ -1,41 +1,36 @@
 import 'dart:convert';
 
-import 'package:doctor/baseurl/baseURL.dart';
-import 'package:doctor/global/global.dart';
-import 'package:doctor/models/client_responses/client_register_response.dart';
-import 'package:doctor/models/healer_responses/healer_register_response.dart';
-import 'package:doctor/page/Healer/Healer_menu/Menu%20Pages/Home_Menu.dart';
-import 'package:doctor/page/Healer/Healer_menu/pages/healer_pricing_plan.dart';
-import 'package:doctor/utils/color_utils.dart';
-import 'package:doctor/utils/string_utils.dart';
-import 'package:doctor/utils/utils_methods.dart';
-import 'package:doctor/widget/text_widget.dart';
-import 'package:doctor/widgets/spinKitFadingCircleWidget.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:trendy_chikitsa/baseurl/baseURL.dart';
+import 'package:trendy_chikitsa/models/client_responses/client_register_response.dart';
+import 'package:trendy_chikitsa/models/healer_responses/healer_register_response.dart';
+import 'package:trendy_chikitsa/page/Healer/Healer_menu/pages/healer_pricing_plan.dart';
+import 'package:trendy_chikitsa/utils/color_utils.dart';
+import 'package:trendy_chikitsa/utils/string_utils.dart';
+import 'package:trendy_chikitsa/utils/utils_methods.dart';
+import 'package:trendy_chikitsa/widget/text_widget.dart';
+import 'package:trendy_chikitsa/widgets/spinKitFadingCircleWidget.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gender_picker/source/enums.dart';
-import 'package:gender_picker/source/gender_picker.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'Healer_Login.dart';
-import 'MyRadioListTile.dart';
 
 class Healer_Register extends StatefulWidget {
-  const Healer_Register({Key? key}) : super(key: key);
+  bool? isLookingFor;
+
+  Healer_Register({Key? key, required this.isLookingFor}) : super(key: key);
 
   @override
   State<Healer_Register> createState() => _Healer_RegisterState();
 }
 
 class _Healer_RegisterState extends State<Healer_Register> {
-  int _value = 1;
+  final int _value = 1;
   SharedPreferences? prefs;
-bool  isLoading=false;
+  bool isLoading = false;
 /*type:1
 full_name:jaya
 email_id:jaya12@gmail.com
@@ -58,21 +53,37 @@ pincode:452009*/
   var items = [
     'Male',
     'Female',
-    'Other',
   ];
   late Gender _gender;
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   static const emailRegex = r'\S+@\S+\.\S+';
   var isPasswordHidden = true.obs;
-  bool isChecked = false, _isPassObscure = true, _isConfirmObscure = true;
+  bool isChecked = false, _isPassObscure = false, _isConfirmObscure = false;
   UtilMethods utilMethods = UtilMethods();
   bool agree = false;
+  // Defining the focus node
+  FocusNode? focusNode1;
+  FocusNode? focusNode2;
+  FocusNode? focusNode3;
+  FocusNode? focusNode4;
+  FocusNode? focusNode5;
+  FocusNode? focusNode6;
+  FocusNode? focusNode7;
+  FocusNode? focusNode8;
   @override
   void initState() {
-    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
 
     //  saveValue();
-
+    focusNode1 = FocusNode();
+    focusNode2 = FocusNode();
+    focusNode3 = FocusNode();
+    focusNode4 = FocusNode();
+    focusNode5 = FocusNode();
+    focusNode6 = FocusNode();
+    focusNode7 = FocusNode();
+    focusNode8 = FocusNode();
     super.initState();
     saveValue();
   }
@@ -81,6 +92,9 @@ pincode:452009*/
     //  storage = new FlutterSecureStorage();
 
     prefs = await SharedPreferences.getInstance();
+    setState(() {
+      
+    });
     // _register();
   }
 
@@ -91,12 +105,11 @@ pincode:452009*/
           child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
-          brightness: Brightness.dark,
           toolbarHeight: 60,
           backgroundColor: ColorUtils.trendyThemeColor,
           elevation: 0.0,
           /*  automaticallyImplyLeading: false,*/
-          title: Text('Register',
+          title: Text('Healer Sign Up',
               textAlign: TextAlign.left,
               style: TextStyle(
                 fontFamily: StringUtils.roboto_font_family,
@@ -104,6 +117,7 @@ pincode:452009*/
                 fontSize: 18,
               )),
           centerTitle: true,
+          systemOverlayStyle: SystemUiOverlayStyle.light,
         ),
         body: Stack(children: [
           Center(
@@ -127,8 +141,8 @@ pincode:452009*/
                       Container(
                           height: 7.h,
                           width: 100.w,
-                          padding:
-                              EdgeInsets.symmetric(vertical: 3, horizontal: 15),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 3, horizontal: 15),
                           margin:
                               EdgeInsets.only(top: 1.h, left: 8.w, right: 8.w),
                           decoration: BoxDecoration(
@@ -137,7 +151,7 @@ pincode:452009*/
                                 color: ColorUtils.lightGreyBorderColor),
                             color: ColorUtils.whiteColor,
                           ),
-                          child: new Row(
+                          child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
@@ -154,13 +168,14 @@ pincode:452009*/
                                                     SizedBox(
                                                       width: 20,
                                                     ),*/
-                              new Container(
-                                child: new Flexible(
-                                  child: new TextField(
+                              Container(
+                                child: Flexible(
+                                  child: TextField(
                                     controller: fullnameController,
                                     keyboardType: TextInputType.text,
+                                    focusNode: focusNode1,
                                     textAlign: TextAlign.left,
-                                    decoration: new InputDecoration(
+                                    decoration: InputDecoration(
                                         hintStyle: TextStyle(
                                             color: ColorUtils.b3Color,
                                             fontFamily: StringUtils
@@ -179,11 +194,11 @@ pincode:452009*/
                                         disabledBorder: InputBorder.none,
                                         hintText: 'Enter Full Name'),
                                     onChanged: (text) {
-                                      setState(() {
-                                        /*   customer_mobile =
+                                      /*    setState(() {
+                                        */ /*   customer_mobile =
                                                             text
-                                                                .toString();*/
-                                      });
+                                                                .toString();*/ /*
+                                      });*/
                                     },
                                   ),
                                 ), //flexible
@@ -205,8 +220,8 @@ pincode:452009*/
                       Container(
                           height: 7.h,
                           width: 100.w,
-                          padding:
-                              EdgeInsets.symmetric(vertical: 3, horizontal: 15),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 3, horizontal: 15),
                           margin:
                               EdgeInsets.only(top: 1.h, left: 8.w, right: 8.w),
                           decoration: BoxDecoration(
@@ -215,7 +230,7 @@ pincode:452009*/
                                 color: ColorUtils.lightGreyBorderColor),
                             color: ColorUtils.whiteColor,
                           ),
-                          child: new Row(
+                          child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
@@ -232,13 +247,14 @@ pincode:452009*/
                                                     SizedBox(
                                                       width: 20,
                                                     ),*/
-                              new Container(
-                                child: new Flexible(
-                                  child: new TextField(
+                              Container(
+                                child: Flexible(
+                                  child: TextField(
                                     controller: emailController,
+                                    focusNode: focusNode2,
                                     keyboardType: TextInputType.text,
                                     textAlign: TextAlign.left,
-                                    decoration: new InputDecoration(
+                                    decoration: InputDecoration(
                                         hintStyle: TextStyle(
                                             color: ColorUtils.b3Color,
                                             fontFamily: StringUtils
@@ -257,11 +273,9 @@ pincode:452009*/
                                         disabledBorder: InputBorder.none,
                                         hintText: 'Enter Email'),
                                     onChanged: (text) {
-                                      setState(() {
-                                        /*   customer_mobile =
-                                                            text
-                                                                .toString();*/
-                                      });
+                                      /*    setState(() {
+
+                                      });*/
                                     },
                                   ),
                                 ), //flexible
@@ -283,8 +297,8 @@ pincode:452009*/
                       Container(
                           height: 7.h,
                           width: 100.w,
-                          padding:
-                              EdgeInsets.symmetric(vertical: 3, horizontal: 15),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 3, horizontal: 15),
                           margin:
                               EdgeInsets.only(top: 1.h, left: 8.w, right: 8.w),
                           decoration: BoxDecoration(
@@ -293,7 +307,7 @@ pincode:452009*/
                                 color: ColorUtils.lightGreyBorderColor),
                             color: ColorUtils.whiteColor,
                           ),
-                          child: new Row(
+                          child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
@@ -310,14 +324,15 @@ pincode:452009*/
                                                     SizedBox(
                                                       width: 20,
                                                     ),*/
-                              new Container(
-                                child: new Flexible(
-                                  child: new TextField(
+                              Container(
+                                child: Flexible(
+                                  child: TextField(
                                     controller: passwordController,
                                     keyboardType: TextInputType.visiblePassword,
                                     textAlign: TextAlign.left,
+                                    focusNode: focusNode3,
                                     obscureText: !_isPassObscure,
-                                    decoration: new InputDecoration(
+                                    decoration: InputDecoration(
                                         hintStyle: TextStyle(
                                             color: ColorUtils.b3Color,
                                             fontFamily: StringUtils
@@ -347,13 +362,7 @@ pincode:452009*/
                                         errorBorder: InputBorder.none,
                                         disabledBorder: InputBorder.none,
                                         hintText: 'Enter Password'),
-                                    onChanged: (text) {
-                                      setState(() {
-                                        /*   customer_mobile =
-                                                            text
-                                                                .toString();*/
-                                      });
-                                    },
+                                    onChanged: (text) {},
                                   ),
                                 ), //flexible
                               ), //container
@@ -374,8 +383,8 @@ pincode:452009*/
                       Container(
                           height: 7.h,
                           width: 100.w,
-                          padding:
-                              EdgeInsets.symmetric(vertical: 3, horizontal: 15),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 3, horizontal: 15),
                           margin:
                               EdgeInsets.only(top: 1.h, left: 8.w, right: 8.w),
                           decoration: BoxDecoration(
@@ -384,7 +393,7 @@ pincode:452009*/
                                 color: ColorUtils.lightGreyBorderColor),
                             color: ColorUtils.whiteColor,
                           ),
-                          child: new Row(
+                          child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
@@ -401,14 +410,15 @@ pincode:452009*/
                                                     SizedBox(
                                                       width: 20,
                                                     ),*/
-                              new Container(
-                                child: new Flexible(
-                                  child: new TextField(
+                              Container(
+                                child: Flexible(
+                                  child: TextField(
                                     controller: confirmController,
                                     keyboardType: TextInputType.visiblePassword,
+                                    focusNode: focusNode4,
                                     obscureText: !_isConfirmObscure,
                                     textAlign: TextAlign.left,
-                                    decoration: new InputDecoration(
+                                    decoration: InputDecoration(
                                         hintStyle: TextStyle(
                                             color: ColorUtils.b3Color,
                                             fontFamily: StringUtils
@@ -438,13 +448,7 @@ pincode:452009*/
                                         errorBorder: InputBorder.none,
                                         disabledBorder: InputBorder.none,
                                         hintText: 'Enter Confirm Password'),
-                                    onChanged: (text) {
-                                      setState(() {
-                                        /*   customer_mobile =
-                                                            text
-                                                                .toString();*/
-                                      });
-                                    },
+                                    onChanged: (text) {},
                                   ),
                                 ), //flexible
                               ), //container
@@ -465,8 +469,8 @@ pincode:452009*/
                       Container(
                           height: 7.h,
                           width: 100.w,
-                          padding:
-                              EdgeInsets.symmetric(vertical: 3, horizontal: 15),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 3, horizontal: 15),
                           margin:
                               EdgeInsets.only(top: 1.h, left: 8.w, right: 8.w),
                           decoration: BoxDecoration(
@@ -475,7 +479,7 @@ pincode:452009*/
                                 color: ColorUtils.lightGreyBorderColor),
                             color: ColorUtils.whiteColor,
                           ),
-                          child: new Row(
+                          child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
@@ -492,13 +496,14 @@ pincode:452009*/
                                                     SizedBox(
                                                       width: 20,
                                                     ),*/
-                              new Container(
-                                child: new Flexible(
-                                  child: new TextField(
+                              Container(
+                                child: Flexible(
+                                  child: TextField(
                                     controller: phoneNumberController,
                                     keyboardType: TextInputType.number,
+                                    focusNode: focusNode5,
                                     textAlign: TextAlign.left,
-                                    decoration: new InputDecoration(
+                                    decoration: InputDecoration(
                                         hintStyle: TextStyle(
                                             color: ColorUtils.b3Color,
                                             fontFamily: StringUtils
@@ -516,13 +521,7 @@ pincode:452009*/
                                         errorBorder: InputBorder.none,
                                         disabledBorder: InputBorder.none,
                                         hintText: 'Enter Phone Number'),
-                                    onChanged: (text) {
-                                      setState(() {
-                                        /*   customer_mobile =
-                                                            text
-                                                                .toString();*/
-                                      });
-                                    },
+                                    onChanged: (text) {},
                                   ),
                                 ), //flexible
                               ), //container
@@ -545,9 +544,9 @@ pincode:452009*/
                               EdgeInsets.only(left: 8.w, right: 8.w, top: 1.h),
                           child: Container(
                             width: MediaQuery.of(context).size.width,
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 vertical: 0, horizontal: 15),
-                            margin: EdgeInsets.only(top: 0),
+                            margin: const EdgeInsets.only(top: 0),
                             decoration: BoxDecoration(
                               color: ColorUtils.whiteColor,
                               borderRadius: BorderRadius.circular(10),
@@ -623,7 +622,7 @@ pincode:452009*/
                                 color: ColorUtils.lightGreyBorderColor),
                             color: ColorUtils.whiteColor,
                           ),
-                          child: new Row(
+                          child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
@@ -640,14 +639,15 @@ pincode:452009*/
                                                     SizedBox(
                                                       width: 20,
                                                     ),*/
-                              new Container(
-                                child: new Flexible(
-                                  child: new TextField(
+                              Container(
+                                child: Flexible(
+                                  child: TextField(
                                     controller: ageController,
                                     keyboardType: TextInputType.number,
                                     textAlign: TextAlign.left,
+                                    focusNode: focusNode6,
                                     maxLength: 2,
-                                    decoration: new InputDecoration(
+                                    decoration: InputDecoration(
                                         hintStyle: TextStyle(
                                             color: ColorUtils.b3Color,
                                             fontFamily: StringUtils
@@ -690,10 +690,10 @@ pincode:452009*/
                                     fontSize: 17,
                                   )))),
                       Container(
-                          height: 7.h,
+                          height: 15.h,
                           width: 100.w,
-                          padding:
-                              EdgeInsets.symmetric(vertical: 3, horizontal: 15),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 3, horizontal: 15),
                           margin:
                               EdgeInsets.only(top: 1.h, left: 8.w, right: 8.w),
                           decoration: BoxDecoration(
@@ -702,7 +702,7 @@ pincode:452009*/
                                 color: ColorUtils.lightGreyBorderColor),
                             color: ColorUtils.whiteColor,
                           ),
-                          child: new Row(
+                          child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
@@ -719,13 +719,16 @@ pincode:452009*/
                                                     SizedBox(
                                                       width: 20,
                                                     ),*/
-                              new Container(
-                                child: new Flexible(
-                                  child: new TextField(
+                              Container(
+                                child: Flexible(
+                                  child: TextField(
                                     controller: addressController,
                                     keyboardType: TextInputType.text,
                                     textAlign: TextAlign.left,
-                                    decoration: new InputDecoration(
+                                    minLines: 6,
+                                    maxLines: null,
+                                    focusNode: focusNode7,
+                                    decoration: InputDecoration(
                                         hintStyle: TextStyle(
                                             color: ColorUtils.b3Color,
                                             fontFamily: StringUtils
@@ -770,8 +773,8 @@ pincode:452009*/
                       Container(
                           height: 7.h,
                           width: 100.w,
-                          padding:
-                              EdgeInsets.symmetric(vertical: 3, horizontal: 15),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 3, horizontal: 15),
                           margin:
                               EdgeInsets.only(top: 1.h, left: 8.w, right: 8.w),
                           decoration: BoxDecoration(
@@ -780,17 +783,18 @@ pincode:452009*/
                                 color: ColorUtils.lightGreyBorderColor),
                             color: ColorUtils.whiteColor,
                           ),
-                          child: new Row(
+                          child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              new Container(
-                                child: new Flexible(
-                                  child: new TextField(
+                              Container(
+                                child: Flexible(
+                                  child: TextField(
                                     controller: pincodeController,
                                     keyboardType: TextInputType.number,
+                                    focusNode: focusNode8,
                                     textAlign: TextAlign.left,
-                                    decoration: new InputDecoration(
+                                    decoration: InputDecoration(
                                         hintStyle: TextStyle(
                                             color: ColorUtils.b3Color,
                                             fontFamily: StringUtils
@@ -820,64 +824,65 @@ pincode:452009*/
                               ), //container
                             ], //widget
                           )),
-
                       Padding(
                         padding:
-                        EdgeInsets.only(left: 4.w, right: 4.w, top: 2.h),
-                        child:      Row(
-                        children: [
-                          Material(
-                            child: Checkbox(
-                              value: agree,
-                              activeColor: ColorUtils.trendyThemeColor,
-                              onChanged: (value) {
-                                setState(() {
-                                  agree = value ?? false;
-                                });
-                              },
+                            EdgeInsets.only(left: 4.w, right: 4.w, top: 2.h),
+                        child: Row(
+                          children: [
+                            Material(
+                              child: Checkbox(
+                                value: agree,
+                                activeColor: ColorUtils.trendyThemeColor,
+                                onChanged: (value) {
+                                  setState(() {
+                                    agree = value ?? false;
+                                  });
+                                },
+                              ),
                             ),
-                          ),
-                          new RichText(
-                            text: new TextSpan(
-                              text: '',
-                              style:null,
-                              children: <TextSpan>[
-                                new TextSpan(
-                                    text: 'I agree to the Trendy Chikitsa',
-                                  style: TextStyle(
-                              fontFamily: StringUtils.roboto_font_family,
-                              color: ColorUtils.blackColor,
-                              fontSize: 16,
-                            )),
-                                new TextSpan(
-                                    text: ' Terms of\n service ',
-                                    style: TextStyle(
-                                      fontFamily: StringUtils.roboto_font_family,
-                                      color: Colors.blue,
-                                      fontSize: 16,
-                                    )),
-                                new TextSpan(
-                                    text: 'and ',
-                                    style: TextStyle(
-                                      fontFamily: StringUtils.roboto_font_family,
-                                      color: ColorUtils.blackColor,
-                                      fontSize: 16,
-                                    )),
-
-                                new TextSpan(
-                                    text: 'Privacy Policy',
-                                    style: TextStyle(
-                                      fontFamily: StringUtils.roboto_font_family,
-                                      color: Colors.blue,
-                                      fontSize: 16,
-                                    )),
-
-                              ],
+                            RichText(
+                              text: TextSpan(
+                                text: '',
+                                style: null,
+                                children: <TextSpan>[
+                                  TextSpan(
+                                      text: 'I agree to the Trendy Chikitsa',
+                                      style: TextStyle(
+                                        fontFamily:
+                                            StringUtils.roboto_font_family,
+                                        color: ColorUtils.blackColor,
+                                        fontSize: 16,
+                                      )),
+                                  TextSpan(
+                                      text: ' Terms of\n service ',
+                                      style: TextStyle(
+                                        fontFamily:
+                                            StringUtils.roboto_font_family,
+                                        color: Colors.blue,
+                                        fontSize: 16,
+                                      )),
+                                  TextSpan(
+                                      text: 'and ',
+                                      style: TextStyle(
+                                        fontFamily:
+                                            StringUtils.roboto_font_family,
+                                        color: ColorUtils.blackColor,
+                                        fontSize: 16,
+                                      )),
+                                  TextSpan(
+                                      text: 'Privacy Policy',
+                                      style: TextStyle(
+                                        fontFamily:
+                                            StringUtils.roboto_font_family,
+                                        color: Colors.blue,
+                                        fontSize: 16,
+                                      )),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),)
-
+                          ],
+                        ),
+                      )
                     ]),
                   ) //row
 
@@ -886,7 +891,7 @@ pincode:452009*/
           Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                  padding: EdgeInsets.fromLTRB(10, 40, 10, 20),
+                  padding: const EdgeInsets.fromLTRB(10, 40, 10, 20),
                   child: SizedBox(
                       width: 280,
                       height: 46,
@@ -906,44 +911,55 @@ pincode:452009*/
                               shape: MaterialStateProperty.all<
                                       RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
-                                      borderRadius:
-                                          new BorderRadius.circular(10.0),
+                                      borderRadius: BorderRadius.circular(10.0),
                                       side: BorderSide(
                                           color:
                                               ColorUtils.trendyButtonColor)))),
                           onPressed: () {
-                            if (fullnameController.text.length == 0) {
+                            debugPrint('check dropdown ---   $dropdownvalue');
+                            if (fullnameController.text.isEmpty) {
                               showAlertDialog(
                                   context, "Please enter full name");
-                            } else if (emailController.text.length == 0 ||
+                              fullnameController.selection =
+                                  TextSelection.collapsed(
+                                      offset: fullnameController.text.length);
+                              focusNode1!.requestFocus();
+                            } else if (emailController.text.isEmpty ||
                                 !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                                     .hasMatch(emailController.text)) {
                               showAlertDialog(
                                   context, "Please enter valid email");
-                            } else if (passwordController.text.length == 0) {
+                              focusNode2!.requestFocus();
+                            } else if (passwordController.text.isEmpty) {
                               showAlertDialog(context, "Please enter password");
-                            } else if (confirmController.text.length == 0) {
+                              focusNode3!.requestFocus();
+                            } else if (confirmController.text.isEmpty) {
                               showAlertDialog(
                                   context, "Please enter confirm password");
+                              focusNode4!.requestFocus();
                             } else if (phoneNumberController.text.length !=
                                 10) {
                               showAlertDialog(context,
                                   "Please enter 10 digit mobile number");
-                            } else if (ageController.text.length == 0) {
-                              showAlertDialog(context, "Please enter age");
-                            } else if (dropdownvalue == "Select Gender" ||
-                                dropdownvalue.toString().trim().length == 0) {
+                              focusNode5!.requestFocus();
+                            } else if (dropdownvalue.toString().trim() ==
+                                    "Select Gender" ||
+                                dropdownvalue == null ||
+                                dropdownvalue.toString().trim().isEmpty) {
                               showAlertDialog(context, "Please select gender");
+                            } else if (ageController.text.isEmpty) {
+                              showAlertDialog(context, "Please enter age");
+                              focusNode6!.requestFocus();
                             }
                             /*else if (_referralController.text.length == 0) {
             utilMethods.showErrorAlertDialog(context, "Please enter referral code");
           }*/
-                            else if (addressController.text.length == 0) {
-                              showAlertDialog(context, "Please enter address");
-                            } else if (pincodeController.text.length == 0) {
+                            else if (pincodeController.text.isEmpty) {
                               showAlertDialog(context, "Please enter pincode");
+                              focusNode8!.requestFocus();
                             } else if (!agree) {
-                              showAlertDialog(context, "Please agree with terms and conditions.");
+                              showAlertDialog(context,
+                                  "Please agree with terms and conditions.");
                             } else {
                               registerHealer();
                             }
@@ -955,11 +971,10 @@ pincode:452009*/
 
   Future<String?> registerHealer() async {
     var data;
-    isLoading=true;
-    setState(() {
-
-    });
-    print('type---    ${prefs!.getString(StringUtils.type).toString()}');
+    isLoading = true;
+    setState(() {});
+    print(
+        'type---    ${prefs!.getString(StringUtils.type).toString()} ,   ${dropdownvalue.toString().trim()}');
     var request = http.MultipartRequest('POST', BaseuURL.register_user);
     //   request.headers.addAll(headers);
     request.fields['type'] = prefs!.getString(StringUtils.type).toString();
@@ -971,10 +986,23 @@ pincode:452009*/
     request.fields['phone_number'] =
         phoneNumberController.text.toString().trim();
     request.fields['age'] = ageController.text.toString().trim();
-    request.fields['gender'] = dropdownvalue.toString();
+
+    if (dropdownvalue!.toString().trim() == 'Female') {
+      debugPrint('gender---  2 ');
+      request.fields['gender'] = '2';
+    } else if (dropdownvalue!.toString().trim() == 'Male') {
+      request.fields['gender'] = '1';
+      debugPrint('gender---  1 ');
+    }
+    /* request.fields['gender'] = dropdownvalue.toString();*/
     request.fields['address'] = addressController.text.toString().trim();
     request.fields['pincode'] = pincodeController.text.toString().trim();
-
+    print(
+        'check looking for value---    ${widget.isLookingFor}    ${prefs!.getString(StringUtils.unique_id).toString()}');
+    if (widget.isLookingFor == true) {
+      request.fields['c_links'] =
+          prefs!.getString(StringUtils.unique_id).toString();
+    }
     // var res = await request.send();
 
     request
@@ -991,7 +1019,7 @@ pincode:452009*/
 
               var rest1 = data["msg"];
               data = json.decode(response.body);
-              print('--->>?   ${data}');
+              print('--->>?   $data');
               if (prefs!.getString(StringUtils.type).toString() == "1") {
                 if (data["status"] == "true" &&
                     data["msg"] ==
@@ -1020,22 +1048,18 @@ pincode:452009*/
                   prefs!.setBool(StringUtils.loginINAPP, true);
                   prefs!.setString(StringUtils.type, "1");
                   showAlertDialog(context, data["msg"]);
-                  Future.delayed(Duration(seconds: 2), () {
-                    isLoading=false;
-                    setState(() {
-
-                    });
+                  Future.delayed(const Duration(seconds: 2), () {
+                    isLoading = false;
+                    setState(() {});
                     if (Navigator.canPop(context)) {
                       Navigator.pop(context);
                     }
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => HealerPricingPlan()));
+                        builder: (context) => const HealerPricingPlan()));
                   });
                 } else {
-                  isLoading=false;
-                  setState(() {
-
-                  });
+                  isLoading = false;
+                  setState(() {});
                   showAlertDialog(context, data["msg"]);
                 }
               } else if (prefs!.getString(StringUtils.type).toString() == "2") {
@@ -1067,20 +1091,18 @@ pincode:452009*/
                   prefs!.setBool(StringUtils.loginINAPP, true);
                   prefs!.setString(StringUtils.type, "2");
                   showAlertDialog(context, data["msg"]);
-                  Future.delayed(Duration(seconds: 2), () {
-                    isLoading=false;
-                    setState(() {
-
-                    });
-                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-                      builder: (context) => Healer_Login()
-                    ),(route) => false,);
+                  Future.delayed(const Duration(seconds: 2), () {
+                    isLoading = false;
+                    setState(() {});
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                          builder: (context) => const Healer_Login()),
+                      (route) => false,
+                    );
                   });
                 } else {
-                  isLoading=false;
-                  setState(() {
-
-                  });
+                  isLoading = false;
+                  setState(() {});
                   showAlertDialog(context, data["msg"]);
                 }
               }
@@ -1091,6 +1113,7 @@ pincode:452009*/
         })
         .catchError((err) => print('error : ' + err.toString()))
         .whenComplete(() {});
+    return null;
     //print('reason phrase- ${res.stream.bytesToString()}');
     // return res.stream.bytesToString();
   }
@@ -1103,15 +1126,15 @@ pincode:452009*/
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            new GestureDetector(
+            GestureDetector(
                 onTap: () {
                   Navigator.of(context).pop();
                 },
-                child: Container(
+                child: SizedBox(
                     width: 60.w,
                     child: Text(msg,
                         textAlign: TextAlign.left,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontWeight: FontWeight.normal,
                             color: Colors.black87,
                             fontSize: 18)))),
@@ -1120,7 +1143,7 @@ pincode:452009*/
         content: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            new GestureDetector(
+            GestureDetector(
                 onTap: () {
                   Navigator.of(context).pop();
                 },

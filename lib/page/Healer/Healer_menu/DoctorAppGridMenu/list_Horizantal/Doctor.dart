@@ -10,10 +10,10 @@ class List_Horizantal extends StatefulWidget {
 class _List_HorizantalState extends State<List_Horizantal> {
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return const Row(
       children: [
         // buildCard(),
-        const SizedBox(width: 12,)
+        SizedBox(width: 12,)
       ],
     );
   }

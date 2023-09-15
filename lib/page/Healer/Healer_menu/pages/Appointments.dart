@@ -1,11 +1,11 @@
-import 'package:doctor/page/Healer/Healer_menu/pages/today_appointment.dart';
-import 'package:doctor/utils/color_utils.dart';
-import 'package:doctor/utils/string_utils.dart';
+import 'package:trendy_chikitsa/page/Healer/Healer_menu/pages/today_appointment.dart';
+import 'package:trendy_chikitsa/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
 class Appointments extends StatefulWidget {
-  Appointments({Key? key}) : super(key: key);
+  final pageidex;
+  const Appointments({Key? key, required this.pageidex}) : super(key: key);
 
   @override
   State<Appointments> createState() => _AppointmentsState();
@@ -16,6 +16,7 @@ class _AppointmentsState extends State<Appointments> {
   Widget build(BuildContext context) {
     return Sizer(builder: (context, orientation, deviceType) {
       return DefaultTabController(
+          initialIndex: widget.pageidex,
           length: 2,
           child: Scaffold(
             appBar: AppBar(
@@ -25,8 +26,8 @@ class _AppointmentsState extends State<Appointments> {
               bottom: TabBar(
                 labelColor: ColorUtils.whiteColor,
                 indicatorColor: ColorUtils.whiteColor,
-                labelStyle: TextStyle(fontSize: 18.0),
-                tabs: [
+                labelStyle: const TextStyle(fontSize: 18.0),
+                tabs: const [
                   Tab(
                     text: 'Today',
                   ),
@@ -38,8 +39,12 @@ class _AppointmentsState extends State<Appointments> {
             ),
             body: TabBarView(
               children: [
-                TodayAppointment(tab_value: 'today',),
-                TodayAppointment(tab_value: 'upcoming',),
+                TodayAppointment(
+                  tab_value: 'today',
+                ),
+                TodayAppointment(
+                  tab_value: 'upcoming',
+                ),
               ],
             ),
           ));

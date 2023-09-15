@@ -1,15 +1,14 @@
-import 'package:doctor/utils/color_utils.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:trendy_chikitsa/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 
 
 class SpinKitFadingCircleWidget extends StatelessWidget implements PreferredSizeWidget {
-  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late String text;
  late bool isLoading;
-  SpinKitFadingCircleWidget(bool isLoading){
+  SpinKitFadingCircleWidget(bool isLoading, {super.key}){
     this.isLoading=isLoading;
 
   }

@@ -1,9 +1,9 @@
-import 'package:doctor/page/Client/Client_menu/pages/Client_Home_Menu.dart';
+import 'package:flutter/services.dart';
+import 'package:trendy_chikitsa/page/Client/Client_menu/pages/Client_Home_Menu.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../global/global.dart';
 import 'Client_Forgotpass.dart';
-import '../Client_Home.dart';
 import 'Client_Register.dart';
 
 class Client_Login extends StatefulWidget {
@@ -14,7 +14,6 @@ class Client_Login extends StatefulWidget {
 }
 
 class _Client_LoginState extends State<Client_Login> {
-
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   static const emailRegex = r'\S+@\S+\.\S+';
   var isPasswordHidden = true.obs;
@@ -26,7 +25,6 @@ class _Client_LoginState extends State<Client_Login> {
         child: Scaffold(
             extendBodyBehindAppBar: true,
             appBar: AppBar(
-              brightness: Brightness.dark,
               toolbarHeight: 70,
               backgroundColor: Colors.transparent,
               elevation: 0.0,
@@ -42,6 +40,7 @@ class _Client_LoginState extends State<Client_Login> {
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter)),
               ),
+              systemOverlayStyle: SystemUiOverlayStyle.light,
             ),
             body: SingleChildScrollView(
               child: Container(
@@ -74,7 +73,7 @@ class _Client_LoginState extends State<Client_Login> {
                           height: 20,
                         ),
                         Obx(
-                              () => TextFormField(
+                          () => TextFormField(
                             obscureText: isPasswordHidden.value,
                             decoration: InputDecoration(
                                 hintText: 'Password',
@@ -90,7 +89,7 @@ class _Client_LoginState extends State<Client_Login> {
                                   ),
                                   onTap: () {
                                     isPasswordHidden.value =
-                                    !isPasswordHidden.value;
+                                        !isPasswordHidden.value;
                                   },
                                 )),
                             keyboardType: TextInputType.visiblePassword,
@@ -116,12 +115,12 @@ class _Client_LoginState extends State<Client_Login> {
                                   style: TextStyle(
                                       fontSize: 16, color: AppColors.colorlal),
                                 ),
-                                onTap: (){
+                                onTap: () {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (_) =>
-                                          const Client_Forgotpass()));
+                                              const Client_Forgotpass()));
                                 },
                               )
                             ],
@@ -141,13 +140,13 @@ class _Client_LoginState extends State<Client_Login> {
                                           fontSize: 18,
                                           color: AppColors.colorlal,
                                           decoration:
-                                          TextDecoration.underline))),
+                                              TextDecoration.underline))),
                               onTap: () {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (_) =>
-                                        const Client_Register()));
+                                            const Client_Register()));
                               },
                             )
                           ],
@@ -161,7 +160,8 @@ class _Client_LoginState extends State<Client_Login> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (_) => const Client_Home_Menu()));
+                                      builder: (_) =>
+                                          const Client_Home_Menu()));
                             } else {
                               return;
                             }
@@ -182,7 +182,6 @@ class _Client_LoginState extends State<Client_Login> {
                               ),
                             ),
                           ),
-
                         ),
                       ],
                     ),

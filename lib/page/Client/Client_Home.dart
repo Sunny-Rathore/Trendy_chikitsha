@@ -1,4 +1,4 @@
-import 'package:doctor/page/Client/Client_menu/pages/Client_Home_Menu.dart';
+import 'package:trendy_chikitsa/page/Client/Client_menu/pages/Client_Home_Menu.dart';
 import 'package:flutter/material.dart';
 
 class Client_Home extends StatefulWidget {

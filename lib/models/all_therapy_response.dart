@@ -11,17 +11,17 @@ class AllTherapyResponse {
     if (json['response'] != null) {
       response = <TherapyList>[];
       json['response'].forEach((v) {
-        response!.add(new TherapyList.fromJson(v));
+        response!.add(TherapyList.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['msg'] = this.msg;
-    if (this.response != null) {
-      data['response'] = this.response!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['msg'] = msg;
+    if (response != null) {
+      data['response'] = response!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -40,10 +40,10 @@ class TherapyList {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['therapy_id'] = this.therapyId;
-    data['therapy_name'] = this.therapy_name;
-    data['therapy_image'] = this.therapy_image;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['therapy_id'] = therapyId;
+    data['therapy_name'] = therapy_name;
+    data['therapy_image'] = therapy_image;
     return data;
   }
 }

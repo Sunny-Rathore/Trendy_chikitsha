@@ -11,17 +11,17 @@ class HealerTherapyPricingResponse {
     if (json['response'] != null) {
       response = <Response>[];
       json['response'].forEach((v) {
-        response!.add(new Response.fromJson(v));
+        response!.add(Response.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['msg'] = this.msg;
-    if (this.response != null) {
-      data['response'] = this.response!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['msg'] = msg;
+    if (response != null) {
+      data['response'] = response!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -43,11 +43,11 @@ class Response {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['th_id'] = this.thId;
-    data['healer_id'] = this.healerId;
-    data['therapy_name'] = this.therapyName;
-    data['custom_price'] = this.customPrice;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['th_id'] = thId;
+    data['healer_id'] = healerId;
+    data['therapy_name'] = therapyName;
+    data['custom_price'] = customPrice;
     return data;
   }
 }

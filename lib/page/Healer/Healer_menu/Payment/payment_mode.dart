@@ -1,6 +1,5 @@
-import 'package:doctor/global/global.dart';
-import 'package:doctor/page/Healer/Choose%20Your%20Expertise/Choose_your_expertise.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:trendy_chikitsa/global/global.dart';
+import 'package:trendy_chikitsa/page/Healer/Choose%20Your%20Expertise/Choose_your_expertise.dart';
 import 'package:flutter/material.dart';
 
 class Payment_price extends StatefulWidget {
@@ -40,8 +39,8 @@ class _Payment_priceState extends State<Payment_price> {
                     width: MediaQuery.of(context).size.width / 2.1,
                     decoration: BoxDecoration(
                         border: Border.all(color: AppColors.colorWhite)),
-                    child: Column(
-                      children: const [
+                    child: const Column(
+                      children: [
                         SizedBox(
                           height: 20,
                         ),
@@ -97,8 +96,8 @@ class _Payment_priceState extends State<Payment_price> {
                     width: MediaQuery.of(context).size.width / 2.1,
                     decoration: BoxDecoration(
                         border: Border.all(color: AppColors.colorWhite)),
-                    child: Column(
-                      children:  const [
+                    child: const Column(
+                      children: [
                         SizedBox(
                           height: 20,
                         ),
@@ -144,7 +143,6 @@ class _Payment_priceState extends State<Payment_price> {
                         SizedBox(
                           height: 20,
                         ),
-
                       ],
                     ),
                   ),
@@ -160,19 +158,24 @@ class _Payment_priceState extends State<Payment_price> {
                 width: MediaQuery.of(context).size.width / 3.1,
                 decoration: BoxDecoration(
                     color: AppColors.colortameti,
-                    borderRadius: BorderRadius.circular(10)
-                ),
-
-                child: const Center(child: Text("Continue",style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.bold),)),
+                    borderRadius: BorderRadius.circular(10)),
+                child: const Center(
+                    child: Text(
+                  "Continue",
+                  style: TextStyle(
+                      fontSize: 22,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                )),
               ),
-              onTap: (){
+              onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ChooseYourExpertise()),
+                  MaterialPageRoute(
+                      builder: (context) => const ChooseYourExpertise()),
                 );
               },
             ),
-
           ],
         ),
       ),

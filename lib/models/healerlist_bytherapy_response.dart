@@ -11,17 +11,17 @@ class HealerListByTherapy {
     if (json['response'] != null) {
       response = <HealerListByTherapyResponse>[];
       json['response'].forEach((v) {
-        response!.add(new HealerListByTherapyResponse.fromJson(v));
+        response!.add(HealerListByTherapyResponse.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['msg'] = this.msg;
-    if (this.response != null) {
-      data['response'] = this.response!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['msg'] = msg;
+    if (response != null) {
+      data['response'] = response!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -50,12 +50,12 @@ class HealerListByTherapyResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['healer_id'] = this.healerId;
-    data['healer_unique_id'] = this.healerUniqueId;
-    data['healer_name'] = this.healerName;
-    data['healer_profile'] = this.healerProfile;
-    data['experience'] = this.experience;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['healer_id'] = healerId;
+    data['healer_unique_id'] = healerUniqueId;
+    data['healer_name'] = healerName;
+    data['healer_profile'] = healerProfile;
+    data['experience'] = experience;
     return data;
   }
 }

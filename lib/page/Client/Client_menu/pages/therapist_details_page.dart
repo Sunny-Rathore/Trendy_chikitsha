@@ -1,23 +1,22 @@
 import 'dart:convert';
 
-import 'package:doctor/baseurl/baseURL.dart';
-import 'package:doctor/models/all_therapy_response.dart';
-import 'package:doctor/models/healer_profile_response.dart';
-import 'package:doctor/models/healer_responses/book_appointment_response.dart';
-import 'package:doctor/models/healer_responses/healer_therapy_pricing_response.dart';
-import 'package:doctor/page/Client/client_navigation.dart';
-import 'package:doctor/utils/color_utils.dart';
-import 'package:doctor/utils/string_utils.dart';
-import 'package:doctor/utils/utils_methods.dart';
-import 'package:doctor/widget/text_widget.dart';
-import 'package:doctor/widget/text_widget_align_center.dart';
-import 'package:doctor/widgets/spinKitFadingCircleWidget.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:trendy_chikitsa/baseurl/baseURL.dart';
+import 'package:trendy_chikitsa/models/all_therapy_response.dart';
+import 'package:trendy_chikitsa/models/healer_profile_response.dart';
+import 'package:trendy_chikitsa/models/healer_responses/book_appointment_response.dart';
+import 'package:trendy_chikitsa/models/healer_responses/healer_therapy_pricing_response.dart';
+import 'package:trendy_chikitsa/page/Client/Client_menu/pages/clients_appointments.dart';
+import 'package:trendy_chikitsa/page/Client/client_navigation.dart';
+import 'package:trendy_chikitsa/utils/color_utils.dart';
+import 'package:trendy_chikitsa/utils/string_utils.dart';
+import 'package:trendy_chikitsa/utils/utils_methods.dart';
+import 'package:trendy_chikitsa/widget/text_widget.dart';
+import 'package:trendy_chikitsa/widget/text_widget_align_center.dart';
+import 'package:trendy_chikitsa/widgets/spinKitFadingCircleWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:lottie/lottie.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
@@ -37,21 +36,22 @@ class TherapyDetailsPage extends StatefulWidget {
 }
 
 class TherapyDetailsstate extends State<TherapyDetailsPage> {
-  Color gridItemColor = Color(0xffE6E6E6);
+  Color gridItemColor = const Color(0xffE6E6E6);
   List<int> selectedIndexList1 = <int>[];
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   List<TherapyList> therapyList = [];
   String selected_timeslot = "",
       initialdate = "",
       selectedInitialDate = "",
       appToken = "",
       therapyName = '',
-      pricing = '',slotID='';
+      pricing = '',
+      slotID = '';
   HealerProfileResponse? healerProfileResponse;
   DateTime selectedDate = DateTime.now();
   SharedPreferences? preferences;
   HealerTherapyPricingResponse? healerTherapyPricingResponse;
-  bool currentDate = true, isLoading=false;
+  bool currentDate = true, isLoading = false;
   String share_link = "";
 
   @override
@@ -67,19 +67,19 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
     final DateFormat formatter1 = DateFormat('yyyy-MM-dd');
 
     selectedInitialDate = formatter1.format(now);
-    print('++++     ${selectedInitialDate}');
+    print('++++     $selectedInitialDate');
     final String formatted = formatter.format(now);
     initialdate = formatted;
     print(
-        'time format ---  ${new DateFormat.jm().format(DateTime.now()).toString()}');
+        'time format ---  ${DateFormat.jm().format(DateTime.now()).toString()}');
     saveValue();
   }
 
   saveValue() async {
-       preferences = await SharedPreferences.getInstance();
+    preferences = await SharedPreferences.getInstance();
     getHealerTherapyPricing();
-    Future.delayed(Duration(seconds: 2), () {
-      setState(() {});
+    Future.delayed(const Duration(seconds: 2), () {
+      // setState(() {});
       // Do something
     });
     //  getVideoThumbnail('');
@@ -95,7 +95,7 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
         backgroundColor: ColorUtils.whiteColor,
         drawer: NavDrawer(),
         appBar: AppBar(
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
               bottom: Radius.circular(10),
             ),
@@ -112,46 +112,19 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
               fontSize: 20,
             ),
           ),
-          /*     actions: <Widget>[
-                GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Profile()),
-                      );
-                    },
-                    child: Padding(
-                        padding: EdgeInsets.fromLTRB(3, 0, 20, 00),
-                        child: SvgPicture.asset(
-                          'assets/images/profile.svg',
-                          height: 22,
-                          width: 22,
-                        )))
-              ],*/
-          /*       leading: new IconButton(
-                icon: new Icon(
-                  Icons.menu,
-                  color: ColorUtils.appDarkBlueColor,
-                  size: 20,
-                ),
-              onPressed: (){},
-              */ /*  onPressed: () => _scaffoldKey.currentState!.openDrawer(),*/ /*
-              ),*/
         ),
         body: Stack(children: [
           SingleChildScrollView(
               child: Center(
-                  child: FutureBuilder<HealerProfileResponse?>(
+                  child: FutureBuilder(
                       future: getHealerProfile(),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          print(
-                              'snapshot inside error--  ${snapshot.error}, ${snapshot.hasData}');
-
-                          print('snapshot--  ${snapshot.error}');
-                          if (snapshot.hasData) {
-                            return Padding(
-                                padding: EdgeInsets.fromLTRB(20, 18, 20, 66),
+                        return snapshot.connectionState ==
+                                ConnectionState.waiting
+                            ? const Text('')
+                            : Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(20, 18, 20, 66),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -164,7 +137,7 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
                                                   .toString()
                                               : "https://media.istockphoto.com/photos/there-are-many-fun-ways-to-learn-picture-id1166330501?k=20&m=1166330501&s=612x612&w=0&h=VcvEDu0or-cSjxyEQIM1FWpCReXQ9vq1ZXQN4nRa39c="),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 15,
                                     ),
                                     TextWidget(
@@ -185,62 +158,11 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
                                         Colors.black,
                                         19,
                                         StringUtils.roboto_font_family),
-                                    /*       Center(
-                                    child: Padding(
-                                        padding: EdgeInsets.only(top: 4),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                          children: [
-                                            SizedBox(
-                                                width: 40,
-                                                child: Icon(
-                                                  Icons.location_on_rounded,
-                                                  color:
-                                                  ColorUtils.greyText1Color,
-                                                  size: 20,
-                                                )),
-                                            Flexible(
-                                                child: Text(
-                                                    'New Palasia',
-                                                    maxLines: 2,
-                                                    overflow:
-                                                    TextOverflow.ellipsis,
-                                                    textAlign: TextAlign.left,
-                                                    style: TextStyle(
-                                                      fontFamily: StringUtils
-                                                          .roboto_font_family,
-                                                      fontWeight:
-                                                      FontWeight.normal,
-                                                      color: Colors.black,
-                                                      fontSize: 19,
-                                                    ))),
-
-
-                                          ],
-                                        ))),*/
-                                    /*        Padding(
-                                    padding: EdgeInsets.only(top: 10),
-                                    child: TextWidget(
-                                        'Cons}/-',
-                                        FontWeight.bold,
-                                        ColorUtils.naviBlueTextColor
-                                            .withOpacity(1),
-                                        19,
-                                        StringUtils
-                                            .roboto_font_family_regular)),*/
                                     Padding(
                                       padding:
                                           EdgeInsets.only(top: 1.h, bottom: 10),
                                       child: Container(
-                                        /*   width: 300,
-                              height: 200,*/
-                                        //This helps the text widget know what the maximum width is again! You may also opt to use an Expanded widget instead of a Container widget, if you want to use all remaining space.
                                         child: Center(
-                                          //I added this widget to show that the width limiting widget doesn't need to be a direct parent.
                                           child: FittedBox(
                                             fit: BoxFit.fitWidth,
                                             child: Text(
@@ -277,26 +199,6 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
                                               color:
                                                   ColorUtils.trendyButtonColor,
                                             ),
-                                            /* decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(7.0),
-                                          gradient: LinearGradient(
-                                            begin: Alignment(0.0, -1.0),
-                                            end: Alignment(0.0, 1.0),
-                                            colors: [
-                                              const Color(0xff28e16b),
-                                              const Color(0xff049016)
-                                            ],
-                                            stops: [0.0, 1.0],
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: const Color(0x29000000),
-                                              offset: Offset(0, 3),
-                                              blurRadius: 6,
-                                            ),
-                                          ],
-                                        ),*/
                                             child: Card(
                                                 elevation: 0,
                                                 color: Colors.transparent,
@@ -305,9 +207,8 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
                                                       BorderRadius.circular(7),
                                                 ),
                                                 child: Padding(
-                                                    padding:
-                                                        EdgeInsets.fromLTRB(
-                                                            7, 5, 7, 5),
+                                                    padding: const EdgeInsets
+                                                        .fromLTRB(7, 5, 7, 5),
                                                     child: Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
@@ -337,21 +238,21 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
                                                                   'A red up arrow'),
                                                         ]))))),
                                     Padding(
-                                        padding: EdgeInsets.only(top: 10),
+                                        padding: const EdgeInsets.only(top: 10),
                                         child: TextWidget(
-                                            /* '${(posts![0].timeslots!.length)} slots available today'*/
+                                            
                                             '\nProposed Slots',
                                             FontWeight.normal,
                                             ColorUtils.headerTextColor,
                                             18,
                                             StringUtils.roboto_font_family)),
-                                    healerProfileResponse!.slots!.length > 0
+                                    healerProfileResponse!.slots!.isNotEmpty
                                         ? Padding(
-                                            padding: EdgeInsets.fromLTRB(
+                                            padding: const EdgeInsets.fromLTRB(
                                                 0, 10, 0, 0),
                                             child: GridView.count(
                                               physics:
-                                                  NeverScrollableScrollPhysics(),
+                                                  const NeverScrollableScrollPhysics(),
                                               crossAxisCount: 2,
                                               crossAxisSpacing: 15.0,
                                               childAspectRatio: (16 / 5),
@@ -362,14 +263,18 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
                                                     .slots!.length,
                                                 (index) {
                                                   return GestureDetector(
-
                                                       onTap: () {
                                                         if (!selectedIndexList1
                                                             .contains(index)) {
-                                                          selectedIndexList1.clear();
+                                                          selectedIndexList1
+                                                              .clear();
                                                           selectedIndexList1
                                                               .add(index);
-                                                         slotID= healerProfileResponse!.slots![index].slotId.toString();
+                                                          slotID =
+                                                              healerProfileResponse!
+                                                                  .slots![index]
+                                                                  .slotId
+                                                                  .toString();
                                                         } else {
                                                           selectedIndexList1
                                                               .remove(index);
@@ -395,14 +300,15 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
                                                                         : ColorUtils
                                                                             .darkGreyTextColor,
                                                                   ),
-                                                                  borderRadius:
-                                                                      BorderRadius.all(
-                                                                          Radius.circular(
-                                                                              5))),
+                                                                  borderRadius: const BorderRadius
+                                                                          .all(
+                                                                      Radius.circular(
+                                                                          5))),
                                                           child: Center(
                                                               child: Padding(
-                                                                  padding: EdgeInsets
-                                                                      .fromLTRB(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                              .fromLTRB(
                                                                           2,
                                                                           0,
                                                                           2,
@@ -429,93 +335,13 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
                                             20,
                                             StringUtils
                                                 .roboto_font_family_bold),
-                                    /*    Padding(
-                                  padding: EdgeInsets.fromLTRB(10, 40, 10, 20),
-                                  child: SizedBox(
-                                      width: 280,
-                                      height: 46,
-                                      child: ElevatedButton(
-                                          child: TextWidget(
-                                              'Book Appointment',
-                                              FontWeight.normal,
-                                              ColorUtils.whiteColor,
-                                              19,
-                                              StringUtils.roboto_font_family),
-                                          style: ButtonStyle(
-                                              elevation:
-                                                  MaterialStateProperty.all(20),
-                                              foregroundColor: MaterialStateProperty.all<Color>(
-                                                  ColorUtils.headerTextColor),
-                                              backgroundColor:
-                                                  MaterialStateProperty.all<Color>(
-                                                      ColorUtils
-                                                          .headerTextColor),
-                                              shape: MaterialStateProperty.all<
-                                                      RoundedRectangleBorder>(
-                                                  RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          new BorderRadius.circular(30.0),
-                                                      side: BorderSide(color: ColorUtils.headerTextColor)))),
-                                          onPressed: () {
-                                            if (selected_timeslot.trim() ==
-                                                "") {
-                                              UtilMethods.showErrorAlertDialog(
-                                                  context,
-                                                  "Please select any appointment time.");
-                                            } else {
-                                              Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                      builder: (BuildContext
-                                                              context) =>
-                                                          BookAppointment_Page(
-                                                            doctorname: widget
-                                                                .doctorname
-                                                                .toString(),
-                                                            appointment_time:
-                                                                selected_timeslot */ /*widget.fromtime.toString()*/ /*,
-                                                            doctorAddress: widget
-                                                                .doctorAddress
-      `                                                          .toString(),
-                                                            appointment_status:
-                                                                "Open",
-                                                            doctor_profile: posts[
-                                                                    0]
-                                                                .doctordetails![
-                                                                    0]
-                                                                .doctorProfileimage
-                                                                .toString(),
-                                                          )));
-                                            }
-                                          })))*/
                                   ],
                                 ));
-                          } else {
-                            return SizedBox(
-                                height: 500,
-                                child: Center(
-                                  child: Lottie.asset(
-                                    'assets/images/loading_data.json',
-                                    repeat: true,
-                                    height: 70,
-                                    width: 35.w,
-                                    reverse: false,
-                                    animate: true,
-                                  ),
-                                  /*     Image.asset(
-                                                          'assets/images/no_data.png',
-                                                          width: 200,
-                                                          height: 200,
-                                                        ),*/
-                                ));
-                          }
-                        } else {
-                          return SizedBox(height:70.h,child: SpinKitFadingCircleWidget(true));
-                        }
                       }))),
           Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                  padding: EdgeInsets.fromLTRB(10, 40, 10, 20),
+                  padding: const EdgeInsets.fromLTRB(10, 40, 10, 20),
                   child: SizedBox(
                       width: 280,
                       height: 46,
@@ -529,43 +355,37 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
                           style: ButtonStyle(
                               elevation: MaterialStateProperty.all(20),
                               foregroundColor: MaterialStateProperty.all<Color>(
-                                healerProfileResponse!=null &&  healerProfileResponse!.slots!.length > 0? ColorUtils.trendyButtonColor:ColorUtils.trendyButtonColor.withOpacity(0.5)),
+                                  healerProfileResponse != null && healerProfileResponse!.slots!.isNotEmpty
+                                      ? ColorUtils.trendyButtonColor
+                                      : ColorUtils.trendyButtonColor
+                                          .withOpacity(0.5)),
                               backgroundColor: MaterialStateProperty.all<Color>(
-                                  healerProfileResponse!=null &&   healerProfileResponse!.slots!.length > 0? ColorUtils.trendyButtonColor:ColorUtils.trendyButtonColor.withOpacity(0.5)),
-                              shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                      borderRadius:
-                                          new BorderRadius.circular(20.0),
-                                      side: BorderSide(
-                                          color:
-                                          healerProfileResponse!=null &&  healerProfileResponse!.slots!.length > 0? ColorUtils.trendyButtonColor:ColorUtils.trendyButtonColor.withOpacity(0.5))))),
+                                  healerProfileResponse != null && healerProfileResponse!.slots!.isNotEmpty
+                                      ? ColorUtils.trendyButtonColor
+                                      : ColorUtils.trendyButtonColor
+                                          .withOpacity(0.5)),
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  side: BorderSide(color: healerProfileResponse != null && healerProfileResponse!.slots!.isNotEmpty ? ColorUtils.trendyButtonColor : ColorUtils.trendyButtonColor.withOpacity(0.5))))),
                           onPressed: () {
-                          /*  deleteTimeSlotsConfirmationDialog(context);*/
-                             SpinKitFadingCircleWidget(true);
-                             if( healerProfileResponse!=null &&  healerProfileResponse!.slots!.length > 0){
-                               if (slotID.trim() == "") {
-                                 UtilMethods.showErrorAlertDialog(context,
-                                     "Please select any appointment time.");
-                                 SpinKitFadingCircleWidget(false);
-                               } /*else if(_selectedBookingType==""){
-                              UtilMethods.showErrorAlertDialog(context,
-                                  "Please select booking type.");
-                              SpinKitFadingCircleWidget(false);
-                            }*/else {
-                                 SpinKitFadingCircleWidget(false);
-                                 deleteTimeSlotsConfirmationDialog(context);
-
-
-
-                               }
-                             }else{
-                               showSnackBar(context, "Bookings not available.");
-                             }
-
+                            /*  deleteTimeSlotsConfirmationDialog(context);*/
+                            SpinKitFadingCircleWidget(true);
+                            if (healerProfileResponse != null &&
+                                healerProfileResponse!.slots!.isNotEmpty) {
+                              if (slotID.trim() == "") {
+                                UtilMethods.showErrorAlertDialog(context,
+                                    "Please select any appointment time.");
+                                SpinKitFadingCircleWidget(false);
+                              } 
+                              else {
+                                SpinKitFadingCircleWidget(false);
+                                deleteTimeSlotsConfirmationDialog(context);
+                              }
+                            } else {
+                              showSnackBar(context, "Bookings not available.");
+                            }
                           })))),
-
-      SpinKitFadingCircleWidget(isLoading)
+          SpinKitFadingCircleWidget(isLoading)
         ]),
       ));
     });
@@ -596,7 +416,7 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                primary: ColorUtils.headerTextColor, // button text color
+                foregroundColor: ColorUtils.headerTextColor, // button text color
               ),
             ),
           ),
@@ -604,7 +424,7 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
         );
       },
     );
-    if (selected != null && selected != selectedDate)
+    if (selected != null && selected != selectedDate) {
       setState(() {
         var temp = DateTime.now().toUtc();
         var d1 = DateTime.utc(temp.year, temp.month, temp.day);
@@ -619,22 +439,21 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
         }
 
         selectedDate = selected;
-        print('selected date--   ${selectedDate}');
+        print('selected date--   $selectedDate');
         final DateFormat formatter1 = DateFormat('yyyy-MM-dd');
         final String formatted1 = formatter1.format(selected);
 
         selectedInitialDate = selectedDate.toString().substring(0, 10);
-        print('selected initial date---   ${selectedInitialDate}');
+        print('selected initial date---   $selectedInitialDate');
         final DateFormat formatter = DateFormat('MMMM d, yyyy');
         final String formatted = formatter.format(selectedDate);
         initialdate = formatted;
         /*   initialdate=selectedDate.toString();*/
-        Future.delayed(Duration(seconds: 1), () {
-
+        Future.delayed(const Duration(seconds: 1), () {
           setState(() {});
-
         });
       });
+    }
   }
 
   TimeOfDay stringToTimeOfDay(String tod) {
@@ -646,8 +465,8 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
 
   Future<HealerProfileResponse?> getHealerProfile() async {
     var data;
-    print("selectedInitialDate   ${selectedInitialDate} ");
-    var request = await http.MultipartRequest('POST', BaseuURL.healerProfile);
+    print("selectedInitialDate   $selectedInitialDate ");
+    var request = http.MultipartRequest('POST', BaseuURL.healerProfile);
     // var request =await http.MultipartRequest('POST', Uri.parse(
     // 'https://www.techtradedu.com/conceptlive/api/online_class'));
     request.fields['healer_id'] = widget.healerId.toString() /*'43'*/;
@@ -667,15 +486,14 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
 
       var rest1 = data["msg"];
       data = json.decode(responsed.body);
-      print('--->>?   ${data}');
+      print('--->>?   $data');
 
       if (data["status"] == "true" && data["msg"] == "success") {
         print('Login succssfull---    ');
 
         final jsonResponse = json.decode(responsed.body);
 
-        healerProfileResponse =
-            new HealerProfileResponse.fromJson(jsonResponse);
+        healerProfileResponse = HealerProfileResponse.fromJson(jsonResponse);
 
         return healerProfileResponse;
       } else {
@@ -683,12 +501,12 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
 
         final jsonResponse = json.decode(responsed.body);
 
-        healerProfileResponse =
-            new HealerProfileResponse.fromJson(jsonResponse);
+        healerProfileResponse = HealerProfileResponse.fromJson(jsonResponse);
 
         return healerProfileResponse;
       }
     }
+    return null;
   }
 
   String _selectedBookingType = '';
@@ -714,16 +532,18 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
             fontSize: 19,
           )),
       onPressed: () {
-
-        if(_selectedBookingType==''){
-          UtilMethods.showErrorAlertDialog(context,
-              "Please choose booking type.");
-
-        }else{
+        if (_selectedBookingType == '') {
+          UtilMethods.showErrorAlertDialog(
+              context, "Please choose booking type.");
+        } else {
           Navigator.pop(context, true);
-          therapyPricingDialog(context);
+          if (healerTherapyPricingResponse != null) {
+            therapyPricingDialog(context);
+          } else {
+            UtilMethods.showErrorAlertDialog(
+                context, "Price not available for this therapy");
+          }
         }
-
 
         /* Future.delayed(Duration(seconds: 2), () {
           setState(() {});
@@ -741,7 +561,7 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
+                const Padding(
                     padding: EdgeInsets.only(bottom: 10),
                     child: Text('Booking Type')),
                 ListTile(
@@ -754,7 +574,7 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
                       });
                     },
                   ),
-                  title: Text('Book online session with the Healer.'),
+                  title: const Text('Book online session with the Healer.'),
                 ),
                 ListTile(
                   leading: Radio<String>(
@@ -766,7 +586,7 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
                       });
                     },
                   ),
-                  title: Text('Book personal visit with the Healer.'),
+                  title: const Text('Book personal visit with the Healer.'),
                 ),
               ],
             ));
@@ -807,12 +627,10 @@ class TherapyDetailsstate extends State<TherapyDetailsPage> {
             fontSize: 20,
           )),
       onPressed: () {
-        isLoading=true;
-        setState(() {
-
-        });
+        isLoading = true;
+        setState(() {});
         Navigator.pop(context, true);
-bookAnAppointment();
+        bookAnAppointment();
         /*     Future.delayed(Duration(seconds: 2), () {
           setState(() {});
           // Do something
@@ -827,7 +645,7 @@ bookAnAppointment();
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
+              const Padding(
                   padding: EdgeInsets.only(bottom: 10),
                   child: Text('Booking Price')),
               ListTile(
@@ -839,8 +657,10 @@ bookAnAppointment();
                       fontSize: 16,
                     )),
                 title: Text(
-                    healerTherapyPricingResponse!.response![0].therapyName
-                        .toString(),
+                    healerTherapyPricingResponse != null
+                        ? healerTherapyPricingResponse!.response![0].therapyName
+                            .toString()
+                        : 'Not found',
                     style: TextStyle(
                       fontFamily: StringUtils.roboto_font_family,
                       color: ColorUtils.blackColor,
@@ -849,15 +669,16 @@ bookAnAppointment();
               ),
               ListTile(
                 minLeadingWidth: 5.w,
-                leading: Text("Price-",
+                leading: Text("Price ",
                     style: TextStyle(
                       fontFamily: StringUtils.roboto_font_family,
                       color: ColorUtils.blackColor,
                       fontSize: 16,
                     )),
                 title: Text(
-                    healerTherapyPricingResponse!.response![0].customPrice
-                        .toString(),
+                    healerTherapyPricingResponse != null
+                        ? '\u{20B9}${healerTherapyPricingResponse!.response![0].customPrice.toString()}'
+                        : 'Price not found',
                     style: TextStyle(
                       fontFamily: StringUtils.roboto_font_family,
                       color: ColorUtils.blackColor,
@@ -885,7 +706,7 @@ bookAnAppointment();
     var data;
 
     var request =
-        await http.MultipartRequest('POST', BaseuURL.healer_therapy_pricing);
+        http.MultipartRequest('POST', BaseuURL.healer_therapy_pricing);
     // var request =await http.MultipartRequest('POST', Uri.parse(
     // 'https://www.techtradedu.com/conceptlive/api/online_class'));
     request.fields['healer_id'] = widget.healerId.toString() /*'43'*/;
@@ -903,41 +724,41 @@ bookAnAppointment();
 
       var rest1 = data["msg"];
       data = json.decode(responsed.body);
-      print('--->>?   ${data}');
+      print('--->>?   $data');
 
       if (data["status"] == "true" && data["msg"] == "success") {
-        print('Login succssfull---    ');
+        print('yes pricing is there---    ');
 
         final jsonResponse = json.decode(responsed.body);
 
         healerTherapyPricingResponse =
-            new HealerTherapyPricingResponse.fromJson(jsonResponse);
+            HealerTherapyPricingResponse.fromJson(jsonResponse);
 
         return healerTherapyPricingResponse;
       } else {
-        print('Login succssfull---    ');
+        print('No pricing--   ${widget.healerId.toString()} ');
 
         final jsonResponse = json.decode(responsed.body);
-
-        healerTherapyPricingResponse =
-            new HealerTherapyPricingResponse.fromJson(jsonResponse);
+        healerTherapyPricingResponse = null;
+        /* healerTherapyPricingResponse =
+            new HealerTherapyPricingResponse.fromJson(jsonResponse);*/
 
         return healerTherapyPricingResponse;
       }
     }
+    return null;
   }
 
   Future<BookAppointmentResponse?> bookAnAppointment() async {
     var data;
     BookAppointmentResponse? bookAppointmentResponse;
-    var request =
-        await http.MultipartRequest('POST', BaseuURL.book_appointment);
+    var request = http.MultipartRequest('POST', BaseuURL.book_appointment);
     // var request =await http.MultipartRequest('POST', Uri.parse(
     // 'https://www.techtradedu.com/conceptlive/api/online_class'));
     request.fields['client_id'] =
         preferences!.getString(StringUtils.id).toString();
     request.fields['appoint_date'] = selectedInitialDate /*'43'*/;
-    request.fields['slot_id'] =slotID /*'43'*/;
+    request.fields['slot_id'] = slotID /*'43'*/;
     request.fields['price_id'] =
         healerTherapyPricingResponse!.response![0].thId.toString() /*'43'*/;
     request.fields['healer_id'] = widget.healerId.toString() /*'43'*/;
@@ -956,7 +777,7 @@ bookAnAppointment();
 
       var rest1 = data["msg"];
       data = json.decode(responsed.body);
-      print('--->>?   ${data}');
+      print('--->>?   $data');
 
       if (data["status"] == "true" &&
           data["msg"] ==
@@ -966,12 +787,15 @@ bookAnAppointment();
         final jsonResponse = json.decode(responsed.body);
 
         bookAppointmentResponse =
-            new BookAppointmentResponse.fromJson(jsonResponse);
+            BookAppointmentResponse.fromJson(jsonResponse);
         showSnackBar(context, bookAppointmentResponse.msg.toString());
-        Future.delayed(Duration(seconds: 1), () {
+        Future.delayed(const Duration(seconds: 1), () {
           isLoading = false;
           setState(() {});
-
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => ClientAppointments()));
         });
         return bookAppointmentResponse;
       } else {
@@ -980,15 +804,15 @@ bookAnAppointment();
         final jsonResponse = json.decode(responsed.body);
         showSnackBar(context, data["msg"]);
         bookAppointmentResponse =
-            new BookAppointmentResponse.fromJson(jsonResponse);
-        Future.delayed(Duration(seconds: 1), () {
+            BookAppointmentResponse.fromJson(jsonResponse);
+        Future.delayed(const Duration(seconds: 1), () {
           isLoading = false;
           setState(() {});
-
         });
         return bookAppointmentResponse;
       }
     }
+    return null;
   }
 
   showSnackBar(

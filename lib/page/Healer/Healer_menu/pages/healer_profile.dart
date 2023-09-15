@@ -1,32 +1,28 @@
-import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
-import 'dart:ui';
-import 'package:doctor/baseurl/baseURL.dart';
-import 'package:doctor/models/all_therapy_response.dart';
-import 'package:doctor/models/healer_responses/healer_profile_fetch_data.dart';
-import 'package:doctor/utils/color_utils.dart';
-import 'package:doctor/utils/string_utils.dart';
-import 'package:doctor/utils/utils_methods.dart';
-import 'package:doctor/widgets/spinKitFadingCircleWidget.dart';
-import 'package:flutter/scheduler.dart';
-
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:getwidget/getwidget.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:multiselect/multiselect.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
+import 'package:trendy_chikitsa/baseurl/baseURL.dart';
+import 'package:trendy_chikitsa/models/all_therapy_response.dart';
+import 'package:trendy_chikitsa/models/healer_responses/healer_issue_list.dart';
+import 'package:trendy_chikitsa/models/healer_responses/healer_profile_fetch_data.dart';
+import 'package:trendy_chikitsa/page/Healer/Healer_menu/pages/healer_pricing_plan.dart';
+import 'package:trendy_chikitsa/page/hp.dart';
+import 'package:trendy_chikitsa/utils/color_utils.dart';
+import 'package:trendy_chikitsa/utils/string_utils.dart';
+import 'package:trendy_chikitsa/utils/utils_methods.dart';
+import 'package:trendy_chikitsa/widgets/spinKitFadingCircleWidget.dart';
 
 class ProfileSetting extends StatefulWidget {
   String from_page = "";
+
+  ProfileSetting({super.key});
 
   @override
   ProfileSettingstate createState() => ProfileSettingstate();
@@ -53,7 +49,6 @@ class ProfileSettingstate extends State<ProfileSetting> {
   var items = [
     'Male',
     'Female',
-    'Other',
   ];
 
   var monthItem = [
@@ -73,39 +68,62 @@ class ProfileSettingstate extends State<ProfileSetting> {
   ];
   List<TherapyList> therapyList = [];
   List<TextEditingController?>? experienceInYearControllerList = [];
-  List<String?> _animals = [
+  List<TextEditingController?>? custom_rating = [];
+  List<List<MyList>> issueIndex = [];
+  List<String> fileNameList = [];
+  final List<String> _animals = [
+    'Career related issues',
+    'Excellence in sports',
+    'Excellence in academics',
+    'Memory and concentration issue',
     'Depression',
-    'Carrer related issue',
+    'Stress',
+    'Anxiety',
+    'Sleep issues',
+    'Physical health and injury',
+    'Sexual wellbeing',
+    'Personal issues',
+    'Child counselling',
+    'Parenting issues',
+    'Public and peer relationships',
+    'Differently abled people',
     'Confidence issue',
-    'Corporate programms',
-    'Depression1',
-    'Carrer related issue1',
+    'Indecision',
+    'Recruitment Analysis',
+    'Planning, Curiosity, Problem solving ability',
+    'Corporate programs',
+    'All of the above'
   ];
-
+  List<String> selected1 = [];
   List<String> selected = [];
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final myController = TextEditingController();
   final nameController = TextEditingController();
-
+  List<int> listOfInt = [];
   String appToken = "";
   bool isLoading = false;
   String share_link = "", title = "Profile";
-  PickedFile? _imageFile = null;
+  PickedFile? _imageFile;
+  List<List<String>> issueList = [];
+  List<List<String>> multiSelectIssueList = [];
+  List<List<int>> issueIndexList = [];
+  List<PickedFile?> therapy_certificate = [];
   final ImagePicker _picker = ImagePicker();
-  int _selectedIndex = 0;
+  final int _selectedIndex = 0;
   SharedPreferences? prefs;
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _mobileNumberController = TextEditingController();
-  TextEditingController _dobController = TextEditingController();
-  TextEditingController _zipCodeController = TextEditingController();
-  TextEditingController _addressController = TextEditingController();
-  TextEditingController _aboutMeController = TextEditingController();
-  int value = 1, pricingValue = 1;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _mobileNumberController = TextEditingController();
+  final TextEditingController _dobController = TextEditingController();
+  final TextEditingController _zipCodeController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _aboutMeController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _keywordsController = TextEditingController();
+  final TextEditingController _videoController = TextEditingController();
+  int value = 1, pricingValue = 1, maxValue = 9;
   List<Expertise?> expertiseList = [];
   List<Pricing?> pricingList = [];
-
-
   List<String?> selectTherapyItemList = [];
   List<String?> selectPricingTherapyItemList = [];
   List<String?> expInMonths = [];
@@ -115,7 +133,8 @@ class ProfileSettingstate extends State<ProfileSetting> {
       selectedGender,
       selectedStateItem,
       class_id = "",
-      stateId = "",selectedPricingTherapyItem="",
+      stateId = "",
+      selectedPricingTherapyItem,
       cityId = "",
       image_url = 'https://source.unsplash.com/user/c_v_r';
 
@@ -130,32 +149,48 @@ class ProfileSettingstate extends State<ProfileSetting> {
     prefs = await SharedPreferences.getInstance();
     getTherapies();
     getFetchProfileData();
-
-    /*   _nameController =
-        new TextEditingController(text: prefs!.getString(StringUtils.t_name));
-    _emailController =
-        new TextEditingController(text: prefs!.getString(StringUtils.email));
-    _mobileNumberController =
-        new TextEditingController(text: prefs!.getString(StringUtils.s_mobile));
-    _dobController =
-        new TextEditingController(text: prefs!.getString(StringUtils.dob));
-    _zipCodeController =
-        new TextEditingController(text: prefs!.getString(StringUtils.zipcode));
-    _addressController=
-    new TextEditingController(text: prefs!.getString(StringUtils.address));
-    _classController=
-    new TextEditingController(text: prefs!.getString(StringUtils.subject));*/
-
+    if (prefs!
+            .getString(StringUtils.subscriptionPlan)
+            .toString()
+            .trim()
+            .toLowerCase() ==
+        'free') {
+      setState(() {
+        maxValue = 1;
+      });
+    } else if (prefs!
+            .getString(StringUtils.subscriptionPlan)
+            .toString()
+            .trim()
+            .toLowerCase() ==
+        '3 months') {
+      setState(() {
+        maxValue = 3;
+      });
+    } else if (prefs!
+            .getString(StringUtils.subscriptionPlan)
+            .toString()
+            .trim()
+            .toLowerCase() ==
+        '6 months') {
+      setState(() {
+        maxValue = 5;
+      });
+    } else if (prefs!
+            .getString(StringUtils.subscriptionPlan)
+            .toString()
+            .trim()
+            .toLowerCase() ==
+        '1 year') {
+      setState(() {
+        maxValue = 9;
+      });
+    }
+    print(maxValue);
+    print(prefs!.getString(StringUtils.subscriptionPlan));
     print('selcted city   ${prefs!.getString(StringUtils.city)}');
 
-    /*  preferences = await SharedPreferences.getInstance();
-    SchedulerBinding.instance!.addPostFrameCallback((_) {
-      name =
-          preferences!.getString(StringUtils.customer_mobile_number).toString();
-      nameController.text =
-          preferences!.getString(StringUtils.customer_name).toString();
-     setState(() {});
-    }); */
+    setState(() {});
   }
 
   @override
@@ -167,12 +202,13 @@ class ProfileSettingstate extends State<ProfileSetting> {
           title: '',
           builder: (context, widget) {
             // TODO: implement build
-            return new Scaffold(
+
+            return Scaffold(
                 key: _scaffoldKey,
                 resizeToAvoidBottomInset: true,
                 backgroundColor: ColorUtils.lightGreyBorderColor,
                 appBar: AppBar(
-                  shape: RoundedRectangleBorder(
+                  shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.vertical(
                       bottom: Radius.circular(20),
                     ),
@@ -189,15 +225,15 @@ class ProfileSettingstate extends State<ProfileSetting> {
                       fontSize: 20,
                     ),
                   ),
-                  actions: <Widget>[],
-                  leading: new IconButton(
+                  actions: const <Widget>[],
+                  /* leading: new IconButton(
                     icon: new Icon(
                       Icons.menu,
                       color: ColorUtils.whiteColor,
                       size: 20,
                     ),
                     onPressed: () => _scaffoldKey.currentState!.openDrawer(),
-                  ),
+                  ),*/
                 ),
                 body: Stack(
                   children: [
@@ -247,11 +283,111 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                           .violetButtonColor),
                                                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                                                       RoundedRectangleBorder(
-                                                          borderRadius: new BorderRadius.circular(8.0),
+                                                          borderRadius: BorderRadius.circular(8.0),
                                                           side: BorderSide(color: ColorUtils.violetButtonColor)))),
-                                              onPressed: () {}))),
+                                              onPressed: () {
+                                                isLoading = true;
+                                                setState(() {});
+                                                if (_nameController.text
+                                                    .toString()
+                                                    .trim()
+                                                    .isEmpty) {
+                                                  showAlertDialog(context,
+                                                      'Please enter full name');
+                                                  isLoading = false;
+                                                  setState(() {});
+                                                } else if (_emailController
+                                                        .text.isEmpty ||
+                                                    !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                                        .hasMatch(
+                                                            _emailController
+                                                                .text)) {
+                                                  showAlertDialog(context,
+                                                      "Please enter valid email");
+                                                  isLoading = false;
+                                                  setState(() {});
+                                                } else if (_mobileNumberController
+                                                        .text.length !=
+                                                    10) {
+                                                  showAlertDialog(context,
+                                                      "Please enter 10 digit mobile number");
+                                                  isLoading = false;
+                                                  setState(() {});
+                                                } else if (_ageController
+                                                    .text.isEmpty) {
+                                                  showAlertDialog(context,
+                                                      "Please enter age");
+                                                  isLoading = false;
+                                                  setState(() {});
+                                                } else if (selectedGender
+                                                            .toString()
+                                                            .trim() ==
+                                                        "Select Gender" ||
+                                                    selectedGender == null ||
+                                                    selectedGender
+                                                        .toString()
+                                                        .trim()
+                                                        .isEmpty) {
+                                                  showAlertDialog(context,
+                                                      "Please select gender");
+                                                  isLoading = false;
+                                                  setState(() {});
+                                                } else if (selectPricingTherapyItemList
+                                                    .isEmpty) {
+                                                  showAlertDialog(context,
+                                                      "Please add atlease one pricing plan");
+                                                  isLoading = false;
+                                                  setState(() {});
+                                                } else {
+                                                  updateProfile();
+                                                }
+                                              }))),
                                 ])),
-                            onTap: () async {}),
+                            onTap: () async {
+                              isLoading = true;
+                              setState(() {});
+                              if (_nameController.text
+                                  .toString()
+                                  .trim()
+                                  .isEmpty) {
+                                showAlertDialog(
+                                    context, 'Please enter full name');
+                                isLoading = false;
+                                setState(() {});
+                              } else if (_emailController.text.isEmpty ||
+                                  !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                      .hasMatch(_emailController.text)) {
+                                showAlertDialog(
+                                    context, "Please enter valid email");
+                                isLoading = false;
+                                setState(() {});
+                              } else if (_mobileNumberController.text.length !=
+                                  10) {
+                                showAlertDialog(context,
+                                    "Please enter 10 digit mobile number");
+                                isLoading = false;
+                                setState(() {});
+                              } else if (_ageController.text.isEmpty) {
+                                showAlertDialog(context, "Please enter age");
+                                isLoading = false;
+                                setState(() {});
+                              } else if (selectedGender.toString().trim() ==
+                                      "Select Gender" ||
+                                  selectedGender == null ||
+                                  selectedGender.toString().trim().isEmpty) {
+                                showAlertDialog(
+                                    context, "Please select gender");
+                                isLoading = false;
+                                setState(() {});
+                              } else if (selectPricingTherapyItemList.isEmpty) {
+                                showAlertDialog(context,
+                                    "Please add atlease one pricing plan");
+                                isLoading = false;
+                                setState(() {});
+                              } else {
+                                updateProfile();
+                              }
+                            }),
                         Container(
                             margin: EdgeInsets.only(
                                 left: 0, right: 0, top: 0.h, bottom: .7.h),
@@ -285,7 +421,7 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                             .blackColor,
                                                         fontSize: 19,
                                                       )))),
-                                          Container(
+                                          SizedBox(
                                             height: 20.h,
                                             width: 40.w,
                                             child: Stack(
@@ -348,12 +484,12 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
+                                            child: TextField(
                                               keyboardType: TextInputType.text,
                                               controller: _nameController,
                                               /*enabled: false,*/
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
                                                           ColorUtils.blackColor,
@@ -370,7 +506,7 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                   errorBorder: InputBorder.none,
                                                   disabledBorder:
                                                       InputBorder.none,
-                                                  hintText: 'eg. Topic 1'),
+                                                  hintText: 'Enter name'),
                                               onChanged: (text) {
                                                 setState(() {
                                                   /* customer_mobile =
@@ -421,12 +557,12 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
+                                            child: TextField(
                                               controller: _emailController,
                                               keyboardType: TextInputType.text,
                                               /* enabled: false,*/
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
                                                           ColorUtils.blackColor,
@@ -443,7 +579,7 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                   errorBorder: InputBorder.none,
                                                   disabledBorder:
                                                       InputBorder.none,
-                                                  hintText: 'eg. Topic 1'),
+                                                  hintText: 'Enter email'),
                                               onChanged: (text) {
                                                 setState(() {
                                                   /* customer_mobile =
@@ -495,13 +631,13 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
+                                            child: TextField(
                                               controller:
                                                   _mobileNumberController,
                                               keyboardType: TextInputType.text,
                                               /* enabled: false,*/
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
                                                           ColorUtils.blackColor,
@@ -518,7 +654,8 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                   errorBorder: InputBorder.none,
                                                   disabledBorder:
                                                       InputBorder.none,
-                                                  hintText: 'eg. Topic 1'),
+                                                  hintText:
+                                                      'Enter mobile number'),
                                               onChanged: (text) {
                                                 setState(() {
                                                   /* customer_mobile =
@@ -548,13 +685,103 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                             .blackColor,
                                                         fontSize: 16,
                                                       )))),
+                                          InkWell(
+                                              onTap: () {
+                                                _selectDate(
+                                                    context); // Call Function that has showDatePicker()
+                                              },
+                                              child: IgnorePointer(
+                                                  child: Container(
+                                                height: 6.h,
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 3,
+                                                    horizontal: 2.w),
+                                                margin: EdgeInsets.only(
+                                                    top: 1.h,
+                                                    left: 4.w,
+                                                    right: 4.w),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                  border: Border.all(
+                                                    color: ColorUtils.greyColor
+                                                        .withOpacity(.4),
+                                                  ),
+                                                  /*  color: ColorUtils
+                                                      .lightGreyBorderColor
+                                                      .withOpacity(0.3),*/
+                                                ),
+                                                child: TextField(
+                                                  controller: _dobController,
+                                                  keyboardType:
+                                                      TextInputType.text,
+                                                  /*enabled: false,*/
+                                                  /*   onTap: (){
+                                                _selectDate(context);
+                                              },*/
+
+                                                  textAlign: TextAlign.left,
+                                                  decoration: InputDecoration(
+                                                      hintStyle: TextStyle(
+                                                          color: ColorUtils
+                                                              .blackColor,
+                                                          fontSize: 17),
+                                                      labelStyle: TextStyle(
+                                                          color: ColorUtils
+                                                              .blackColor,
+                                                          fontSize: 16),
+                                                      border: InputBorder.none,
+                                                      focusedBorder:
+                                                          InputBorder.none,
+                                                      enabledBorder:
+                                                          InputBorder.none,
+                                                      errorBorder:
+                                                          InputBorder.none,
+                                                      disabledBorder:
+                                                          InputBorder.none,
+                                                      hintText:
+                                                          'Enter date of birth'),
+                                                  onChanged: (text) {
+                                                    setState(() {
+                                                      /* customer_mobile =
+                                          text.toString();*/
+                                                      //you can access nameController in its scope to get
+                                                      // the value of text entered as shown below
+                                                      //UserName = nameController.text;
+                                                    });
+                                                  },
+                                                ),
+                                              ))),
+                                          Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: 15,
+                                                  right: 15,
+                                                  top: 2.h),
+                                              child: Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Text('Age',
+                                                      textAlign: TextAlign.left,
+                                                      style: TextStyle(
+                                                        fontFamily: StringUtils
+                                                            .roboto_font_family,
+                                                        color: ColorUtils
+                                                            .blackColor,
+                                                        fontSize: 16,
+                                                      )))),
                                           Container(
-                                            height: 6.h,
+                                            height: 9.5.h,
                                             width: MediaQuery.of(context)
                                                 .size
                                                 .width,
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 3, horizontal: 2.w),
+                                            padding: EdgeInsets.only(
+                                                top: 3.h,
+                                                left: 4.w,
+                                                right: 4.w,
+                                                bottom: 1.h),
                                             margin: EdgeInsets.only(
                                                 top: 1.h,
                                                 left: 4.w,
@@ -570,12 +797,14 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
-                                              controller: _dobController,
-                                              keyboardType: TextInputType.text,
+                                            child: TextField(
+                                              controller: _ageController,
+                                              maxLength: 2,
+                                              keyboardType:
+                                                  TextInputType.number,
                                               /*enabled: false,*/
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
                                                           ColorUtils.blackColor,
@@ -592,7 +821,7 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                   errorBorder: InputBorder.none,
                                                   disabledBorder:
                                                       InputBorder.none,
-                                                  hintText: 'eg. Topic 1'),
+                                                  hintText: 'Your age'),
                                               onChanged: (text) {
                                                 setState(() {
                                                   /* customer_mobile =
@@ -604,7 +833,6 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                               },
                                             ),
                                           ),
-
                                           Padding(
                                               padding: EdgeInsets.only(
                                                   left: 15,
@@ -627,9 +855,9 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                             width: MediaQuery.of(context)
                                                 .size
                                                 .width,
-                                            padding: EdgeInsets.symmetric(
+                                            padding: const EdgeInsets.symmetric(
                                                 vertical: 3, horizontal: 15),
-                                            margin: EdgeInsets.only(
+                                            margin: const EdgeInsets.only(
                                                 top: 10, left: 15, right: 15),
                                             decoration: BoxDecoration(
                                               borderRadius:
@@ -647,7 +875,8 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                               isExpanded: true,
                                               value: selectedGender,
                                               hint: Container(
-                                                child: Text('Select Gender'),
+                                                child:
+                                                    const Text('Select Gender'),
                                               ),
                                               // Down Arrow Icon
                                               icon: Icon(
@@ -697,7 +926,7 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                         fontSize: 16,
                                                       )))),
                                           Container(
-                                            height: 6.h,
+                                            height: 15.h,
                                             width: MediaQuery.of(context)
                                                 .size
                                                 .width,
@@ -718,12 +947,14 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
+                                            child: TextField(
                                               controller: _addressController,
                                               keyboardType: TextInputType.text,
                                               enabled: true,
+                                              minLines: 6,
+                                              maxLines: null,
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
                                                           ColorUtils.blackColor,
@@ -740,7 +971,7 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                   errorBorder: InputBorder.none,
                                                   disabledBorder:
                                                       InputBorder.none,
-                                                  hintText: 'eg. Topic 1'),
+                                                  hintText: 'Enter address'),
                                               onChanged: (text) {
                                                 setState(() {
                                                   /* customer_mobile =
@@ -792,12 +1023,12 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
+                                            child: TextField(
                                               controller: _zipCodeController,
                                               keyboardType: TextInputType.text,
                                               enabled: true,
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
                                                           ColorUtils.blackColor,
@@ -814,7 +1045,7 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                   errorBorder: InputBorder.none,
                                                   disabledBorder:
                                                       InputBorder.none,
-                                                  hintText: 'eg. Topic 1'),
+                                                  hintText: 'Enter zipcode'),
                                               onChanged: (text) {
                                                 setState(() {
                                                   /* customer_mobile =
@@ -864,7 +1095,7 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                       )))),
 
                                           Container(
-                                            height: 6.h,
+                                            height: 20.h,
                                             width: MediaQuery.of(context)
                                                 .size
                                                 .width,
@@ -885,14 +1116,16 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
+                                            child: TextField(
                                               controller: _aboutMeController,
                                               /*enabled: false,*/
+                                              minLines: 6,
+                                              maxLength: 350,
+                                              maxLines: null,
                                               keyboardType:
                                                   TextInputType.multiline,
-                                              maxLines: null,
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
                                                           ColorUtils.blackColor,
@@ -910,7 +1143,7 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                   disabledBorder:
                                                       InputBorder.none,
                                                   hintText:
-                                                      'Lorem Ipsum is simply '),
+                                                      'Write about you.. '),
                                               onChanged: (text) {
                                                 setState(() {
                                                   /* customer_mobile =
@@ -961,12 +1194,12 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
-                                              controller: _emailController,
+                                            child: TextField(
+                                              controller: _keywordsController,
                                               keyboardType: TextInputType.text,
                                               /* enabled: false,*/
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
                                                           ColorUtils.blackColor,
@@ -1035,13 +1268,12 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                             ),
-                                            child: new TextField(
-                                              controller:
-                                                  _mobileNumberController,
+                                            child: TextField(
+                                              controller: _videoController,
                                               keyboardType: TextInputType.text,
                                               /* enabled: false,*/
                                               textAlign: TextAlign.left,
-                                              decoration: new InputDecoration(
+                                              decoration: InputDecoration(
                                                   hintStyle: TextStyle(
                                                       color:
                                                           ColorUtils.blackColor,
@@ -1106,18 +1338,70 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                       Padding(
                                           padding: EdgeInsets.only(
                                               left: 15, right: 15, top: 2.h),
-                                          child: Align(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text('Expertise ${index + 1}',
+                                                  textAlign: TextAlign.left,
+                                                  style: TextStyle(
+                                                    fontFamily: StringUtils
+                                                        .roboto_font_family,
+                                                    color:
+                                                        ColorUtils.blackColor,
+                                                    fontSize: 18,
+                                                  )),
+                                              Visibility(
+                                                  visible: index > 0,
+                                                  child: IconButton(
+                                                      onPressed: () {
+                                                        if (expertiseList
+                                                                .length >
+                                                            index) {
+                                                          deleteExpertise(
+                                                              expertiseList[
+                                                                      index]!
+                                                                  .expertise_id
+                                                                  .toString(),
+                                                              (index + 1)
+                                                                  .toString());
+                                                        } else {
+                                                          value = value - 1;
+                                                          selectTherapyItemList
+                                                              .removeAt(index);
+                                                          expInMonths
+                                                              .removeAt(index);
+                                                          experienceInYearControllerList!
+                                                              .removeAt(index);
+                                                          multiSelectIssueList
+                                                              .removeAt(index);
+                                                          fileNameList
+                                                              .removeAt(index);
+                                                          therapy_certificate
+                                                              .removeAt(index);
+                                                        }
+                                                        setState(() {});
+                                                      },
+                                                      icon: Icon(
+                                                        Icons.delete,
+                                                        color: ColorUtils
+                                                            .darkPinkColor,
+                                                        size: 30,
+                                                      ))),
+                                            ],
+                                          ) /*Align(
                                               alignment: Alignment.centerLeft,
                                               child:
-                                                  Text('Expertise ${index + 1}',
-                                                      textAlign: TextAlign.left,
-                                                      style: TextStyle(
-                                                        fontFamily: StringUtils
-                                                            .roboto_font_family,
-                                                        color: ColorUtils
-                                                            .blackColor,
-                                                        fontSize: 18,
-                                                      )))),
+                                              Text('Expertise ${index + 1}',
+                                                  textAlign: TextAlign.left,
+                                                  style: TextStyle(
+                                                    fontFamily: StringUtils
+                                                        .roboto_font_family,
+                                                    color: ColorUtils
+                                                        .blackColor,
+                                                    fontSize: 18,
+                                                  )))*/
+                                          ),
                                       Padding(
                                           padding: EdgeInsets.only(
                                               left: 15, right: 15, top: 2.h),
@@ -1135,9 +1419,9 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                       Container(
                                         width:
                                             MediaQuery.of(context).size.width,
-                                        padding: EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                             vertical: 3, horizontal: 15),
-                                        margin: EdgeInsets.only(
+                                        margin: const EdgeInsets.only(
                                             top: 10, left: 15, right: 15),
                                         decoration: BoxDecoration(
                                           borderRadius:
@@ -1161,7 +1445,7 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                               ? selectedCityItem
                                               : selectTherapyItemList[index],
                                           hint: Container(
-                                            child: Text('Select Therapy'),
+                                            child: const Text('Select Therapy'),
                                           ),
                                           // Down Arrow Icon
                                           icon: Icon(
@@ -1170,11 +1454,11 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                             size: 30,
                                           ),
 
-                                          items: therapyList!.map((item) {
+                                          items: therapyList.map((item) {
                                             return DropdownMenuItem(
                                               child: Text(
                                                   item.therapy_name.toString(),
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                       fontWeight:
                                                           FontWeight.normal,
                                                       color: Colors.black,
@@ -1193,49 +1477,80 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                           },
                                         )),
                                       ),
-
-                                      /*       Padding(
-                                              padding: const EdgeInsets.all(20.0),
-                                              // DropDownMultiSelect comes from multiselect
-                                              child: DropDownMultiSelect(
-
-                                                onChanged: (List<String> x) {
-                                                  setState(() {
-                                                    selected =x;
-                                                  });
-                                                },
-                                                options: ['Depression' , 'Carrer related issue' , 'Confidence issue' , 'Corporate programms','Depression1' , 'Carrer related issue1' , 'Confidence issue1' , 'Corporate programms1','Depression2' , 'Carrer related issue2' , 'Confidence issue2' , 'Corporate programms2'],
-                                                selectedValues: selected,
-
-                                                whenEmpty: 'Select Something',
-                                              ),
-                                            ),*/
                                       Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 0.h,
+                                            left: 3.5.w,
+                                            right: 3.5.w),
+                                        child: DropDownMultiSelect<String>(
+                                          // Specify the generic type 'String'
+                                          onChanged: (List<String> x) {
+                                            // Specify the type 'String'
+                                            setState(() {
+                                              List<String> selected1 = [];
+
+                                              selected1 = x;
+
+                                              var stringList =
+                                                  selected1.join(" ");
+                                              print(stringList);
+                                              multiSelectIssueList
+                                                  .removeAt(index);
+                                              multiSelectIssueList.insert(
+                                                  index, selected1);
+                                            });
+                                          },
+                                          options:
+                                              _animals, // Specify the type 'List<String>'
+                                          selectedValues: multiSelectIssueList !=
+                                                  null
+                                              ? multiSelectIssueList[index]
+                                              : <String>[], // Specify the type 'List<String>'
+                                          whenEmpty: 'Select Something',
+                                        ),
+                                      ),
+                                      /*     Padding(
                                           padding: EdgeInsets.only(
                                               top: 2.h, left: 2.w, right: 2.w),
                                           child: GFMultiSelect(
                                             items: _animals,
+                                            initialSelectedItemsIndex: issueIndexList[index] !=
+                                                null
+                                                ? issueIndexList![index]
+                                                : [],
                                             onSelect: (value1) {
                                               print('selected $value1');
+
+                                              print('selected $value1');
+                                              print(
+                                                  'selected ${value1.length}');
+                                              for (int j = 0; j <
+                                                  value1.length; j++) {
+                                                for (int i = 0; i <
+                                                    _animals.length; i++) {
+                                                  print(
+                                                      'selected-- ${value1[j]}   ${_animals[i]}');
+                                                }
+                                              }
                                             },
                                             dropdownTitleTileMargin:
-                                                EdgeInsets.only(
-                                                    top: 1.h,
-                                                    left: 2.w,
-                                                    right: 2.w,
-                                                    bottom: 1.h),
+                                            EdgeInsets.only(
+                                                top: 1.h,
+                                                left: 2.w,
+                                                right: 2.w,
+                                                bottom: 1.h),
                                             dropdownTitleTilePadding:
-                                                EdgeInsets.all(10),
+                                            EdgeInsets.all(10),
                                             dropdownUnderlineBorder:
-                                                const BorderSide(
-                                                    color: Colors.transparent,
-                                                    width: 2),
+                                            const BorderSide(
+                                                color: Colors.transparent,
+                                                width: 2),
                                             dropdownTitleTileBorder: Border.all(
                                                 color: ColorUtils.greyColor
                                                     .withOpacity(.4),
                                                 width: 1),
                                             dropdownTitleTileBorderRadius:
-                                                BorderRadius.circular(5),
+                                            BorderRadius.circular(5),
                                             expandedIcon: const Icon(
                                               Icons.keyboard_arrow_down,
                                               color: Colors.black54,
@@ -1247,17 +1562,17 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                             submitButton: Text('OK'),
                                             cancelButton: Text('Cancel'),
                                             dropdownTitleTileTextStyle:
-                                                const TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.black54),
+                                            const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black54),
                                             padding: const EdgeInsets.all(0),
                                             margin: const EdgeInsets.all(0),
                                             type: GFCheckboxType.basic,
                                             activeBgColor: GFColors.SUCCESS,
                                             activeBorderColor: GFColors.SUCCESS,
                                             inactiveBorderColor:
-                                                ColorUtils.greyColor,
-                                          )),
+                                            ColorUtils.greyColor,
+                                          )),*/
                                       Padding(
                                           padding: EdgeInsets.only(
                                               left: 15, right: 15, top: 2.h),
@@ -1288,19 +1603,18 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                 .withOpacity(.4),
                                           ),
                                         ),
-                                        child: new TextField(
+                                        child: TextField(
                                           controller: experienceInYearControllerList !=
                                                       null &&
                                                   experienceInYearControllerList!
-                                                          .length >
-                                                      0
+                                                      .isNotEmpty
                                               ? experienceInYearControllerList![
                                                   index]
                                               : null,
                                           keyboardType: TextInputType.number,
                                           enabled: true,
                                           textAlign: TextAlign.left,
-                                          decoration: new InputDecoration(
+                                          decoration: InputDecoration(
                                               hintStyle: TextStyle(
                                                   color: ColorUtils.greyColor,
                                                   fontSize: 16),
@@ -1315,6 +1629,20 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                               hintText: 'eg. 2'),
                                           onChanged: (text) {
                                             setState(() {
+                                              experienceInYearControllerList![
+                                                      index]!
+                                                  .text = text.toString();
+
+                                              experienceInYearControllerList![
+                                                          index]!
+                                                      .selection =
+                                                  TextSelection.fromPosition(
+                                                      TextPosition(
+                                                          offset:
+                                                              experienceInYearControllerList![
+                                                                      index]!
+                                                                  .text
+                                                                  .length));
                                               /* customer_mobile =
                                           text.toString();*/
                                               //you can access nameController in its scope to get
@@ -1342,9 +1670,9 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                       Container(
                                         width:
                                             MediaQuery.of(context).size.width,
-                                        padding: EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                             vertical: 3, horizontal: 15),
-                                        margin: EdgeInsets.only(
+                                        margin: const EdgeInsets.only(
                                             top: 10, left: 15, right: 15),
                                         decoration: BoxDecoration(
                                           borderRadius:
@@ -1366,7 +1694,7 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                               : expInMonths[index],
                                           /*expInMonths[index]*/
                                           hint: Container(
-                                            child: Text('0'),
+                                            child: const Text('0'),
                                           ),
                                           // Down Arrow Icon
                                           icon: Icon(
@@ -1399,7 +1727,7 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                         )),
                                       ),
                                       Padding(
-                                          padding: EdgeInsets.only(
+                                          padding: const EdgeInsets.only(
                                               left: 15, right: 15, top: 20),
                                           child: Align(
                                               alignment: Alignment.centerLeft,
@@ -1413,29 +1741,38 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                             .blackColor,
                                                         fontSize: 17,
                                                       )))),
-                                      Container(
-                                          height: 6.h,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 0, horizontal: 1),
-                                          margin: EdgeInsets.only(
-                                              top: 10, left: 15, right: 15),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                            border: Border.all(
-                                              color: ColorUtils.greyColor,
-                                            ),
-                                            color: ColorUtils.whiteColor,
-                                          ),
-                                          child: new Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              /*  new Text('+91 ',
+                                      Visibility(
+                                          visible: true,
+                                          /*expertiseList.length>index?expertiseList[index]!
+                                              .therapyCertificate1.toString() ==
+                                              "" ? false : true:true,*/
+                                          child: Container(
+                                              height: 8.h,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 0,
+                                                      horizontal: 1),
+                                              margin: const EdgeInsets.only(
+                                                  top: 10, left: 15, right: 15),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                                border: Border.all(
+                                                  color: ColorUtils.greyColor,
+                                                ),
+                                                color: ColorUtils.whiteColor,
+                                              ),
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: <Widget>[
+                                                  /*  new Text('+91 ',
                                 textAlign:
                                 TextAlign.left,
                                 style: TextStyle(
@@ -1444,94 +1781,150 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                       .blackColor,
                                   fontSize: 19,
                                 )),*/
-                                              SizedBox(
-                                                width: 0,
-                                              ),
-                                              new Container(
-                                                child: new Align(
+                                                  const SizedBox(
+                                                    width: 0,
+                                                  ),
+                                                  Align(
                                                     alignment:
                                                         Alignment.centerLeft,
-                                                    child: Text(
-                                                        /*fileName*/
-                                                        'File Name',
-                                                        textAlign:
-                                                            TextAlign.left,
-                                                        style: TextStyle(
-                                                          fontFamily: StringUtils
-                                                              .roboto_font_family,
-                                                          color: ColorUtils
-                                                              .blackColor,
-                                                          fontSize: 17,
-                                                        ))),
+                                                    child: SizedBox(
+                                                        width: 67.w,
+                                                        child: Text(
+                                                            fileNameList.length >=
+                                                                    index
+                                                                ? fileNameList[
+                                                                        index]
+                                                                    .toString()
+                                                                    .split('/')
+                                                                    .last
+                                                                : 'File Name' /* 'File Name'*/,
+                                                            textAlign:
+                                                                TextAlign.left,
+                                                            maxLines: 3,
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  StringUtils
+                                                                      .roboto_font_family,
+                                                              color: ColorUtils
+                                                                  .blackColor,
+                                                              fontSize: 17,
+                                                            ))),
 
-                                                //flexible
-                                              ),
-                                              InkWell(
-                                                  onTap: () async {
-                                                    /*     FilePickerResult? result =
-                                                          await FilePicker.platform
-                                                              .pickFiles(
-                                                              type: FileType.any);
-                                                          */ /*  allowedExtensions: ['.csv', 'doc','pdf']);*/ /*
-                                                          */ /* allowedExtensions: [
-                                                    'doc',
-                                                    'pdf','csv',
-                                                  ]);*/ /*
-                                                          if (result == null) return;
-                                                          file = result!.files.first;
-                                                          print('File Name: ${file?.name}');
-                                                          print('File Size: ${file?.size}');
-                                                          print(
-                                                              'File Extension: ${file?.extension}');
-                                                          print('File Path: ${file?.path}');
-
-                                                          fileName = file!.name.toString();
-                                                          await uploadFile(
-                                                              file
-                                                                  ?.path);
-                                                          setState(() {});*/
-                                                  },
-                                                  child: SizedBox(
-                                                      height: 50,
-                                                      width: 80,
-                                                      child: ColoredBox(
-                                                        color: ColorUtils
-                                                            .lightGreyBorderColor,
-                                                        child: Align(
-                                                            alignment: Alignment
-                                                                .center,
-                                                            child: Text(
-                                                                'Browse',
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontFamily:
-                                                                      StringUtils
-                                                                          .roboto_font_family,
-                                                                  color: ColorUtils
-                                                                      .blackColor,
-                                                                  fontSize: 15,
-                                                                ))),
-                                                      ))),
-                                            ], //widget
-                                          )),
+                                                    //flexible
+                                                  ),
+                                                  Visibility(
+                                                      visible:
+                                                          fileNameList[index] ==
+                                                                  'File Name'
+                                                              ? false
+                                                              : true,
+                                                      child: InkWell(
+                                                          onTap: () async {
+                                                            showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder: (context) =>
+                                                                    SizedBox(
+                                                                        height:
+                                                                            50,
+                                                                        width:
+                                                                            50,
+                                                                        //color: Colors
+                                                                        //.red,
+                                                                        child:
+                                                                            SizedBox(
+                                                                          child:
+                                                                              MyWidget(
+                                                                            hid:
+                                                                                prefs!.getString(StringUtils.id).toString(),
+                                                                          ),
+                                                                        )));
+                                                          },
+                                                          child: SizedBox(
+                                                              height: 8.h,
+                                                              width: 83,
+                                                              child: ColoredBox(
+                                                                color: ColorUtils
+                                                                    .lightGreyBorderColor,
+                                                                child: Align(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .center,
+                                                                    child: Text(
+                                                                        'View',
+                                                                        textAlign:
+                                                                            TextAlign
+                                                                                .center,
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontFamily:
+                                                                              StringUtils.roboto_font_family,
+                                                                          color:
+                                                                              ColorUtils.blackColor,
+                                                                          fontSize:
+                                                                              17,
+                                                                        ))),
+                                                              )))),
+                                                  Visibility(
+                                                      visible:
+                                                          fileNameList[index] ==
+                                                                  'File Name'
+                                                              ? true
+                                                              : false,
+                                                      child: InkWell(
+                                                          onTap: () async {
+                                                            _pickCertificates(
+                                                                index);
+                                                          },
+                                                          child: SizedBox(
+                                                              height: 8.h,
+                                                              width: 83,
+                                                              child: ColoredBox(
+                                                                color: ColorUtils
+                                                                    .lightGreyBorderColor,
+                                                                child: Align(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .center,
+                                                                    child: Text(
+                                                                        'Browse',
+                                                                        textAlign:
+                                                                            TextAlign
+                                                                                .center,
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontFamily:
+                                                                              StringUtils.roboto_font_family,
+                                                                          color:
+                                                                              ColorUtils.blackColor,
+                                                                          fontSize:
+                                                                              17,
+                                                                        ))),
+                                                              )))),
+                                                ], //widget
+                                              ))),
                                       Visibility(
                                           visible: index + 1 == value,
                                           child: InkWell(
                                               onTap: () {
-                                                setState(() {
-                                                  if (value < 9) {
-                                                    value = value + 1;
-                                                    selectTherapyItemList
-                                                        .add('');
-                                                    expInMonths.add('0');
-                                                    experienceInYearControllerList!
-                                                        .add(
-                                                            TextEditingController());
-                                                  }
-                                                });
+                                                // setState(() {
+                                                //   if (value < maxValue) {
+                                                //     value = value + 1;
+                                                //     selectTherapyItemList
+                                                //         .add('');
+                                                //     expInMonths.add('0');
+                                                //     experienceInYearControllerList!
+                                                //         .add(
+                                                //             TextEditingController());
+                                                //     multiSelectIssueList
+                                                //         .add([]);
+
+                                                //     fileNameList
+                                                //         .add('File Name');
+                                                //     therapy_certificate.insert(
+                                                //         index, null);
+                                                //   }
+                                                // });
                                               },
                                               child: Padding(
                                                   padding: EdgeInsets.only(
@@ -1542,17 +1935,49 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                   child: Align(
                                                       alignment:
                                                           Alignment.center,
-                                                      child: Text(
-                                                          'Add More Expertise',
-                                                          textAlign:
-                                                              TextAlign.left,
-                                                          style: TextStyle(
-                                                            fontFamily: StringUtils
-                                                                .roboto_font_family_bold,
-                                                            color: Colors
-                                                                .lightBlue,
-                                                            fontSize: 19,
-                                                          )))))),
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            if (value <
+                                                                maxValue) {
+                                                              value = value + 1;
+                                                              selectTherapyItemList
+                                                                  .add('');
+                                                              expInMonths
+                                                                  .add('0');
+                                                              experienceInYearControllerList!
+                                                                  .add(
+                                                                      TextEditingController());
+                                                              multiSelectIssueList
+                                                                  .add([]);
+                                                              fileNameList.add(
+                                                                  'File Name');
+                                                              therapy_certificate
+                                                                  .insert(index,
+                                                                      null);
+                                                            } else {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .push(MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) =>
+                                                                              const HealerPricingPlan()));
+                                                            }
+                                                          });
+                                                        },
+                                                        child: Text(
+                                                            'Add More Expertise',
+                                                            textAlign:
+                                                                TextAlign.left,
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  StringUtils
+                                                                      .roboto_font_family_bold,
+                                                              color: Colors
+                                                                  .lightBlue,
+                                                              fontSize: 19,
+                                                            )),
+                                                      ))))),
                                     ],
                                   );
                                 })),
@@ -1578,7 +2003,8 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                               child: Align(
                                                   alignment:
                                                       Alignment.centerLeft,
-                                                  child: Text('Pricing ',
+                                                  child: Text(
+                                                      'Your Pricing Plan ',
                                                       textAlign: TextAlign.left,
                                                       style: TextStyle(
                                                         fontFamily: StringUtils
@@ -1587,6 +2013,72 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                             .blackColor,
                                                         fontSize: 19,
                                                       ))))),
+                                      Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 15, right: 15, top: 2.h),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text('Plan ${index + 1}',
+                                                  textAlign: TextAlign.left,
+                                                  style: TextStyle(
+                                                    fontFamily: StringUtils
+                                                        .roboto_font_family,
+                                                    color:
+                                                        ColorUtils.blackColor,
+                                                    fontSize: 18,
+                                                  )),
+                                              Visibility(
+                                                  visible: index > 0,
+                                                  child: IconButton(
+                                                      onPressed: () {
+                                                        if (pricingList.length >
+                                                            index) {
+                                                          deletePricing(
+                                                              pricingList[
+                                                                      index]!
+                                                                  .thId
+                                                                  .toString(),
+                                                              index);
+                                                        } else {
+                                                          pricingValue =
+                                                              pricingValue - 1;
+                                                          selectPricingTherapyItemList
+                                                              .removeAt(index);
+                                                          custom_rating!
+                                                              .removeAt(index);
+                                                        }
+                                                        setState(() {});
+                                                        /* selectTherapyItemList
+                                                .add('');
+                                            expInMonths.add('0');
+                                            experienceInYearControllerList!
+                                                .add(
+                                                TextEditingController());
+                                            multiSelectIssueList.add([]);
+                                            fileNameList.add('File Name');
+                                            therapy_certificate.insert(index, null);*/
+                                                      },
+                                                      icon: Icon(
+                                                        Icons.delete,
+                                                        color: ColorUtils
+                                                            .darkPinkColor,
+                                                        size: 30,
+                                                      ))),
+                                            ],
+                                          ) /*Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text('Plan ${index + 1}',
+                                                  textAlign: TextAlign.left,
+                                                  style: TextStyle(
+                                                    fontFamily: StringUtils
+                                                        .roboto_font_family,
+                                                    color:
+                                                        ColorUtils.blackColor,
+                                                    fontSize: 18,
+                                                  )))*/
+                                          ),
                                       Padding(
                                           padding: EdgeInsets.only(
                                               left: 15, right: 15, top: 2.h),
@@ -1604,9 +2096,9 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                       Container(
                                         width:
                                             MediaQuery.of(context).size.width,
-                                        padding: EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                             vertical: 3, horizontal: 15),
-                                        margin: EdgeInsets.only(
+                                        margin: const EdgeInsets.only(
                                             top: 10, left: 15, right: 15),
                                         decoration: BoxDecoration(
                                           borderRadius:
@@ -1622,15 +2114,28 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                             child: DropdownButton(
                                           // Initial Value
                                           isExpanded: true,
-                                              value: selectPricingTherapyItemList.length >=
-                                                  index &&
+                                          value: selectPricingTherapyItemList
+                                                          .length >=
+                                                      index &&
                                                   selectPricingTherapyItemList[
-                                                  index] ==
+                                                          index] ==
                                                       ''
-                                                  ? selectedPricingTherapyItem
-                                                  : selectPricingTherapyItemList[index],
+                                              ? selectedPricingTherapyItem
+                                              : selectPricingTherapyItemList[
+                                                  index],
+                                          /*  value: selectTherapyItemList !=
+                                                      null &&
+                                                  selectPricingTherapyItemList
+                                                          .length >=
+                                                      index &&
+                                                  selectPricingTherapyItemList[
+                                                          index] ==
+                                                      ''
+                                              ? selectedPricingTherapyItem
+                                              : selectPricingTherapyItemList[
+                                                  index],*/
                                           hint: Container(
-                                            child: Text('Select Therapy'),
+                                            child: const Text('Select Therapy'),
                                           ),
                                           // Down Arrow Icon
                                           icon: Icon(
@@ -1638,25 +2143,23 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                             color: ColorUtils.greyColor,
                                             size: 30,
                                           ),
-
-                                              items: therapyList!.map((item) {
-                                                return DropdownMenuItem(
-                                                  child: Text(
-                                                      item.therapy_name.toString(),
-                                                      style: TextStyle(
-                                                          fontWeight:
+                                          items: /*therapyList*/
+                                              selectTherapyItemList.map((item) {
+                                            return DropdownMenuItem(
+                                              child: Text(item.toString(),
+                                                  style: const TextStyle(
+                                                      fontWeight:
                                                           FontWeight.normal,
-                                                          color: Colors.black,
-                                                          fontSize: 15)),
-                                                  value:
-                                                  item.therapy_name.toString(),
-                                                );
-                                              }).toList(),
-                                          // After selecting the desired option,it will
-                                          // change button value to selected value
+                                                      color: Colors.black,
+                                                      fontSize: 15)),
+                                              value: item.toString(),
+                                            );
+                                          }).toList(),
+
                                           onChanged: (String? newValue) {
                                             setState(() {
-                                              dropdownvalue = newValue!;
+                                              selectPricingTherapyItemList[
+                                                  index] = newValue!;
                                             });
                                           },
                                         )),
@@ -1694,12 +2197,15 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                       .lightGreyBorderColor
                                                       .withOpacity(0.3),*/
                                         ),
-                                        child: new TextField(
-                                          controller: _addressController,
+                                        child: TextField(
+                                          controller: custom_rating != null &&
+                                                  custom_rating!.isNotEmpty
+                                              ? custom_rating![index]
+                                              : null,
                                           keyboardType: TextInputType.number,
                                           enabled: true,
                                           textAlign: TextAlign.left,
-                                          decoration: new InputDecoration(
+                                          decoration: InputDecoration(
                                               hintStyle: TextStyle(
                                                   color: ColorUtils.greyColor,
                                                   fontSize: 16),
@@ -1714,6 +2220,18 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                               hintText: 'eg. 2'),
                                           onChanged: (text) {
                                             setState(() {
+                                              custom_rating![index]!.text =
+                                                  text.toString();
+
+                                              custom_rating![index]!.selection =
+                                                  TextSelection.fromPosition(
+                                                      TextPosition(
+                                                          offset:
+                                                              experienceInYearControllerList![
+                                                                      index]!
+                                                                  .text
+                                                                  .length));
+
                                               /* customer_mobile =
                                           text.toString();*/
                                               //you can access nameController in its scope to get
@@ -1728,9 +2246,12 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                           child: InkWell(
                                               onTap: () {
                                                 setState(() {
-
                                                   pricingValue =
                                                       pricingValue + 1;
+                                                  selectPricingTherapyItemList
+                                                      .add('');
+                                                  custom_rating!.add(
+                                                      TextEditingController());
                                                 });
                                               },
                                               child: Padding(
@@ -1790,14 +2311,123 @@ class ProfileSettingstate extends State<ProfileSetting> {
                                                           .violetButtonColor),
                                                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                                                       RoundedRectangleBorder(
-                                                          borderRadius: new BorderRadius.circular(8.0),
+                                                          borderRadius: BorderRadius.circular(8.0),
                                                           side: BorderSide(color: ColorUtils.violetButtonColor)))),
-                                              onPressed: () {}))),
+                                              onPressed: () {
+                                                isLoading = true;
+                                                setState(() {});
+
+                                                print(
+                                                    'pricing plan list---   ${selectPricingTherapyItemList.length}   ${selectPricingTherapyItemList[0].toString().trim().length} ');
+                                                if (_nameController.text
+                                                    .toString()
+                                                    .trim()
+                                                    .isEmpty) {
+                                                  showAlertDialog(context,
+                                                      'Please enter full name');
+                                                  isLoading = false;
+                                                  setState(() {});
+                                                } else if (_emailController
+                                                        .text.isEmpty ||
+                                                    !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                                        .hasMatch(
+                                                            _emailController
+                                                                .text)) {
+                                                  showAlertDialog(context,
+                                                      "Please enter valid email");
+                                                  isLoading = false;
+                                                  setState(() {});
+                                                } else if (_mobileNumberController
+                                                        .text.length !=
+                                                    10) {
+                                                  showAlertDialog(context,
+                                                      "Please enter 10 digit mobile number");
+                                                  isLoading = false;
+                                                  setState(() {});
+                                                } else if (_ageController
+                                                    .text.isEmpty) {
+                                                  showAlertDialog(context,
+                                                      "Please enter age");
+                                                  isLoading = false;
+                                                  setState(() {});
+                                                } else if (selectedGender
+                                                            .toString()
+                                                            .trim() ==
+                                                        "Select Gender" ||
+                                                    selectedGender == null ||
+                                                    selectedGender
+                                                        .toString()
+                                                        .trim()
+                                                        .isEmpty) {
+                                                  showAlertDialog(context,
+                                                      "Please select gender");
+                                                  isLoading = false;
+                                                  setState(() {});
+                                                } else if (selectPricingTherapyItemList
+                                                        .isNotEmpty &&
+                                                    selectPricingTherapyItemList[
+                                                            0]
+                                                        .toString()
+                                                        .trim()
+                                                        .isEmpty) {
+                                                  showAlertDialog(context,
+                                                      "Please add atlease one pricing plan");
+                                                  isLoading = false;
+                                                  setState(() {});
+                                                } else {
+                                                  updateProfile();
+                                                }
+                                              }))),
                                 ])),
-                            onTap: () async {}),
-                        SpinKitFadingCircleWidget(isLoading)
+                            onTap: () async {
+                              isLoading = true;
+                              setState(() {});
+                              if (_nameController.text
+                                  .toString()
+                                  .trim()
+                                  .isEmpty) {
+                                showAlertDialog(
+                                    context, 'Please enter full name');
+                                isLoading = false;
+                                setState(() {});
+                              } else if (_emailController.text.isEmpty ||
+                                  !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                      .hasMatch(_emailController.text)) {
+                                showAlertDialog(
+                                    context, "Please enter valid email");
+                                isLoading = false;
+                                setState(() {});
+                              } else if (_mobileNumberController.text.length !=
+                                  10) {
+                                showAlertDialog(context,
+                                    "Please enter 10 digit mobile number");
+                                isLoading = false;
+                                setState(() {});
+                              } else if (_ageController.text.isEmpty) {
+                                showAlertDialog(context, "Please enter age");
+                                isLoading = false;
+                                setState(() {});
+                              } else if (selectedGender.toString().trim() ==
+                                      "Select Gender" ||
+                                  selectedGender == null ||
+                                  selectedGender.toString().trim().isEmpty) {
+                                showAlertDialog(
+                                    context, "Please select gender");
+                                isLoading = false;
+                                setState(() {});
+                              } else if (selectPricingTherapyItemList.isEmpty) {
+                                showAlertDialog(context,
+                                    "Please add atlease one pricing plan");
+                                isLoading = false;
+                                setState(() {});
+                              } else {
+                                updateProfile();
+                              }
+                            }),
                       ]),
-                    ) /*;
+                    ),
+                    SpinKitFadingCircleWidget(
+                        isLoading) /*;
                           } else {
                             return SizedBox(
                                 height: 500,
@@ -1857,22 +2487,101 @@ class ProfileSettingstate extends State<ProfileSetting> {
     }
   }
 
+  void _pickCertificates(int index) async {
+    try {
+      final pickedFile = await _picker.getImage(source: ImageSource.gallery);
+      setState(() {
+        therapy_certificate.insert(index, pickedFile);
+        fileNameList.insert(index, pickedFile!.path.split('/').last);
+      });
+      //  var res = await uploadImage(_imageFile!.path.toString());
+      // print(res);
+    } catch (e) {
+      print("Image picker error " + e.toString());
+    }
+  }
+
   Future<String?> updateProfile() async {
     var data;
+    print(
+        'fetched healer id-   ${prefs!.getString(StringUtils.id).toString()}');
 
-    var request = http.MultipartRequest('POST',
-        Uri.parse('https://www.techtradedu.com/conceptlive/api/edit_profile'));
-    request.fields['user_type'] = '2';
-    request.fields['address'] = _addressController.text.toString();
-    request.fields['city_id'] = cityId.toString();
-    request.fields['state_id'] = stateId.toString();
-    request.fields['zip_code'] = _zipCodeController.text.toString();
+    var request = http.MultipartRequest('POST', BaseuURL.update_healer_profile);
+    request.fields['healer_id'] = /*'52'*/
+        prefs!.getString(StringUtils.id).toString();
+    request.fields['healer_name'] = _nameController.text.toString();
+    request.fields['healer_email'] = _emailController.text.toString();
+    request.fields['healer_telephone'] =
+        _mobileNumberController.text.toString();
+    request.fields['healer_dob'] = _dobController.text.toString();
+
+    request.fields['healer_age'] = _ageController.text.toString();
+    if (selectedGender!.toString().trim() == 'Female') {
+      debugPrint('healer_gender---  2 ');
+      request.fields['healer_gender'] = '2';
+    } else if (selectedGender!.toString().trim() == 'Male') {
+      request.fields['healer_gender'] = '1';
+      debugPrint('healer_gender---  1 ');
+    }
+    //   request.fields['healer_gender'] = selectedGender.toString();
+    request.fields['healer_address'] = _addressController.text.toString();
+    request.fields['healer_pin'] = _zipCodeController.text.toString();
+    request.fields['healer_about'] = _aboutMeController.text.toString();
+    request.fields['healer_keywords'] = _keywordsController.text.toString();
+
+    /*  'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.'*/
+    for (int i = 0; i < pricingValue; i++) {
+      print(
+          'therapy_name[$i] --    ${selectPricingTherapyItemList[i].toString()}');
+
+      request.fields['therapy_name[$i]'] =
+          selectPricingTherapyItemList[i].toString();
+    }
+    for (int i = 0; i < pricingValue; i++) {
+      print(
+          'custom_rating_count[$i] --    ${custom_rating![i]!.text.toString()}');
+
+      request.fields['custom_rating_count[$i]'] =
+          custom_rating![i]!.text.toString();
+    }
+    for (int i = 0; i < value; i++) {
+      print(
+          'therapy_name${i + 1} --    ${selectTherapyItemList[i].toString()}');
+      request.fields['therapy_name${i + 1}'] =
+          selectTherapyItemList[i].toString();
+    }
+    for (int i = 0; i < multiSelectIssueList.length; i++) {
+      var stringList = multiSelectIssueList[i].join(" ");
+      request.fields['issues${i + 1}[]'] = stringList;
+      print('issues${i + 1}[]    $stringList');
+    }
+
+    for (int i = 0; i < value; i++) {
+      print(
+          'experience_year${i + 1} --    ${experienceInYearControllerList![i]!.text.toString()}');
+
+      request.fields['experience_year${i + 1}'] =
+          experienceInYearControllerList![i]!.text.toString();
+    }
+
+    for (int i = 0; i < value; i++) {
+      print('experience_month${i + 1} --    ${expInMonths[i]!.toString()}');
+
+      request.fields['experience_month${i + 1}'] = expInMonths[i]!.toString();
+    }
+
+    for (int i = 0; i < value; i++) {
+      print('therapy_certificate${i + 1} -- ');
+      if (therapy_certificate[i] != null) {
+        request.files.add(await http.MultipartFile.fromPath(
+            'therapy_certificate${i + 1}',
+            therapy_certificate[i]!.path.toString()));
+      }
+    }
     if (_imageFile != null) {
       request.files.add(await http.MultipartFile.fromPath(
-          'user_profile', _imageFile!.path.toString()));
+          'healer_profile', _imageFile!.path.toString()));
     }
-    // var res = await request.send();
-
     request
         .send()
         .then((result) async {
@@ -1885,18 +2594,20 @@ class ProfileSettingstate extends State<ProfileSetting> {
               print(jsonData);
               data = json.decode(response.body);
 
-              var rest1 = data["msg"];
-              data = json.decode(response.body);
-              print('--->>?   ${data}');
-
-              if (data["status"] == "true" &&
-                  data["msg"] == "Login successful!!!") {
-                print('Login succssfull---    ');
-
-                UtilMethods.showSnackBar(context, "Login successful!!!");
-
-                //  showAlertDialog(context, "Uploaded KYC successfully" );
+              if (data["status"] == "true" && data["msg"] == "success") {
+                print('Success! Updated Successfully.---    ');
+                showAlertDialog(context, "Success! Updated Successfully.");
+                Future.delayed(const Duration(seconds: 2), () {
+                  isLoading = false;
+                  setState(() {});
+                  /*  Navigator.pop(context);*/
+                });
               } else {
+                showAlertDialog(context, data["msg"]);
+                Future.delayed(const Duration(seconds: 1), () {
+                  isLoading = false;
+                  setState(() {});
+                });
                 UtilMethods.showSnackBar(context, data["msg"]);
               }
             }
@@ -1906,6 +2617,68 @@ class ProfileSettingstate extends State<ProfileSetting> {
         })
         .catchError((err) => print('error : ' + err.toString()))
         .whenComplete(() {});
+    return null;
+  }
+
+  DateTime selectedDate = DateTime.now();
+  bool currentDate = true;
+  String initialdate = "", selectedInitialDate = "";
+  _selectDate(BuildContext context) async {
+    final DateTime? selected = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(1970),
+      lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: ColorUtils.appDarkBlueColor, // header background color
+              onPrimary: Colors.white, // header text color
+              onSurface: Colors.black87, // body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor:
+                    ColorUtils.headerTextColor, // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (selected != null && selected != selectedDate) {
+      setState(() {
+        var temp = DateTime.now().toUtc();
+        var d1 = DateTime.utc(temp.year, temp.month, temp.day);
+        var d2 = DateTime.utc(selected.year, selected.month,
+            selected.day); //you can add today's date here
+        if (d2.compareTo(d1) == 0) {
+          currentDate = true;
+          print('true');
+        } else {
+          currentDate = false;
+          print('false');
+        }
+
+        selectedDate = selected;
+        print('selected date--   $selectedDate');
+        final DateFormat formatter1 = DateFormat('yyyy-MM-dd');
+        final String formatted1 = formatter1.format(selected);
+
+        selectedInitialDate = selectedDate.toString().substring(0, 10);
+        print('selected initial date---   $selectedInitialDate');
+        _dobController.text = selectedInitialDate;
+        final DateFormat formatter = DateFormat('MMMM d, yyyy');
+        final String formatted = formatter.format(selectedDate);
+        //   initialdate = formatted;
+        /*   initialdate=selectedDate.toString();*/
+        Future.delayed(const Duration(seconds: 1), () {
+          setState(() {});
+        });
+      });
+    }
   }
 
   Widget _previewImage() {
@@ -1922,7 +2695,7 @@ class ProfileSettingstate extends State<ProfileSetting> {
         backgroundColor: Colors.transparent,
       );
     } else {
-      return CircleAvatar(
+      return const CircleAvatar(
         radius: 90.0,
         backgroundImage: AssetImage(
           ('assets/images/student.jpg'),
@@ -1936,11 +2709,13 @@ class ProfileSettingstate extends State<ProfileSetting> {
   Future<HealerProfileFetchData?> getFetchProfileData() async {
     var data;
     try {
+      print(
+          'fetched healer id-   ${prefs!.getString(StringUtils.id).toString()}');
       var request =
-          await http.MultipartRequest('POST', BaseuURL.healerprofile_detail);
+          http.MultipartRequest('POST', BaseuURL.healerprofile_detail);
 
       request.fields['healer_id'] =
-          /*prefs!.getString(StringUtils.id).toString()*/ '52';
+          prefs!.getString(StringUtils.id).toString() /*'52'*/;
       // var res = await request.send();
       // var res = await request.send();
       var response = await request.send();
@@ -1955,37 +2730,77 @@ class ProfileSettingstate extends State<ProfileSetting> {
 
         var rest1 = data["msg"];
         data = json.decode(responsed.body);
-        print('--->>?   ${data}');
+        print('--->>?   $data');
 
         if (data["status"] == "true" && data["response"] == "success") {
           print('getFetchProfileData--    ');
 
           final jsonResponse = json.decode(responsed.body);
-
+          selectPricingTherapyItemList.clear();
           _healerProfileFetchData =
-              new HealerProfileFetchData.fromJson(jsonResponse);
+              HealerProfileFetchData.fromJson(jsonResponse);
           expertiseList =
               _healerProfileFetchData!.expertise!.cast<Expertise?>();
           pricingList = _healerProfileFetchData!.pricing!.cast<Pricing?>();
-
 
           _nameController.text = _healerProfileFetchData!.healerName.toString();
           _emailController.text =
               _healerProfileFetchData!.healerEmail.toString();
           _mobileNumberController.text =
               _healerProfileFetchData!.healerTelephone.toString();
-          _dobController.text = _healerProfileFetchData!.dateOfBirth.toString();
           _zipCodeController.text = _healerProfileFetchData!.pinCode.toString();
           _addressController.text = _healerProfileFetchData!.address.toString();
+
+          if (_healerProfileFetchData!.dateOfBirth.toString().trim() ==
+              'null') {
+            _dobController.text = 'YYYY-MM-DD';
+          } else {
+            _dobController.text =
+                _healerProfileFetchData!.dateOfBirth.toString();
+          }
+
+          if (_healerProfileFetchData!.about.toString().trim() == "null") {
+            _aboutMeController.text = '';
+          } else {
+            _aboutMeController.text = _healerProfileFetchData!.about.toString();
+          }
+          if (_healerProfileFetchData!.keywords.toString().trim() == 'null') {
+            _keywordsController.text = '';
+          } else {
+            _keywordsController.text =
+                _healerProfileFetchData!.keywords.toString();
+          }
+
+          if (_healerProfileFetchData!.videoLink.toString().trim() == 'null') {
+            _videoController.text = '';
+          } else {
+            _videoController.text =
+                _healerProfileFetchData!.videoLink.toString();
+          }
+
+          _ageController.text = _healerProfileFetchData!.healer_age.toString();
+
           selectedGender = _healerProfileFetchData!.gender.toString();
-          if (_healerProfileFetchData!.healerProfile.toString().trim().length >
-              0) {
+          debugPrint(
+              'check profile url--  ${_healerProfileFetchData!.healerProfile.toString()} ');
+          if (_healerProfileFetchData!.healerProfile
+              .toString()
+              .trim()
+              .isNotEmpty) {
             image_url = _healerProfileFetchData!.healerProfile.toString();
           }
           print('expertiseList.length--${expertiseList.length}    ');
-          value=expertiseList.length;
-          pricingValue=pricingList.length;
-          if (expertiseList.length > 0) {
+          value = expertiseList.length;
+          if (pricingList.isNotEmpty) {
+            pricingValue = pricingList.length;
+          } else {
+            pricingValue = 1;
+          }
+
+          print(
+              'pricingValue.length--$pricingValue , ${pricingList.length}   ');
+
+          if (expertiseList.isNotEmpty) {
             value = expertiseList.length;
 
             print('expertiseList.length--dfdsfds${expertiseList.length}    ');
@@ -1996,17 +2811,59 @@ class ProfileSettingstate extends State<ProfileSetting> {
               selectTherapyItemList
                   .add(expertiseList[i]!.therapyName1.toString());
               expInMonths.add(expertiseList[i]!.experienceMonth1.toString());
-              experienceInYearControllerList!.add(new TextEditingController());
+              experienceInYearControllerList!.add(TextEditingController());
               experienceInYearControllerList![i]!.text =
                   expertiseList[i]!.experienceYear1.toString();
+
+              multiSelectIssueList.add(expertiseList[i]!.issues1!.split(', '));
+              if (expertiseList[i]!.therapyCertificate1!.isNotEmpty) {
+                fileNameList
+                    .add(expertiseList[i]!.therapyCertificate1.toString());
+              } else {
+                fileNameList.add('File Name');
+              }
+              therapy_certificate.add(null);
+
+              print(' issueList --   ${multiSelectIssueList.length}    ');
+
+              /*   for (int i = 0; i < issueList.length; i++) {
+                print(
+                    ' value of i --   ${ i}  ${issueList[i].length}  ');
+
+                for (int k = 0; k < issueList[i].length; k++) {
+                  print(
+                      ' value of k --   ${ k}    ');
+                  print(
+                      ' issueList[i][k]   -- ${issueList[i][k]} ');
+                  for (int j = 0; j < _animals.length; j++) {
+                    print(
+                        ' value of j --   ${ j}    ');
+                    print(
+                        ' issueList[i][k]   --${i}, ${k} ${issueList[i][k]} , ${_animals[j]}');
+
+                    if (issueList[i][k].trim() == _animals[j]!.trim()) {
+                      print(
+                          'issueIn--     ');
+                      listOfInt.add(j);
+                    }
+                  }
+                }
+                issueIndexList.add(listOfInt);
+                print(
+                    'In--issueIndexList.length   ${ issueIndexList[0]
+                        .length}    ');
+                listOfInt.clear();
+                setState(() {
+
+                });
+              }*/
+
               print(
-                  'expertiseList.length inside loop --   ${selectTherapyItemList[i]}    ');
+                  'expertiseList.length inside loop11 --   ${selectTherapyItemList[i]}    ');
             }
-
-
           }
 
-          if (pricingList.length > 0) {
+          if (pricingList.isNotEmpty) {
             pricingValue = pricingList.length;
             print('pricingList.length--dfdsfds${pricingList.length}    ');
 
@@ -2015,19 +2872,25 @@ class ProfileSettingstate extends State<ProfileSetting> {
                   'pricingList.length inside loop --   ${pricingList[i]!.therapyName.toString()}    ');
               selectPricingTherapyItemList
                   .add(pricingList[i]!.therapyName.toString());
+              custom_rating!.add(TextEditingController());
+              custom_rating![i]!.text = pricingList[i]!.customPrice.toString();
 
               print(
-                  'pricingList.length inside loop --   ${ selectPricingTherapyItemList[i]}    ');
+                  'pricingList.length inside loop --   ${selectPricingTherapyItemList[i]}    ');
             }
-
-
+          } else {
+            selectPricingTherapyItemList.add('');
+            custom_rating!.add(TextEditingController());
           }
-
         } else {
-          expertiseList!.clear();
+          expertiseList.clear();
           selectTherapyItemList.clear();
+          selectPricingTherapyItemList.clear();
           experienceInYearControllerList!.clear();
           expInMonths.clear();
+          issueList.clear();
+          therapy_certificate.clear();
+          fileNameList.clear();
         }
       }
 
@@ -2041,7 +2904,7 @@ class ProfileSettingstate extends State<ProfileSetting> {
   Future<List<TherapyList>?> getTherapies() async {
     var data;
     AllTherapyResponse? studentAllChapterResponse;
-    var request = await http.MultipartRequest('GET', BaseuURL.allTherapies);
+    var request = http.MultipartRequest('GET', BaseuURL.allTherapies);
 
     // var res = await request.send();
     var response = await request.send();
@@ -2056,23 +2919,23 @@ class ProfileSettingstate extends State<ProfileSetting> {
 
       var rest1 = data["msg"];
       data = json.decode(responsed.body);
-      print('--->>?   ${data}');
+      print('--->>?   $data');
 
       if (data["status"] == "true" && data["msg"] == "success") {
         print('Login succssfull---    ');
 
         final jsonResponse = json.decode(responsed.body);
 
-        studentAllChapterResponse =
-            new AllTherapyResponse.fromJson(jsonResponse);
+        studentAllChapterResponse = AllTherapyResponse.fromJson(jsonResponse);
         /*  setState(() {*/
-        therapyList = studentAllChapterResponse!.response!;
+        therapyList = studentAllChapterResponse.response!;
 
         //   leadList.add(person.campaignData.indexOf(0));
         /*   });*/
         //  showAlertDialog(context, "Uploaded KYC successfully" );
+        setState(() {});
       } else {
-        therapyList!.clear();
+        therapyList.clear();
         setState(() {});
       }
     }
@@ -2121,6 +2984,166 @@ class ProfileSettingstate extends State<ProfileSetting> {
     return studentAllChapterResponse!.response;
   }
 
+  showSnackBar(
+    BuildContext context,
+    String msg,
+  ) {
+    final snackBar = SnackBar(
+      content: Text(msg),
+    );
 
+// Find the ScaffoldMessenger in the widget tree
+// and use it to show a SnackBar.
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
 
+  showAlertDialog(BuildContext context, String msg) {
+    // set up the button
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: SizedBox(
+                    width: 60.w,
+                    child: Text(msg,
+                        textAlign: TextAlign.left,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black87,
+                            fontSize: 18)))),
+          ],
+        ),
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("Ok",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        color: ColorUtils.appDarkBlueColor,
+                        fontSize: 18))),
+          ],
+        ));
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  Future<String?> deleteExpertise(String expertiseID, String parameter) async {
+    isLoading = true;
+    setState(() {});
+    var data;
+    var request = http.MultipartRequest('POST', BaseuURL.delete_expertise);
+
+    request.fields['expertise_id'] = expertiseID;
+    request.fields['parameter'] = parameter;
+
+    // var res = await request.send();
+
+    request
+        .send()
+        .then((result) async {
+          http.Response.fromStream(result).then((response) {
+            if (response.statusCode == 200) {
+              print("Uploaded! ");
+              print('response.body ' + response.body);
+
+              var jsonData = response.body;
+              print(jsonData);
+              data = json.decode(response.body);
+
+              var rest1 = data["msg"];
+              data = json.decode(response.body);
+              print('--->>?   $data');
+
+              if (data["status"] == "true" && (data["msg"] == "success")) {
+                expertiseList.removeAt(int.parse(parameter) - 1);
+                value = value - 1;
+                selectTherapyItemList.removeAt(int.parse(parameter) - 1);
+                expInMonths.removeAt(int.parse(parameter) - 1);
+                experienceInYearControllerList!
+                    .removeAt(int.parse(parameter) - 1);
+                multiSelectIssueList.removeAt(int.parse(parameter) - 1);
+                fileNameList.removeAt(int.parse(parameter) - 1);
+                therapy_certificate.removeAt(int.parse(parameter) - 1);
+                Future.delayed(const Duration(seconds: 2), () {
+                  isLoading = false;
+                  setState(() {});
+                });
+              }
+            }
+
+            return response.body;
+          });
+        })
+        .catchError((err) => print('error : ' + err.toString()))
+        .whenComplete(() {});
+    return null;
+    //print('reason phrase- ${res.stream.bytesToString()}');
+    // return res.stream.bytesToString();
+  }
+
+  Future<String?> deletePricing(String therapyId, int index) async {
+    isLoading = true;
+    setState(() {});
+    var data;
+    var request = http.MultipartRequest('POST', BaseuURL.delete_price);
+
+    request.fields['therapy_id'] = therapyId;
+
+    // var res = await request.send();
+
+    request
+        .send()
+        .then((result) async {
+          http.Response.fromStream(result).then((response) {
+            if (response.statusCode == 200) {
+              print("Uploaded! ");
+              print('response.body ' + response.body);
+
+              var jsonData = response.body;
+              print(jsonData);
+              data = json.decode(response.body);
+
+              var rest1 = data["msg"];
+              data = json.decode(response.body);
+              print('--->>?   $data');
+
+              if (data["status"] == "true" && (data["msg"] == "success")) {
+                pricingList.removeAt(index);
+                pricingValue = pricingValue - 1;
+                selectPricingTherapyItemList.removeAt(index);
+                custom_rating!.removeAt(index);
+
+                Future.delayed(const Duration(seconds: 2), () {
+                  isLoading = false;
+                  setState(() {});
+                });
+              }
+            }
+
+            return response.body;
+          });
+        })
+        .catchError((err) => print('error : ' + err.toString()))
+        .whenComplete(() {});
+    return null;
+    //print('reason phrase- ${res.stream.bytesToString()}');
+    // return res.stream.bytesToString();
+  }
 }

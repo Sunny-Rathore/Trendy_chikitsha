@@ -1,4 +1,4 @@
-import 'package:doctor/page/Healer/Healer%20Register/Healer_Register.dart';
+import 'package:trendy_chikitsa/page/Healer/Healer%20Register/Healer_Register.dart';
 import 'package:flutter/material.dart';
 
 import '../global/global.dart';
@@ -103,7 +103,7 @@ class _Select_healerState extends State<Select_healer> {
                         ),
                       ),
                     ),
-                    onTap: (){ Navigator.push(context, MaterialPageRoute(builder: (context) => const Healer_Register()));
+                    onTap: (){ Navigator.push(context, MaterialPageRoute(builder: (context) =>  Healer_Register(isLookingFor: false,)));
                     }
                   ),
                 ],

@@ -1,5 +1,5 @@
-import 'package:doctor/global/global.dart';
-import 'package:doctor/page/Client/Client%20Register/Client_Register.dart';
+import 'package:trendy_chikitsa/global/global.dart';
+import 'package:trendy_chikitsa/page/Client/Client%20Register/Client_Register.dart';
 import 'package:flutter/material.dart';
 
 class SelectedPage extends StatefulWidget {
@@ -88,7 +88,7 @@ class _SelectedPageState extends State<SelectedPage> {
                       height: MediaQuery.of(context).size.height / 13,
                       width: MediaQuery.of(context).size.width * 1,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        borderRadius: const BorderRadius.all(Radius.circular(10)),
                         color: AppColors.colorWhite,
                       ),
                       child: Center(

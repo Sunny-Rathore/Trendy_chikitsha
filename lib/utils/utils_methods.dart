@@ -1,17 +1,10 @@
-import 'package:doctor/utils/color_utils.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:trendy_chikitsa/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 
-
-
-
-
-class UtilMethods{
-
-
+class UtilMethods {
   static showErrorAlertDialog(BuildContext context, String msg) {
     // set up the button
-    Widget okButton = FlatButton(
+    Widget okButton = TextButton(
       child: Text("Ok",
           textAlign: TextAlign.center,
           style: TextStyle(
@@ -32,7 +25,7 @@ class UtilMethods{
                 fontSize: 15)),
         content: Text(msg,
             textAlign: TextAlign.left,
-            style: TextStyle(
+            style: const TextStyle(
                 fontWeight: FontWeight.normal,
                 color: Colors.black87,
                 fontSize: 18)),
@@ -64,8 +57,7 @@ class UtilMethods{
     );
   }
 
-
-  static showAlertDialog(BuildContext context, String msg, bool close_screen) {
+  static showAlertDialog(BuildContext context, String msg, bool closeScreen) {
     // set up the button
 
     // set up the AlertDialog
@@ -73,27 +65,29 @@ class UtilMethods{
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            new GestureDetector(
+            GestureDetector(
                 onTap: () {
                   Navigator.of(context).pop();
                 },
-                child:Container(width: 220,child: Text(msg,
-                    textAlign: TextAlign.left,
-                    maxLines: 3,
-                    style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        color: Colors.black87,
-                        fontSize: 18)))),
+                child: SizedBox(
+                    width: 220,
+                    child: Text(msg,
+                        textAlign: TextAlign.left,
+                        maxLines: 3,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black87,
+                            fontSize: 18)))),
           ],
         ),
         content: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            new GestureDetector(
+            GestureDetector(
                 onTap: () {
                   Navigator.of(context).pop();
 
-                  if(close_screen){
+                  if (closeScreen) {
                     Navigator.pop(context);
                   }
                 },
@@ -115,9 +109,11 @@ class UtilMethods{
     );
   }
 
-
-  static showSnackBar(BuildContext context, String msg,){
-    final    snackBar = SnackBar(
+  static showSnackBar(
+    BuildContext context,
+    String msg,
+  ) {
+    final snackBar = SnackBar(
       content: Text(msg),
     );
 
@@ -126,9 +122,5 @@ class UtilMethods{
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-
-
-    // set up the AlertDialog
-
-
+  // set up the AlertDialog
 }

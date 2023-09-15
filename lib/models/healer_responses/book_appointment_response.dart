@@ -9,16 +9,16 @@ class BookAppointmentResponse {
     status = json['status'];
     msg = json['msg'];
     response = json['response'] != null
-        ? new Response.fromJson(json['response'])
+        ? Response.fromJson(json['response'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['msg'] = this.msg;
-    if (this.response != null) {
-      data['response'] = this.response!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['msg'] = msg;
+    if (response != null) {
+      data['response'] = response!.toJson();
     }
     return data;
   }
@@ -59,16 +59,16 @@ class Response {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['booking_number'] = this.bookingNumber;
-    data['healer_id'] = this.healerId;
-    data['client_id'] = this.clientId;
-    data['date'] = this.date;
-    data['slot_id'] = this.slotId;
-    data['price_id'] = this.priceId;
-    data['create_date'] = this.createDate;
-    data['book_status'] = this.bookStatus;
-    data['appoint_type'] = this.appointType;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['booking_number'] = bookingNumber;
+    data['healer_id'] = healerId;
+    data['client_id'] = clientId;
+    data['date'] = date;
+    data['slot_id'] = slotId;
+    data['price_id'] = priceId;
+    data['create_date'] = createDate;
+    data['book_status'] = bookStatus;
+    data['appoint_type'] = appointType;
     return data;
   }
 }

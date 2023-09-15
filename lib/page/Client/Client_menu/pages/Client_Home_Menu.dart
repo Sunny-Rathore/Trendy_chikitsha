@@ -1,13 +1,10 @@
-import 'package:doctor/global/global.dart';
-import 'package:doctor/page/Client/Client_menu/client_homepage.dart';
-import 'package:doctor/page/Client/Client_menu/pages/client_change_password.dart';
+import 'package:flutter/services.dart';
+import 'package:trendy_chikitsa/page/Client/Client_menu/client_homepage.dart';
 
-import 'package:doctor/page/Client/Client_menu/pages/therapy_category.dart';
-import 'package:doctor/page/Client/client_navigation.dart';
-import 'package:doctor/utils/color_utils.dart';
-import 'package:doctor/utils/string_utils.dart';
+import 'package:trendy_chikitsa/page/Client/client_navigation.dart';
+import 'package:trendy_chikitsa/utils/color_utils.dart';
+import 'package:trendy_chikitsa/utils/string_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 class Client_Home_Menu extends StatefulWidget {
   const Client_Home_Menu({Key? key}) : super(key: key);
@@ -17,18 +14,15 @@ class Client_Home_Menu extends StatefulWidget {
 }
 
 class _Client_Home_MenuState extends State<Client_Home_Menu> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
       extendBody: true,
-      drawer:NavDrawer() ,
-
-
+      drawer: NavDrawer(),
       appBar: AppBar(
-        brightness: Brightness.dark,
         toolbarHeight: 60,
         backgroundColor: ColorUtils.trendyThemeColor,
         elevation: 0.0,
@@ -47,13 +41,13 @@ class _Client_Home_MenuState extends State<Client_Home_Menu> {
               try {
                 _scaffoldKey.currentState!.openDrawer();
               } catch (ex) {
-                print('rrr----    ${ex}');
+                print('rrr----    $ex');
               }
             },
             child: Padding(
-                padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                child: new IconButton(
-                    icon: new Icon(
+                padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                child: IconButton(
+                    icon: Icon(
                       Icons.menu,
                       color: ColorUtils.whiteColor,
                       size: 21,
@@ -63,9 +57,10 @@ class _Client_Home_MenuState extends State<Client_Home_Menu> {
                       try {
                         _scaffoldKey.currentState!.openDrawer();
                       } catch (ex) {
-                        print('rrr----    ${ex}');
+                        print('rrr----    $ex');
                       }
                     }))),
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         /*   flexibleSpace: Container(
                 decoration: BoxDecoration(
                     borderRadius: const BorderRadius.only(
@@ -77,17 +72,14 @@ class _Client_Home_MenuState extends State<Client_Home_Menu> {
                         end: Alignment.topCenter)),
               ),*/
       ),
-
-      body: SafeArea(
-        child:ClientHomePage()
-      ),
+      body: const SafeArea(child: ClientHomePage()),
     );
   }
 
   buildCard() => Container(
-    width: 200,
-    height: 200,
-    color: Colors.red,
-    child: Image.asset(""),
-  );
+        width: 200,
+        height: 200,
+        color: Colors.red,
+        child: Image.asset(""),
+      );
 }

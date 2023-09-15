@@ -1,4 +1,4 @@
-import 'package:doctor/global/global.dart';
+import 'package:trendy_chikitsa/global/global.dart';
 import 'package:flutter/material.dart';
 
 class SelectedIssue extends StatefulWidget {

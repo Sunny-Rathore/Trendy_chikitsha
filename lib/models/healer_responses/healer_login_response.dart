@@ -11,17 +11,17 @@ class HealerLoginResponse {
     msg = json['msg'];
     response = json['response'];
     healerData = json['healer_data'] != null
-        ? new HealerData.fromJson(json['healer_data'])
+        ? HealerData.fromJson(json['healer_data'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['msg'] = this.msg;
-    data['response'] = this.response;
-    if (this.healerData != null) {
-      data['healer_data'] = this.healerData!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['msg'] = msg;
+    data['response'] = response;
+    if (healerData != null) {
+      data['healer_data'] = healerData!.toJson();
     }
     return data;
   }
@@ -122,36 +122,36 @@ class HealerData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['h_id'] = this.hId;
-    data['h_name'] = this.hName;
-    data['h_email'] = this.hEmail;
-    data['h_password'] = this.hPassword;
-    data['h_profile'] = this.hProfile;
-    data['h_age'] = this.hAge;
-    data['h_gender'] = this.hGender;
-    data['h_dob'] = this.hDob;
-    data['h_telephone'] = this.hTelephone;
-    data['h_address'] = this.hAddress;
-    data['h_pin'] = this.hPin;
-    data['h_about'] = this.hAbout;
-    data['h_approve'] = this.hApprove;
-    data['h_date'] = this.hDate;
-    data['h_links'] = this.hLinks;
-    data['h_facebook_link'] = this.hFacebookLink;
-    data['h_twitter_link'] = this.hTwitterLink;
-    data['h_instagram_link'] = this.hInstagramLink;
-    data['h_pinterest_link'] = this.hPinterestLink;
-    data['h_linkedin_link'] = this.hLinkedinLink;
-    data['h_youtube_link'] = this.hYoutubeLink;
-    data['h_keywords'] = this.hKeywords;
-    data['video_link'] = this.videoLink;
-    data['reset'] = this.reset;
-    data['h_position'] = this.hPosition;
-    data['h_featured'] = this.hFeatured;
-    data['h_top_rate'] = this.hTopRate;
-    data['subscription_plan'] = this.subscriptionPlan;
-    data['type'] = this.type;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['h_id'] = hId;
+    data['h_name'] = hName;
+    data['h_email'] = hEmail;
+    data['h_password'] = hPassword;
+    data['h_profile'] = hProfile;
+    data['h_age'] = hAge;
+    data['h_gender'] = hGender;
+    data['h_dob'] = hDob;
+    data['h_telephone'] = hTelephone;
+    data['h_address'] = hAddress;
+    data['h_pin'] = hPin;
+    data['h_about'] = hAbout;
+    data['h_approve'] = hApprove;
+    data['h_date'] = hDate;
+    data['h_links'] = hLinks;
+    data['h_facebook_link'] = hFacebookLink;
+    data['h_twitter_link'] = hTwitterLink;
+    data['h_instagram_link'] = hInstagramLink;
+    data['h_pinterest_link'] = hPinterestLink;
+    data['h_linkedin_link'] = hLinkedinLink;
+    data['h_youtube_link'] = hYoutubeLink;
+    data['h_keywords'] = hKeywords;
+    data['video_link'] = videoLink;
+    data['reset'] = reset;
+    data['h_position'] = hPosition;
+    data['h_featured'] = hFeatured;
+    data['h_top_rate'] = hTopRate;
+    data['subscription_plan'] = subscriptionPlan;
+    data['type'] = type;
     return data;
   }
 }

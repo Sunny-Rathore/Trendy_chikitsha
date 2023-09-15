@@ -1,10 +1,9 @@
-import 'package:doctor/global/global.dart';
+import 'package:trendy_chikitsa/global/global.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PaymentPage extends StatefulWidget {
-  PaymentPage({Key? key}) : super(key: key);
+  const PaymentPage({Key? key}) : super(key: key);
 
   @override
   _PaymentPageState createState() => _PaymentPageState();
@@ -390,7 +389,7 @@ class _PaymentPageState extends State<PaymentPage> {
                             const SizedBox(width: 10,),
                             Column(
                               children:  [
-                                Container(
+                                SizedBox(
                                   width: MediaQuery.of(context).size.width /4,
                                   child: SizedBox(
                                       height: 100,
@@ -439,7 +438,7 @@ class _PaymentPageState extends State<PaymentPage> {
                             const SizedBox(width: 10,),
                             Column(
                               children:  [
-                                Container(
+                                SizedBox(
                                   width: MediaQuery.of(context).size.width /4,
                                   child: SizedBox(
                                       height: 90,

@@ -1,19 +1,15 @@
 import 'dart:io';
 
-import 'package:doctor/api.dart';
-import 'package:doctor/join_screen.dart';
-import 'package:doctor/meeting_screen.dart';
-
-import 'package:doctor/page/SplashScreen.dart';
+import 'package:trendy_chikitsa/page/SplashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
-class MyHttpOverrides extends HttpOverrides{
+class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
-      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 /*  @override
   HttpClient createHttpClient(SecurityContext context){
@@ -21,12 +17,15 @@ class MyHttpOverrides extends HttpOverrides{
       ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
   }*/
 }
+
 void main() async {
 /*  HttpOverrides.global = new MyHttpOverrides();*/
   WidgetsFlutterBinding.ensureInitialized();
 
-  ByteData data = await PlatformAssetBundle().load('assets/ca/lets-encrypt-r3.pem');
-  SecurityContext.defaultContext.setTrustedCertificatesBytes(data.buffer.asUint8List());
+  ByteData data =
+      await PlatformAssetBundle().load('assets/ca/lets-encrypt-r3.pem');
+  SecurityContext.defaultContext
+      .setTrustedCertificatesBytes(data.buffer.asUint8List());
 
   runApp(const MyApp());
 }
@@ -41,12 +40,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-        debugShowCheckedModeBanner: false,
-      home: VideoSDKQuickStart(),
-     /* home: SplashScreen(),*/
+      debugShowCheckedModeBanner: false,
+      /*   home: VideoSDKQuickStart(),*/
+
+      home: const SplashScreen(),
     );
   }
-}
+}/*
 class VideoSDKQuickStart extends StatefulWidget {
   const VideoSDKQuickStart({Key? key}) : super(key: key);
 
@@ -89,4 +89,4 @@ class _VideoSDKQuickStartState extends State<VideoSDKQuickStart> {
   }
 
 
-}
+}*/

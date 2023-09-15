@@ -17,11 +17,21 @@ static var profileURL="https://cerbosys.in:1700/doctorprofile/";
 
 
   static var addTimeSlot = Uri.parse('${apibaseUrl}add_time_slot/');
+  static var forgot_password = Uri.parse('${apibaseUrl}forgot_password/');
+
+  static var submit_review = Uri.parse('${apibaseUrl}submit_review/');
+  static var add_complain = Uri.parse('${apibaseUrl}add_complain/');
+  static var complain_list = Uri.parse('${apibaseUrl}complain_list/');
+
+  static var upgrade_plan = Uri.parse('${apibaseUrl}upgrade_plan/');
+
   static var register_user =
   Uri.parse('${apibaseUrl}register_user/');
 
   static var healer_change_password = Uri.parse('${apibaseUrl}healer_change_password/');
 
+  static var delete_expertise= Uri.parse('${apibaseUrl}delete_expertise/');
+  static var delete_price= Uri.parse('${apibaseUrl}delete_price/');
 
   static var scheduleTimeListing =
       Uri.parse('${apibaseUrl}schedule_time_listing/');
@@ -43,13 +53,46 @@ static var profileURL="https://cerbosys.in:1700/doctorprofile/";
   static var clientChangePassword =
   Uri.parse('${apibaseUrl}client_change_password/');
 
+  static var update_healer_profile =
+  Uri.parse('${apibaseUrl}update_healer_profile/');
+
+  static var submit_looking_for =
+  Uri.parse('${apibaseUrl}submit_looking_for/');
+
+  static var submit_type =
+  Uri.parse('${apibaseUrl}submit_type/');
+
+
   static var client_appointment =
   Uri.parse('${apibaseUrl}client_appointment/');
 
+  static var healer_reviews =
+  Uri.parse('${apibaseUrl}healer_reviews/');
+  static var client_rating =
+  Uri.parse('${apibaseUrl}client_rating/');
   static var healer_appointment =
   Uri.parse('${apibaseUrl}healer_appointment/');
 
   static var healerprofile_detail =
   Uri.parse('${apibaseUrl}healerprofile_detail/');
+
+  static var create_meeting =
+  Uri.parse('${apibaseUrl}create_meeting/');
+
+  static var approve_booking =
+  Uri.parse('${apibaseUrl}approve_booking/');
+
+  static var reject_booking =
+  Uri.parse('${apibaseUrl}reject_booking/');
+
+  static var client_details =
+  Uri.parse('${apibaseUrl}client_details/');
+
+  static var transaction_history =
+  Uri.parse('${apibaseUrl}transaction_history/');
+
+
+  static var total_counting =
+  Uri.parse('${apibaseUrl}total_counting/');
 
 }
